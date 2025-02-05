@@ -1,4 +1,5 @@
 
+import 'package:advance_budget_request_system/views/budgetcode.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -15,7 +16,8 @@ class _DashboardState extends State<Dashboard>
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    const Center(child: Text('Budget Code')),
+    budgetcode(),
+    //const Center(child: Text('Budget Code')),
     const Center(child: Text("Budget Amount")),
     const Center(child: Text("Project Information")),
     const Center(child: Text("Trip Information")),
@@ -62,6 +64,7 @@ class _DashboardState extends State<Dashboard>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromRGBO(142, 224, 249, 0.855),
         title: const Text("Advance Budget Request System"),
         leading: IconButton(
           onPressed: _toggleMenuBar,
