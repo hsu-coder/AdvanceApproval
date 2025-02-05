@@ -1,5 +1,6 @@
-
+import 'package:advance_budget_request_system/views/trip.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -15,10 +16,11 @@ class _DashboardState extends State<Dashboard>
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
+    const DashboardView(),
     const Center(child: Text('Budget Code')),
     const Center(child: Text("Budget Amount")),
     const Center(child: Text("Project Information")),
-    const Center(child: Text("Trip Information")),
+    const TripInfo(),
     const Center(child: Text("Advance Request")),
     const Center(child: Text("Cash Payment")),
     const Center(child: Text("Settlement")),
@@ -266,53 +268,60 @@ class _CustomDrawerState extends State<CustomDrawer> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0), 
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                title: const Text("Dashboard"),
+                onTap: () => widget.onItemTapped(0),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: ListTile(
                 title: const Text("Budget Code"),
-                onTap: () => widget.onItemTapped(0),
+                onTap: () => widget.onItemTapped(1),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
                   title: const Text('Budget Amount'),
-                  onTap: () => widget.onItemTapped(1)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Project Information'),
                   onTap: () => widget.onItemTapped(2)),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                  title: const Text('Trip Information'),
+                  title: const Text('Project Information'),
                   onTap: () => widget.onItemTapped(3)),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                  title: const Text('Advance Request'),
+                  title: const Text('Trip Information'),
                   onTap: () => widget.onItemTapped(4)),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                  title: const Text('Cash Payment'),
+                  title: const Text('Advance Request'),
                   onTap: () => widget.onItemTapped(5)),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                  title: const Text('Settlement'),
+                  title: const Text('Cash Payment'),
                   onTap: () => widget.onItemTapped(6)),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                  title: const Text('Approval SetUp'),
+                  title: const Text('Settlement'),
                   onTap: () => widget.onItemTapped(7)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: ListTile(
+                  title: const Text('Approval SetUp'),
+                  onTap: () => widget.onItemTapped(8)),
             ),
             // Padding(
             //   padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -329,19 +338,560 @@ class _CustomDrawerState extends State<CustomDrawer> {
 }
 
 // Dashboard
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class DashboardView extends StatefulWidget {
+  const DashboardView({super.key});
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<DashboardView> createState() => _DashboardViewState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double containerWidth = constraints.maxWidth;
+          bool isSmallScreen = constraints.maxWidth < 700;
 
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+              width: isSmallScreen ? constraints.maxWidth/0.55 : containerWidth,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.money_rounded),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Budget Code"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.money_rounded),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Budget Amount"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.money_rounded),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Project Request"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.airplane_ticket_outlined),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Trip Request"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.request_page),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Advance Request"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.payment),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Cash Payment"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.note_outlined),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Settlement"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.blue,
+                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                const Center(
+                                  child: Icon(Icons.approval),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Approval SetUp"),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(Icons.add),
+                                          label: const Text(
+                                            "New",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color: Colors.white),
+                                              iconColor: Colors.white),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        OutlinedButton.icon(
+                                          onPressed: null,
+                                          icon: const Icon(
+                                              Icons.more_horiz_outlined),
+                                          label: const Text(
+                                            "Detail",
+                                            style: TextStyle(color: Colors.white),
+                                          ),
+                                          style: OutlinedButton.styleFrom(
+                                            side: const BorderSide(
+                                                color: Colors.white),
+                                            iconColor: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  width: 7,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
