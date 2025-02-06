@@ -42,17 +42,16 @@ class _AddTripState extends State<AddTrip> {
     }
   }
 
+  //clear
   void _clearText() {
     setState(() {
       _tripCodeController.text = "";
       _tripDesController.text = "";
       _totalAmtController.text = "";
-      _selectedDepartment=null;
-      _selectedCurrency='MMK';
+      _selectedDepartment = null;
+      _selectedCurrency = 'MMK';
     });
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -62,128 +61,127 @@ class _AddTripState extends State<AddTrip> {
       ),
       body: Center(
         child: Container(
-          
+         color: const Color.fromARGB(255, 103, 207, 177),
           width: MediaQuery.of(context).size.width * 0.5,
-          color: Color.fromARGB(255, 103, 207, 177),
           child: Padding(
-            padding: const EdgeInsets.all(6.0),
+            padding: const EdgeInsets.all(7.0),
             child: SingleChildScrollView(
-              child: Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: Form(
-                      key: _formkey,
-                      child: Column(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Text(
-                                'Add Trip Request',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+              child: Center(
+                child: Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Form(
+                        key: _formkey,
+                        child: Column(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                  'Add Trip Request',
+                                  style: TextStyle(
+                                      fontSize: 20, fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
-                          ),
-                          ListTile(
-                            title: TextFormField(
-                              controller: _tripCodeController,
-                              decoration: const InputDecoration(
-                                  labelText: "Enter Trip Code"),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Enter Trip Code";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          ListTile(
-                            title: TextFormField(
-                              controller: _tripDesController,
-                              decoration: const InputDecoration(
-                                  labelText: "Enter Trip Description"),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Enter Trip Description";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          ListTile(
-                            title: TextFormField(
-                              controller: _totalAmtController,
-                              decoration: const InputDecoration(
-                                labelText: "Enter Total Amount",
+                            ListTile(
+                              title: TextFormField(
+                                controller: _tripCodeController,
+                                decoration: const InputDecoration(
+                                    labelText: "Enter Trip Code"),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Enter Trip Code";
+                                  }
+                                  return null;
+                                },
                               ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d*\.?\d*')),
-                              ],
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Enter Total Amount";
-                                }
-                                final amount = double.tryParse(value);
-                                if (amount == null) {
-                                  return "Enter a valid amount";
-                                }
-                                if (amount <= 0) {
-                                  return "Your Request Amount must be greater than 0";
-                                }
-
-                                return null;
-                              },
                             ),
-                          ),
-                          ListTile(
-                            title: DropdownButtonFormField(
-                              decoration: const InputDecoration(),
-                              value: _selectedCurrency,
-                              items: ['MMK', 'USD'].map((currency) {
-                                return DropdownMenuItem(
-                                    value: currency, child: Text(currency));
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedCurrency = value!;
-                                });
-                              },
-                            ),
-                          ),
-                          ListTile(
-                            title: TextFormField(
-                              controller: _dateController,
-                              decoration: const InputDecoration(
-                                  labelText: "Request Date"),
-                              readOnly: true,
-                            ),
-                          ),
-                          ListTile(
-                            title: DropdownButtonFormField(
-                              decoration: const InputDecoration(
-                                labelText: "Choose your Department",
+                            ListTile(
+                              title: TextFormField(
+                                controller: _tripDesController,
+                                decoration: const InputDecoration(
+                                    labelText: "Enter Trip Description"),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Enter Trip Description";
+                                  }
+                                  return null;
+                                },
                               ),
-                              items: departments.map((department) {
-                                return DropdownMenuItem(
-                                    value: department, child: Text(department));
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedDepartment = value!;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Choose your Department";
-                                }
-                                return null;
-                              },
                             ),
-                          ),
-                          Center(
-                            child: Row(
+                            ListTile(
+                              title: TextFormField(
+                                controller: _totalAmtController,
+                                decoration: const InputDecoration(
+                                  labelText: "Enter Total Amount",
+                                ),
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^\d*\.?\d*')),
+                                ],
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Enter Total Amount";
+                                  }
+                                  final amount = double.tryParse(value);
+                                  if (amount == null) {
+                                    return "Enter a valid amount";
+                                  }
+                                  if (amount <= 0) {
+                                    return "Your Request Amount must be greater than 0";
+                                  }
+        
+                                  return null;
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: DropdownButtonFormField(
+                                decoration: const InputDecoration(),
+                                value: _selectedCurrency,
+                                items: ['MMK', 'USD'].map((currency) {
+                                  return DropdownMenuItem(
+                                      value: currency, child: Text(currency));
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedCurrency = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: TextFormField(
+                                controller: _dateController,
+                                decoration: const InputDecoration(
+                                    labelText: "Request Date"),
+                                readOnly: true,
+                              ),
+                            ),
+                            ListTile(
+                              title: DropdownButtonFormField(
+                                decoration: const InputDecoration(
+                                  labelText: "Choose your Department",
+                                ),
+                                items: departments.map((department) {
+                                  return DropdownMenuItem(
+                                      value: department, child: Text(department));
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedDepartment = value!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Choose your Department";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton(
@@ -191,7 +189,9 @@ class _AddTripState extends State<AddTrip> {
                                     _submitForm();
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    textStyle: const TextStyle(fontSize: 15),
+                                    textStyle: const TextStyle(
+                                      fontSize: 15,
+                                    ),
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
                                     padding: const EdgeInsets.symmetric(
@@ -200,17 +200,19 @@ class _AddTripState extends State<AddTrip> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  child: const Text("Submit",style: TextStyle(fontWeight: FontWeight.bold),),
+                                  child: const Text("Submit"),
                                 ),
                                 const SizedBox(
                                   width: 20,
                                 ),
                                 ElevatedButton(
-                                    onPressed: () {
-                                      _clearText();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                    textStyle: const TextStyle(fontSize: 15),
+                                  onPressed: () {
+                                    _clearText();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    textStyle: const TextStyle(
+                                      fontSize: 15,
+                                    ),
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
                                     padding: const EdgeInsets.symmetric(
@@ -219,15 +221,17 @@ class _AddTripState extends State<AddTrip> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                    child: const Text("Clear", style: TextStyle(fontWeight: FontWeight.bold),),)
+                                  child: const Text("Clear"),
+                                )
                               ],
                             ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          )
-                        ],
-                      ))),
+                            const SizedBox(
+                              height: 20,
+                            )
+                          ],
+                        )
+                        )),
+              ),
             ),
           ),
         ),

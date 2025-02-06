@@ -12,23 +12,150 @@ class TripInfo extends StatefulWidget {
 
 class _TripInfoState extends State<TripInfo> {
   List<Map<String, dynamic>> tripData = [
-     {'Date':'2023/10/28','tripID': '1', 'description': 'Job Training', 'Total Amount':'200000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/10/29','tripID': '2', 'description': 'Camping', 'Total Amount':'500000', 'currency': 'MMK', 'department': 'HR', 'Requestable': 'Pending'},
-    {'Date':'2023/10/30','tripID': '3', 'description': 'Trip', 'Total Amount':'700000', 'currency': 'MMK', 'department': 'Marketing', 'Requestable': 'Pending'},
-    {'Date':'2023/10/31','tripID': '4', 'description': 'Oversea', 'Total Amount':'400000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2025/02/04','tripID': '5', 'description': 'Oversesa meeting', 'Total Amount':'500000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2025/02/05','tripID': '6', 'description': 'Mandalay site vist', 'Total Amount':'300000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2025/02/06','tripID': '7', 'description': 'Trip', 'Total Amount':'100000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2025/10/28','tripID': '8', 'description': 'Oversea', 'Total Amount':'300000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/01','tripID': '9', 'description': 'Camping', 'Total Amount':'200000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/02','tripID': '10', 'description': 'Training', 'Total Amount':'800000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/03','tripID': '11', 'description': 'Trip', 'Total Amount':'300000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/04','tripID': '12', 'description': 'Oversea', 'Total Amount':'400000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/05','tripID': '13', 'description': 'Site visit', 'Total Amount':'500000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/06','tripID': '14', 'description': 'Training', 'Total Amount':'200000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/07','tripID': '15', 'description': 'Oversea', 'Total Amount':'300000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-    {'Date':'2023/11/08','tripID': '16', 'description': 'Camping', 'Total Amount':'100000', 'currency': 'MMK', 'department': 'Admin', 'Requestable': 'Pending'},
-
+    {
+      'Date': '2023/10/28',
+      'tripID': '1',
+      'description': 'Job Training',
+      'Total Amount': '200000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/10/29',
+      'tripID': '2',
+      'description': 'Camping',
+      'Total Amount': '500000',
+      'currency': 'MMK',
+      'department': 'HR',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/10/30',
+      'tripID': '3',
+      'description': 'Trip',
+      'Total Amount': '700000',
+      'currency': 'MMK',
+      'department': 'Marketing',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/10/31',
+      'tripID': '4',
+      'description': 'Oversea',
+      'Total Amount': '400000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2025/02/04',
+      'tripID': '5',
+      'description': 'Oversesa meeting',
+      'Total Amount': '500000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2025/02/05',
+      'tripID': '6',
+      'description': 'Mandalay site vist',
+      'Total Amount': '300000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2025/02/06',
+      'tripID': '7',
+      'description': 'Trip',
+      'Total Amount': '100000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2025/10/28',
+      'tripID': '8',
+      'description': 'Oversea',
+      'Total Amount': '300000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/01',
+      'tripID': '9',
+      'description': 'Camping',
+      'Total Amount': '200000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/02',
+      'tripID': '10',
+      'description': 'Training',
+      'Total Amount': '800000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/03',
+      'tripID': '11',
+      'description': 'Trip',
+      'Total Amount': '300000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/04',
+      'tripID': '12',
+      'description': 'Oversea',
+      'Total Amount': '400000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/05',
+      'tripID': '13',
+      'description': 'Site visit',
+      'Total Amount': '500000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/06',
+      'tripID': '14',
+      'description': 'Training',
+      'Total Amount': '200000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/07',
+      'tripID': '15',
+      'description': 'Oversea',
+      'Total Amount': '300000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
+    {
+      'Date': '2023/11/08',
+      'tripID': '16',
+      'description': 'Camping',
+      'Total Amount': '100000',
+      'currency': 'MMK',
+      'department': 'Admin',
+      'Requestable': 'Pending'
+    },
   ];
   List<Map<String, dynamic>> filteredData = [];
 
@@ -50,9 +177,9 @@ class _TripInfoState extends State<TripInfo> {
   List<String> status = ["Active", "Inactive"];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    filteredData=List.from(tripData);
+    filteredData = List.from(tripData);
   }
 
   String _getDateFilterDisplayName(String value) {
@@ -134,11 +261,11 @@ class _TripInfoState extends State<TripInfo> {
         break;
 
       default:
-      return;
+        return;
     }
-    if (dateRange!= null) {
+    if (dateRange != null) {
       setState(() {
-        selectedDate=filterType;
+        selectedDate = filterType;
       });
       _filterDataByDateRange(dateRange);
     }
@@ -323,7 +450,7 @@ class _TripInfoState extends State<TripInfo> {
     });
   }
 
-  void _addTrip(List<Map<String,String>> newTrip){
+  void _addTrip(List<Map<String, String>> newTrip) {
     setState(() {
       tripData.addAll(newTrip);
     });
@@ -352,20 +479,19 @@ class _TripInfoState extends State<TripInfo> {
           );
         });
 
-        if (confirm!=null && confirm) {
-          setState(() {
-          tripData.removeAt(index);
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Trip Data is deleted successfully"))
-          );
-        }
+    if (confirm != null && confirm) {
+      setState(() {
+        tripData.removeAt(index);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Trip Data is deleted successfully")));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String,dynamic>> filteredTrip=tripData.where((trip){
-      return filteredData.every((filter)=>trip.values.contains(filter));
+    List<Map<String, dynamic>> filteredTrip = tripData.where((trip) {
+      return filteredData.every((filter) => trip.values.contains(filter));
     }).toList();
     return Scaffold(
       body: Column(
@@ -447,16 +573,20 @@ class _TripInfoState extends State<TripInfo> {
                 // color: Colors.grey,
                 child: Row(
                   children: [
-                    IconButton(onPressed: () async {
-                     final List<Map<String,String>>? newTrip=await Navigator.push(
-                      context, 
-                      MaterialPageRoute(builder: (context)=> AddTrip(onTripAdded: (newTrip){
-                        setState(() {
-                          tripData.addAll(newTrip);
-                        });
-                      }))
-                      );
-                    }, icon: const Icon(Icons.add)),
+                    IconButton(
+                        onPressed: () async {
+                          final List<Map<String, String>>? newTrip =
+                              await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddTrip(onTripAdded: (newTrip) {
+                                            setState(() {
+                                              tripData.addAll(newTrip);
+                                            });
+                                          })));
+                        },
+                        icon: const Icon(Icons.add)),
                     IconButton(
                         onPressed: () {}, icon: const Icon(Icons.refresh)),
                     IconButton(
@@ -472,141 +602,141 @@ class _TripInfoState extends State<TripInfo> {
           Padding(
             padding: const EdgeInsets.all(0),
             child: Container(
-           
               child: Table(
                 border: const TableBorder.symmetric(
                   inside: BorderSide(color: Colors.grey, width: 1),
                   outside: BorderSide(color: Colors.grey, width: 1),
                 ),
-                columnWidths: const{
+                columnWidths: const {
                   0: FlexColumnWidth(0.5),
-                  1:FlexColumnWidth(0.5),
+                  1: FlexColumnWidth(0.5),
                   2: FlexColumnWidth(2.0),
                   3: FlexColumnWidth(0.8),
-                  4:FlexColumnWidth(0.4),
-                  5:FlexColumnWidth(0.4),
-                  6:FlexColumnWidth(0.5),
-                  7:FlexColumnWidth(0.7)
+                  4: FlexColumnWidth(0.4),
+                  5: FlexColumnWidth(0.4),
+                  6: FlexColumnWidth(0.5),
+                  7: FlexColumnWidth(0.7)
                 },
                 children: const [
                   TableRow(
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 167, 230, 232)
-                    ),
-                    children: [
-                      Padding(padding: EdgeInsets.all(8.0),
-                      child: Text("Request Date",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-              
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("Trip Code", 
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 167, 230, 232)),
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Request Date",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
-              
-                      Padding(padding: EdgeInsets.all(8.0),
-                      child: Text("Trip Description",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-              
-                      Padding(padding: EdgeInsets.all(8.0),
-                      child: Text("Total Amount",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-              
-                      Padding(padding: EdgeInsets.all(8.0),
-                      child: Text("Currency",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-              
-                      Padding(padding: EdgeInsets.all(8.0),
-                      child: Text("Department",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-              
-                      Padding(padding: EdgeInsets.all(8.0),
-                      child: Text("Requestable",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-              
-                      Padding(padding: EdgeInsets.all(8.0),
-                      child: Text("Action",
-                      style: TextStyle(fontWeight: FontWeight.bold),),
-                      ),
-                    ]
-                  ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("Trip Code",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Trip Description",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Total Amount",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Currency",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Department",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Requestable",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Action",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ]),
                 ],
               ),
-            
             ),
           ),
-
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Container(
-                // height: 500,
-                child: Table(
-                  border: const TableBorder.symmetric(
-                    inside: BorderSide(color: Colors.grey,width: 1),
-                    outside: BorderSide(color: Colors.black, width: 1),
-                  ),
-                  columnWidths: const{
-                      0: FlexColumnWidth(0.5),
-                    1: FlexColumnWidth(0.5),
-                    2: FlexColumnWidth(2.0),
-                    3: FlexColumnWidth(0.8),
-                    4: FlexColumnWidth(0.4),
-                    5: FlexColumnWidth(0.4),
-                    6: FlexColumnWidth(0.5),
-                    7: FlexColumnWidth(0.7),
-                  },
-                  children: tripData.map(
-                    (row){
-                      return TableRow(
-                        children: [
-                          for(var key in row.keys)
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(row[key]!),
-                            ),
-                            Padding(padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                IconButton(
-                                  onPressed: (){} , 
-                                  icon: const Icon(Icons.edit),
-                                  color:  Colors.black),
-                                
-                                IconButton(
-                                  onPressed: (){
-                                    _deleteConfirmation(tripData.indexOf(row));
-                                  } , 
-                                  icon: const Icon(Icons.delete),
-                                  color: Colors.black),
-                                
-                                IconButton(
-                                  onPressed: (){} , 
-                                  icon: const Icon(Icons.more_horiz_outlined),
-                                  color: Colors.black),
-                              ],
-                            ),
-                            ),
-                        ]
-                      );
-                    }
-                  ).toList(),
+              child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              // height: 500,
+              child: Table(
+                border: const TableBorder.symmetric(
+                  inside: BorderSide(color: Colors.grey, width: 1),
+                  outside: BorderSide(color: Colors.black, width: 1),
                 ),
+                columnWidths: const {
+                  0: FlexColumnWidth(0.5),
+                  1: FlexColumnWidth(0.5),
+                  2: FlexColumnWidth(2.0),
+                  3: FlexColumnWidth(0.8),
+                  4: FlexColumnWidth(0.4),
+                  5: FlexColumnWidth(0.4),
+                  6: FlexColumnWidth(0.5),
+                  7: FlexColumnWidth(0.7),
+                },
+                children: tripData.map((row) {
+                  return TableRow(children: [
+                    for (var key in row.keys)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(row[key]!),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.edit),
+                              color: Colors.black),
+                          IconButton(
+                              onPressed: () {
+                                _deleteConfirmation(tripData.indexOf(row));
+                              },
+                              icon: const Icon(Icons.delete),
+                              color: Colors.black),
+                          IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.more_horiz_outlined),
+                              color: Colors.black),
+                        ],
+                      ),
+                    ),
+                  ]);
+                }).toList(),
               ),
-          )
-          )
+            ),
+          ))
         ],
       ),
     );
   }
 }
-
-
-

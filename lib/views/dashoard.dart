@@ -1,5 +1,6 @@
 
 import 'package:advance_budget_request_system/views/budgetcode.dart';
+import 'package:advance_budget_request_system/views/trip.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -20,7 +21,7 @@ class _DashboardState extends State<Dashboard>
     //const Center(child: Text('Budget Code')),
     const Center(child: Text("Budget Amount")),
     const Center(child: Text("Project Information")),
-    const Center(child: Text("Trip Information")),
+    const TripInfo(),
     const Center(child: Text("Advance Request")),
     const Center(child: Text("Cash Payment")),
     const Center(child: Text("Settlement")),
