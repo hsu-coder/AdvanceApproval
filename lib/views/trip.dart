@@ -182,6 +182,8 @@ class _TripInfoState extends State<TripInfo> {
     filteredData = List.from(tripData);
   }
 
+  // Date filter
+
   String _getDateFilterDisplayName(String value) {
     switch (value) {
       case 'today':
