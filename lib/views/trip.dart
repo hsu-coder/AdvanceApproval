@@ -13,7 +13,7 @@ class TripInfo extends StatefulWidget {
 class _TripInfoState extends State<TripInfo> {
   List<Map<String, dynamic>> tripData = [
     {
-      'Date': '2023/10/28',
+      'Date': '2023-10-28',
       'tripID': '1',
       'description': 'Job Training',
       'Total Amount': '200000',
@@ -22,7 +22,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/10/29',
+      'Date': '2023-10-29',
       'tripID': '2',
       'description': 'Camping',
       'Total Amount': '500000',
@@ -31,7 +31,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/10/30',
+      'Date': '2023-10-30',
       'tripID': '3',
       'description': 'Trip',
       'Total Amount': '700000',
@@ -40,7 +40,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/10/31',
+      'Date': '2023-10-31',
       'tripID': '4',
       'description': 'Oversea',
       'Total Amount': '400000',
@@ -49,7 +49,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2025/02/04',
+      'Date': '2025-02-04',
       'tripID': '5',
       'description': 'Oversesa meeting',
       'Total Amount': '500000',
@@ -58,7 +58,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2025/02/05',
+      'Date': '2025-02-05',
       'tripID': '6',
       'description': 'Mandalay site vist',
       'Total Amount': '300000',
@@ -67,7 +67,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2025/02/06',
+      'Date': '2025-02-06',
       'tripID': '7',
       'description': 'Trip',
       'Total Amount': '100000',
@@ -76,7 +76,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2025/10/28',
+      'Date': '2025-10-28',
       'tripID': '8',
       'description': 'Oversea',
       'Total Amount': '300000',
@@ -85,7 +85,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/01',
+      'Date': '2023-11-01',
       'tripID': '9',
       'description': 'Camping',
       'Total Amount': '200000',
@@ -94,7 +94,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/02',
+      'Date': '2023-11-02',
       'tripID': '10',
       'description': 'Training',
       'Total Amount': '800000',
@@ -103,7 +103,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/03',
+      'Date': '2023-11-03',
       'tripID': '11',
       'description': 'Trip',
       'Total Amount': '300000',
@@ -112,7 +112,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/04',
+      'Date': '2023-11-04',
       'tripID': '12',
       'description': 'Oversea',
       'Total Amount': '400000',
@@ -121,7 +121,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/05',
+      'Date': '2023-11-05',
       'tripID': '13',
       'description': 'Site visit',
       'Total Amount': '500000',
@@ -130,7 +130,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/06',
+      'Date': '2023-11-06',
       'tripID': '14',
       'description': 'Training',
       'Total Amount': '200000',
@@ -139,7 +139,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/07',
+      'Date': '2023-11-07',
       'tripID': '15',
       'description': 'Oversea',
       'Total Amount': '300000',
@@ -148,7 +148,7 @@ class _TripInfoState extends State<TripInfo> {
       'Requestable': 'Pending'
     },
     {
-      'Date': '2023/11/08',
+      'Date': '2023-11-08',
       'tripID': '16',
       'description': 'Camping',
       'Total Amount': '100000',
@@ -166,15 +166,6 @@ class _TripInfoState extends State<TripInfo> {
   DateTimeRange? selectedDateRange;
   DateTime? startDate;
   DateTime? endDate;
-
-  //Search Data
-  String? selectedCurrency;
-  String? selectedDepartment;
-  String? selectedStatus;
-
-  List<String> currency = ["MMK", "USD"];
-  List<String> department = ["Admin", "Marketing", "HR"];
-  List<String> status = ["Active", "Inactive"];
 
   @override
   void initState() {
@@ -228,7 +219,11 @@ class _TripInfoState extends State<TripInfo> {
   void _filterDataByDateRange(DateTimeRange dateRange) {
     setState(() {
       filteredData = tripData.where((data) {
-        final DateTime dataDate = data['date'] as DateTime;
+        final dateString = data['Date'];
+        if (dateString == null) return false;
+        final DateTime? dataDate =
+            dateString is DateTime ? dateString : DateTime.tryParse(dateString);
+        if (dataDate == null) return false;
         return dataDate
                 .isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
             dataDate.isBefore(dateRange.end.add(const Duration(days: 1)));
@@ -356,101 +351,29 @@ class _TripInfoState extends State<TripInfo> {
         });
   }
 
-  // Search Data
-  void _AdvanceSearchDialog() {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: StatefulBuilder(builder: (context, setStateDialog) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _dropDown(
-                      title: "Currency",
-                      value: selectedCurrency,
-                      options: currency,
-                      onChanged: (newValue) {
-                        setStateDialog(() {
-                          selectedCurrency = newValue;
-                        });
-                        _updateSearch();
-                      }),
-                  _dropDown(
-                      title: "Department",
-                      value: selectedDepartment,
-                      options: department,
-                      onChanged: (newValue) {
-                        setStateDialog(() {
-                          selectedDepartment = newValue;
-                        });
-                        _updateSearch();
-                      }),
-                  _dropDown(
-                      title: "Status",
-                      value: selectedStatus,
-                      options: status,
-                      onChanged: (newValue) {
-                        setStateDialog(() {
-                          selectedStatus = newValue;
-                        });
-                        _updateSearch();
-                      })
-                ],
-              );
-            }),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Close"))
-            ],
-          );
-        });
-  }
-
-  Widget _dropDown({
-    required String title,
-    required String? value,
-    required List<String> options,
-    required Function(String?) onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          DropdownButton(
-              isExpanded: true,
-              value: value,
-              hint: Text("Select $title"),
-              items: options.map((String option) {
-                return DropdownMenuItem<String>(
-                    value: option, child: Text(option));
-              }).toList(),
-              onChanged: onChanged)
-        ],
-      ),
-    );
-  }
-
-  void _updateSearch() {
-    List<String> filters = [];
-    if (selectedCurrency != null) filters.add(selectedCurrency!);
-    if (selectedDepartment != null) filters.add(selectedDepartment!);
-    if (selectedStatus != null) filters.add(selectedStatus!);
-
+  void _searchData(String query) {
     setState(() {
-      _searchController.text = filters.join(" | ");
+      List<Map<String, dynamic>> sourceData = tripData;
+      filteredData = sourceData.where((Map<String, dynamic> data) {
+        final tripID = data['tripID'].toLowerCase();
+        final description = data['description'].toLowerCase();
+        final totalAmt = data['Total Amount'];
+        final currency = data['currency'].toLowerCase();
+        final department = data['department'].toLowerCase();
+        final requestable = data['Requestable'].toLowerCase();
+        final String searchLower = query.toLowerCase();
+
+        return tripID.contains(searchLower) ||
+            description.contains(searchLower) ||
+            totalAmt.contains(searchLower) ||
+            currency.contains(searchLower) ||
+            department.contains(searchLower) ||
+            requestable.contains(searchLower);
+      }).toList();
     });
   }
 
-  void _addTrip(List<Map<String, String>> newTrip) {
+  void _addTrip(List<Map<String, dynamic>> newTrip) {
     setState(() {
       tripData.addAll(newTrip);
     });
@@ -462,8 +385,8 @@ class _TripInfoState extends State<TripInfo> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Delete Confirmation"),
-            content: Text("Are you sure to delete this Trip Data?"),
+            title: const Text("Delete Confirmation"),
+            content: const Text("Are you sure to delete this Trip Data?"),
             actions: [
               TextButton(
                   onPressed: () {
@@ -483,9 +406,23 @@ class _TripInfoState extends State<TripInfo> {
       setState(() {
         tripData.removeAt(index);
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Trip Data is deleted successfully")));
     }
+  }
+
+  //refresh Data
+  void _refreshData(){
+    setState(() {
+      _searchController.clear();
+      selectedDateRange=null;
+      selectedDate=null;
+      startDate=null;
+      endDate=null;
+      filteredData=tripData;
+
+    });
   }
 
   @override
@@ -496,9 +433,18 @@ class _TripInfoState extends State<TripInfo> {
     return Scaffold(
       body: Column(
         children: [
+          const Center(
+              child: Text(
+            "Trip Request Information",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          )),
+          const SizedBox(
+            height: 8,
+          ),
           Row(
             children: [
               Container(
+                // width: MediaQuery.of(context).size.width * 0.2,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20),
                   child: DropdownButton(
@@ -556,7 +502,7 @@ class _TripInfoState extends State<TripInfo> {
                   width: MediaQuery.of(context).size.width * 0.4,
                   child: TextField(
                     controller: _searchController,
-                    onChanged: null,
+                    onChanged: _searchData,
                     decoration: const InputDecoration(
                       labelText: 'Search',
                       prefixIcon: Icon(Icons.search),
@@ -565,32 +511,40 @@ class _TripInfoState extends State<TripInfo> {
                   ),
                 ),
               ),
-              IconButton(
-                  onPressed: _AdvanceSearchDialog,
-                  icon: const Icon(Icons.more_vert)),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
               Container(
                 // width: MediaQuery.of(context).size.width*0.1,
                 // color: Colors.grey,
                 child: Row(
                   children: [
                     IconButton(
-                        onPressed: () async {
-                          final List<Map<String, String>>? newTrip =
-                              await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          AddTrip(onTripAdded: (newTrip) {
-                                            setState(() {
-                                              tripData.addAll(newTrip);
-                                            });
-                                          })));
-                        },
-                        icon: const Icon(Icons.add)),
+                      onPressed: () async {
+                        final List<Map<String, dynamic>>? newTrip =
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AddTrip(onTripAdded: (newTrip) {
+                                          setState(() {
+                                            tripData.addAll(newTrip);
+                                          });
+                                        })));
+                      },
+                      icon: const Icon(Icons.add),
+                      color: Colors.black,
+                    ),
                     IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.refresh)),
+                      onPressed: () {
+                        _refreshData();
+                      },
+                      icon: const Icon(Icons.refresh),
+                      color: Colors.black,
+                    ),
                     IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.download))
+                      onPressed: () {},
+                      icon: const Icon(Icons.download),
+                      color: Colors.black,
+                    )
                   ],
                 ),
               )
@@ -701,13 +655,36 @@ class _TripInfoState extends State<TripInfo> {
                   6: FlexColumnWidth(0.5),
                   7: FlexColumnWidth(0.7),
                 },
-                children: tripData.map((row) {
+                children: filteredData.map((row) {
                   return TableRow(children: [
-                    for (var key in row.keys)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(row[key]!),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Date'] ?? '2025-2-7'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['tripID'] ?? '1'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['description'] ?? 'fd'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Total Amount'] ?? '0'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['currency'] ?? 'USD'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['department'] ?? 'HR'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Requestable'] ?? 'Pending'),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
