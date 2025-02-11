@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:advance_budget_request_system/views/projectEntry.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class ProjectInfo extends StatefulWidget {
@@ -30,34 +31,46 @@ class _ProjectInfoState extends State<ProjectInfo> {
   List<String> selectedFilters = [];
   List<Map<String, dynamic>> projectData = [
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-001',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
       'Currency': 'MMK', // 'Approved Amount': '60,000 MMK',''
       'Department': 'IT',
       'Requestable': 'Yes',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-002',
       'Description': 'Final Project',
       'Total Budget Amount': '200,000 ',
       'Currency': 'MMK', // 'Approved Amount': '60,000 MMK',''
       'Department': 'IT',
       'Requestable': 'Yes',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-003',
       'Description': 'Final Project',
       'Total Budget Amount': '50000,000 ',
       'Currency': 'MMK', // 'Approved Amount': '60,000 MMK',''
       'Department': 'IT',
       'Requestable': 'Yes',
+      "BudgetDetails": [
+        {"Budget Code": "B2001", "Description": "IT Equipment"},
+        {"Budget Code": "B21123", "Description": "Maintenance"},
+      ],
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-004',
       'Description': 'Final Project',
       'Total Budget Amount': '10100,000 ',
@@ -66,7 +79,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-005',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -75,7 +88,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-006',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -84,7 +97,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-007',
       'Description': 'Final Project',
       'Total Budget Amount': '6600,000 ',
@@ -93,7 +106,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-008',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -102,7 +115,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-009',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -111,7 +124,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-010',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -120,7 +133,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-011',
       'Description': 'Final Project',
       'Total Budget Amount': '1100,000 ',
@@ -129,7 +142,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-012',
       'Description': 'Final Project',
       'Total Budget Amount': '1000,000 ',
@@ -138,7 +151,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'No',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-013',
       'Description': 'Final Project',
       'Total Budget Amount': '500,000 ',
@@ -147,7 +160,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'No',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-014',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -156,7 +169,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-015',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -165,7 +178,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+     'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-016',
       'Description': 'Final Project',
       'Total Budget Amount': '7000,000 ',
@@ -174,7 +187,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-017',
       'Description': 'Final Project',
       'Total Budget Amount': '1,000 ',
@@ -183,7 +196,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-018',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -192,7 +205,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'No',
     },
     {
-      'Date': '2025-2-1',
+     'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-019',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -201,7 +214,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+     'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-020',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -210,7 +223,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-021',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -219,7 +232,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'No',
     },
     {
-      'Date': '2025-2-1',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-022',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -253,7 +266,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Delete Confirmation"),
-            content: Text("Are you sure to delete this Trip Data?"),
+            content: Text("Are you sure to delete this Project Data?"),
             actions: [
               TextButton(
                   onPressed: () {
@@ -328,13 +341,14 @@ class _ProjectInfoState extends State<ProjectInfo> {
       case 'today':
         return 'Today';
       case 'this_week':
-        return 'This_week';
+        return 'This week';
       case 'this_month':
-        return 'This_month';
+        return 'This month';
       case 'this_year':
-        return 'This_year';
-      case 'custom':
-        return 'Custom';
+        return 'This year';
+      case 'custom_date':
+        return 'Custom Date';
+
       default:
         return value;
     }
@@ -351,7 +365,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
     DateTime now = DateTime.now();
     DateTime startOfMonth = DateTime(now.year, now.month, 1);
     DateTime endOfMonth = DateTime(now.year, now.month + 1, 0);
-    return '${DateFormat.yMd().format(startOfMonth)}-${DateFormat.yMd().format(endOfMonth)}';
+    return '${DateFormat.yMd().format(startOfMonth)} - ${DateFormat.yMd().format(endOfMonth)}';
   }
 
   String _getThisYearRange() {
@@ -361,65 +375,121 @@ class _ProjectInfoState extends State<ProjectInfo> {
     return '${DateFormat.yMd().format(startOfYear)} - ${DateFormat.yMd().format(endOfYear)}';
   }
 
+  void _filterByCustomDate(DateTimeRange chooseDateRange) {
+    _filterDataByDateRange(chooseDateRange);
+  }
+
+  void _filterDataByDateRange(DateTimeRange dateRange) {
+    setState(() {
+      filterData = projectData.where((data) {
+        final dateString = data['Date'];
+        if (dateString == null) return false;
+        final DateTime? dataDate =
+            dateString is DateTime ? dateString : DateTime.tryParse(dateString);
+        if (dataDate == null) return false;
+        return dataDate
+                .isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
+            dataDate.isBefore(dateRange.end.add(const Duration(days: 1)));
+      }).toList();
+    });
+  }
+
+  void _filterByPresetDate(String filterType) {
+    DateTime now = DateTime.now();
+    DateTimeRange? dateRange;
+
+    switch (filterType) {
+      case 'today':
+        dateRange = DateTimeRange(start: now, end: now);
+        break;
+      case 'this_week':
+        DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+        DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+        dateRange = DateTimeRange(start: startOfWeek, end: endOfWeek);
+        break;
+      case 'this_month':
+        DateTime startOfMonth = DateTime(now.year, now.month, 1);
+        DateTime endOfMonth = DateTime(now.year, now.month + 1, 0);
+        dateRange = DateTimeRange(start: startOfMonth, end: endOfMonth);
+        break;
+      case 'this_year':
+        DateTime startOfYear = DateTime(now.year, 1, 1);
+        DateTime endOfYear = DateTime(now.year, 12, 31);
+        dateRange = DateTimeRange(start: startOfYear, end: endOfYear);
+        break;
+
+      default:
+        return;
+    }
+    // ignore: unnecessary_null_comparison
+    if (dateRange != null) {
+      setState(() {
+        selectedDate = filterType;
+      });
+      _filterDataByDateRange(dateRange);
+    }
+  }
+
   void _showCustomDateRangeDialog(BuildContext context) {
     DateTime initialStartDate = DateTime.now();
     DateTime initialEndDate = DateTime.now();
-
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Custom Data Range"),
+            title: const Text("Choose Custom Date"),
             content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Select Start Date:'),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
+                builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Select Start Date: "),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
                       onPressed: () async {
-                        DateTime? pickedStartDate = await showDatePicker(
-                          context: context,
-                          //  initialDate: initialStartDate,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(3000),
-                        );
-                        if (pickedStartDate != null) {
+                        DateTime? chooseStartDate = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(3000));
+
+                        if (chooseStartDate != null) {
                           setState(() {
-                            initialStartDate = pickedStartDate;
+                            initialStartDate = chooseStartDate;
                           });
                         }
                       },
-                      child: Text(DateFormat.yMd().format(initialStartDate)),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text('Select End Date:'),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
+                      child: Text(DateFormat.yMd().format(initialStartDate))),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text('Select End Date: '),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
                       onPressed: () async {
-                        DateTime? pickedEndDate = await showDatePicker(
-                          context: context,
-                          initialDate: initialEndDate,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (pickedEndDate != null) {
+                        DateTime? chooseEndDate = await showDatePicker(
+                            context: context,
+                            initialDate: initialEndDate,
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(3000));
+
+                        if (chooseEndDate != null) {
                           setState(() {
-                            initialEndDate = pickedEndDate;
+                            initialEndDate = chooseEndDate;
                           });
                         }
                       },
-                      child: Text(DateFormat.yMd().format(initialEndDate)),
-                    ),
-                  ],
-                );
-              },
-            ),
+                      child: Text(DateFormat.yMd().format(initialEndDate)))
+                ],
+              );
+            }),
             actions: [
               TextButton(
                   onPressed: () {
-                    if (initialStartDate.isBefore(initialEndDate) ||
+                    if (initialStartDate.isBefore(initialEndDate) || 
                         initialStartDate.isAtSameMomentAs(initialEndDate)) {
                       setState(() {
                         CustomDateRange = DateTimeRange(
@@ -444,57 +514,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
         });
   }
 
-  void _filterByPresentDate(String filterType) {
-    DateTime now = DateTime.now();
-    DateTimeRange? dateRange;
-    switch (filterType) {
-      case 'today':
-        dateRange = DateTimeRange(start: now, end: now);
-        break;
-      case 'this_week':
-        DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-        DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
-        dateRange = DateTimeRange(start: startOfWeek, end: endOfWeek);
-        break;
-      case 'this_month':
-        DateTime startOfMonth = DateTime(now.year, now.month, 1);
-        DateTime endOfMonth = DateTime(now.year, now.month + 1, 0);
-        dateRange = DateTimeRange(start: startOfMonth, end: endOfMonth);
-        break;
-      case 'this_year':
-        DateTime startOfYear = DateTime(now.year, 1, 1);
-        DateTime endOfYear = DateTime(now.year, 12, 31);
-        dateRange = DateTimeRange(start: startOfYear, end: endOfYear);
-        break;
-      default:
-        return;
-    }
-    // ignore: unnecessary_null_comparison
-    if (dateRange != null) {
-      setState(() {
-        selectedDate = filterType;
-      });
-      _filterDataByDateRange(dateRange);
-    }
-  }
-
-  void _filterByCustomDate(DateTimeRange pickedDateRange) {
-    _filterDataByDateRange(pickedDateRange);
-  }
-
-  void _filterDataByDateRange(DateTimeRange dateRange) {
-    setState(() {
-      filterData = projectData.where((data) {
-        final dataDate = data['Date'] as DateTime;
-        return dataDate.isAfter(dateRange.start.subtract(Duration(days: 1))) &&
-            dataDate.isBefore(dateRange.end.add(Duration(days: 1)));
-      }).toList();
-
-      // Reset to first page
-      // Your method to update pagination based on the new filtered data
-    });
-  }
-
+  
   void _openAdvancedSearchDialog() {
     showDialog(
       context: context,
@@ -546,67 +566,70 @@ class _ProjectInfoState extends State<ProjectInfo> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Project Information"),
+      ),
+      
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 30),
-                  child: DropdownButton<String>(
-                    value: selectedFilter,
-                    hint: const Text('Filter by Date'),
-                    items: [
-                      DropdownMenuItem(
-                        value: 'today',
-                        child: Tooltip(
-                          message: DateFormat.yMd().format(DateTime.now()),
-                          child: const Text('Today'),
-                        ),
-                      ),
-                      DropdownMenuItem(
-                        value: 'this_week',
-                        child: Tooltip(
-                          message: _getThisWeekRange(),
-                          child: const Text('This Week'),
-                        ),
-                      ),
-                      DropdownMenuItem(
-                          value: 'this_month',
-                          child: Tooltip(
-                            message: _getThisMonthRange(),
-                            child: const Text('This Month'),
-                          )),
-                      DropdownMenuItem(
-                          value: 'this_year',
-                          child: Tooltip(
-                            message: _getThisYearRange(),
-                            child: const Text('This Year'),
-                          )),
-                      DropdownMenuItem(
-                          value: 'custom',
-                          child: Tooltip(
-                            message: CustomDateRange != null
-                                ? '${DateFormat.yMd().format(CustomDateRange!.start)} - ${DateFormat.yMd().format(CustomDateRange!.end)}'
-                                : 'Select a custom date range',
-                            child: const Text('Custom'),
-                          )),
-                    ],
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedFilter = newValue;
-                        if (newValue == 'custom') {
-                          _showCustomDateRangeDialog(context);
-                        } else if (newValue != null) {
-                          _filterByPresentDate(newValue);
-                        }
-                      });
-                    },
-                  ),
-                ),
+               Padding(
+                 padding: const EdgeInsets.only(left: 20),
+                 child: DropdownButton(
+                     value: selectedDate,
+                     hint: const Text('Filter by Date'),
+                     items: [
+                       DropdownMenuItem(
+                           value: 'today',
+                           child: Tooltip(
+                             message: DateFormat.yMd().format(DateTime.now()),
+                             child: const Text('Today'),
+                           )),
+                       DropdownMenuItem(
+                           value: 'this_week',
+                           child: Tooltip(
+                             message: _getThisWeekRange(),
+                             child: const Text('This Week'),
+                           )),
+                       DropdownMenuItem(
+                           value: 'this_month',
+                           child: Tooltip(
+                             message: _getThisMonthRange(),
+                             child: const Text('This Month'),
+                           )),
+                       DropdownMenuItem(
+                           value: 'this_year',
+                           child: Tooltip(
+                             message: _getThisYearRange(),
+                             child: const Text('This Year'),
+                           )),
+                       DropdownMenuItem(
+                           value: 'custom_date',
+                           child: Tooltip(
+                             message: CustomDateRange != null
+                                 ? '${DateFormat.yMd().format(CustomDateRange!.start)} - ${DateFormat.yMd().format(CustomDateRange!.end)}'
+                                 : 'Choose a Custom Date Range',
+                             child: const Text('Custom Date'),
+                           )),
+                     ],
+                     onChanged: (String? newValue) {
+                       setState(() {
+                         selectedDate = newValue;
+                         if (newValue == 'custom_date') {
+                           _showCustomDateRangeDialog(context);
+                         } else if (newValue != null) {
+                           _filterByPresetDate(newValue);
+                         }
+                       });
+                     }),
+               ),
                 const SizedBox(
                   width: 20,
                 ),
@@ -653,13 +676,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 8),
-                        // if(selectedFilters.isNotEmpty)
-                        //  Expanded(
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.only(top: 8.0),
-                        //     child:
                         Wrap(
                           alignment: WrapAlignment.start,
                           spacing: 8.0,
@@ -678,7 +695,6 @@ class _ProjectInfoState extends State<ProjectInfo> {
                     ),
                   ),
                 ),
-                //  SizedBox(height: 10),
 
                 // 🏷️ Wrap for Filters
 
@@ -715,6 +731,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
                               builder: (context) =>
                                   EntryForm(onProjectAdded: (newProject) {
                                 setState(() {
+                                  _refreshData();
                                   projectData.addAll(newProject);
                                 });
                               }),
@@ -725,7 +742,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
                       IconButton(
                         icon: const Icon(Icons.refresh, color: Colors.black),
                         onPressed: () {
-                          //  _refreshData(projectData.indexOf(row));
+                          _refreshData();
                           setState(() {});
                         },
                       ),
@@ -740,10 +757,10 @@ class _ProjectInfoState extends State<ProjectInfo> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             Column(
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Container(
                   width: screenWidth,
                   child: Table(
@@ -815,6 +832,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
             ),
             Expanded(
               child: SingleChildScrollView(
+                
                 child: Table(
                   border: const TableBorder.symmetric(
                     inside: BorderSide(color: Colors.grey, width: 1),
@@ -830,27 +848,72 @@ class _ProjectInfoState extends State<ProjectInfo> {
                     6: FlexColumnWidth(0.6),
                     7: FlexColumnWidth(0.8),
                   },
-                  children: filterData.map(
-                    (row) {
+                  children: filterData.asMap().entries.map((entry)  {
+                   int index = entry.key;
+                    var row = entry.value;
+                   
                       return TableRow(
                         children: [
-                          for (var key in row.keys)
+                        //  for (var key in row.keys)
+                            // Padding(
+                            //   padding: const EdgeInsets.all(8.0),
+                            //   child: Text(row[key]!),
+                            // ),
+
+
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(row[key]!),
-                            ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Date'] ?? '2025-2-7'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['ProjectID'] ?? '1'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Description'] ?? 'fd'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Total Budget Amount'] ?? '0'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Currency'] ?? 'USD'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Department'] ?? 'HR'),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(row['Requestable'] ?? 'Pending'),
+                    ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit,
-                                      color: Colors.black),
-                                  onPressed: () {
-                                    print("Edit for ${row["Project Code"]}");
-                                  },
-                                ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditProject(
+                                      
+                                      projectData: projectData[index],
+                                      onProjectUpdated: (updatedProject) {
+                                        setState(() {
+                                          _refreshData();
+                                         projectData[index] = updatedProject;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.edit),
+                              color: Colors.black),
                                 IconButton(
                                     onPressed: () {
                                       _deleteConfirmation(
@@ -862,7 +925,12 @@ class _ProjectInfoState extends State<ProjectInfo> {
                                   icon: const Icon(Icons.more_horiz_outlined,
                                       color: Colors.black),
                                   onPressed: () {
+
                                     print("Details for ${row["Project Code"]}");
+                                    Navigator.push(
+                                      context, 
+                                      MaterialPageRoute(
+                                        builder: (context) => ProjectDetailPage(projectData[index])));
                                   },
                                 ),
                               ],
@@ -876,6 +944,260 @@ class _ProjectInfoState extends State<ProjectInfo> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class EditProject extends StatefulWidget {
+  final Map<String, dynamic> projectData;
+  final Function(Map<String, dynamic>) onProjectUpdated;
+  const EditProject(
+      {Key? key, required this.projectData, required this.onProjectUpdated})
+      : super(key: key);
+
+  @override
+  State<EditProject> createState() => _EditProjectState();
+}
+
+class _EditProjectState extends State<EditProject> {
+  final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _projectController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+
+  String _selectedCurrency = 'MMK';
+  final List<String> departments = [
+    'HR',
+      'IT',
+      'Finance',
+      'Admin',
+      'Production',
+      'Engineering',
+      'Marketing',
+      'Sales'];
+  String? _selectedDepartment;
+
+  @override
+  void initState() {
+    super.initState();
+    _projectController.text = widget.projectData['ProjectID'];
+    _descriptionController.text = widget.projectData['Description'];
+    _amountController.text = widget.projectData['Total Budget Amount'];
+    _selectedCurrency = widget.projectData['Currency'];
+    _selectedDepartment = widget.projectData['Department'];
+    dateController.text = widget.projectData['Date'];
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      Map<String, dynamic> updatedProject = {
+        'Date': dateController.text,
+        'ProjectID': _projectController.text,
+        'Description':_descriptionController.text,
+        'Total Budget Amount': _amountController.text,
+        'Currency': _selectedCurrency,
+        'Department': _selectedDepartment ?? '',
+        'Requestable':
+            widget.projectData['Requestable'], // Keep the existing status
+      };
+
+      widget.onProjectUpdated(updatedProject);
+      Navigator.pop(context);
+    }
+  }
+
+  void _clearText() {
+    setState(() {
+      _projectController.clear();
+      _descriptionController.clear();
+      _amountController.clear();
+      _selectedDepartment = null;
+      _selectedCurrency = 'MMK';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Edit Project Request"),
+      ),
+      body: Center(
+        child: Container(
+          color: const Color.fromARGB(255, 103, 207, 177),
+          width: MediaQuery.of(context).size.width * 0.5,
+          child: Padding(
+            padding: const EdgeInsets.all(7.0),
+            child: SingleChildScrollView(
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(
+                            child: Text(
+                              'Edit Project Request',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          title: TextFormField(
+                            controller: _projectController,
+                            decoration: const InputDecoration(
+                                labelText: "Enter Project Code"),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Enter Project Code";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: TextFormField(
+                            controller: _descriptionController,
+                            decoration: const InputDecoration(
+                                labelText: "Enter Project Description"),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Enter Project Description";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: TextFormField(
+                            controller: _amountController,
+                            decoration: const InputDecoration(
+                              labelText: "Enter Total Amount",
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d*')),
+                            ],
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Enter Total Amount";
+                              }
+                              final amount = double.tryParse(value);
+                              if (amount == null) {
+                                return "Enter a valid amount";
+                              }
+                              if (amount <= 0) {
+                                return "Your Request Amount must be greater than 0";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: DropdownButtonFormField(
+                            decoration: const InputDecoration(),
+                            value: _selectedCurrency,
+                            items: ['MMK', 'USD'].map((Currency) {
+                              return DropdownMenuItem(
+                                  value: Currency, child: Text(Currency));
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedCurrency = value!;
+                              });
+                            },
+                          ),
+                        ),
+                        ListTile(
+                          title: TextFormField(
+                            controller: dateController,
+                            decoration: const InputDecoration(
+                                labelText: "Request Date"),
+                            readOnly: true,
+                          ),
+                        ),
+                        ListTile(
+                          title: DropdownButtonFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Choose your Department",
+                            ),
+                            value: _selectedDepartment,
+                            items: departments.map(( String department) {
+                              return DropdownMenuItem(
+                                  value: department, child: Text(department));
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedDepartment = value!;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Choose your Department";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                textStyle: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text("Update"),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            ElevatedButton(
+                              onPressed: _clearText,
+                              style: ElevatedButton.styleFrom(
+                                textStyle: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text("Clear"),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -981,6 +1303,142 @@ class _AdvancedSearchDialogState extends State<AdvancedSearchDialog> {
     );
   }
 }
+
+
+class ProjectDetailPage extends StatefulWidget{
+  final Map<String, dynamic> projectData;
+  final List<Map<String, String>> budgetTable = [
+    {"BudgetCode": "B0001", "Description": "For Marketing"},
+    {"BudgetCode": "B11123", "Description": "Expenses"},
+    {"BudgetCode": "B2001", "Description": "IT Equipment"},
+    {"BudgetCode": "B21123", "Description": "Maintenance"},
+  ];
+   ProjectDetailPage(this.projectData, {super.key});
+
+  @override
+  State<ProjectDetailPage> createState() => _ProjectDetailPageState();
+}
+
+class _ProjectDetailPageState extends State<ProjectDetailPage> {
+  @override
+  Widget build(BuildContext context) {
+   return Scaffold(
+    appBar: AppBar(
+      title: Text("Project Details Information"),
+      
+    ),
+    body:Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+           _buildRow("ProjectID", widget.projectData["ProjectID"] ?? "N/A", "Amount", widget.projectData["Total Budget Amount"]?.toString() ?? "0"),
+           const SizedBox(height: 10),
+              _buildRow("Description", widget.projectData["Description"]?.toString() ?? "No Description", "Curency", widget.projectData["Currency"] ?? "Unknown"),
+            const SizedBox(height: 10),
+              _buildRow("Date", widget.projectData["Date"] ?? "N/A", "Name", widget.projectData["Name"] ?? "Hsu"),
+            const SizedBox(height: 10), 
+              _buildRow("Department", widget.projectData["Department"] ?? "N/A", "Requestable", widget.projectData["Requestable"] ?? "N/A"),
+              SizedBox(height: 20),
+              Text("Budget Details", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              _buildBudgetTable(),
+              SizedBox(height: 60),
+              Center(
+                
+                child: ElevatedButton(
+                  
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                  
+                  
+                   child: Text("Back")),
+                   ), 
+          ],
+        ),
+      ),) ,
+   );
+
+  }
+ 
+
+
+ Widget _buildRow(String label1, String value1, String label2, String? value2) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildInlineText(label1, value1),
+          if (label2.isNotEmpty) _buildInlineText(label2, value2 ?? "N/A"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInlineText(String label, String value) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: RichText(
+          text: TextSpan(
+            style: TextStyle(fontSize: 16, color: Colors.black),
+            children: [
+              TextSpan(text: "$label: ", style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: value),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildBudgetTable() {
+    List<Map<String, String>> budgetTable =
+        List<Map<String, String>>.from(widget.projectData["BudgetDetails"] ?? []);
+    return Table(
+      border: TableBorder.all(),
+      columnWidths: {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
+      children: [
+        TableRow(
+          decoration: BoxDecoration(color: const Color.fromARGB(255, 124, 244, 240)),
+          children: [
+            _buildTableCell("Budget Code", isHeader: true),
+            _buildTableCell("Description", isHeader: true),
+          ],
+        ),
+        for (var row in budgetTable)
+          TableRow(
+            children: [
+              _buildTableCell(row["Budget Code"] ?? ""),
+              _buildTableCell(row["Description"] ?? ""),
+            ],
+          )
+      ],
+    );
+  }
+}
+
+  Widget _buildTableCell(String text,{bool isHeader = false}){
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+          fontSize: 16,
+        ),
+      ),);
+  }
 
 @override
 Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class ProjectEntry extends StatefulWidget {
   const ProjectEntry({super.key});
@@ -32,8 +33,9 @@ class _EntryFormState extends State<EntryForm> {
   final TextEditingController desciptionController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController dateController = TextEditingController(
+    
       text:
-          "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}");
+          DateFormat('yyyy-MM-dd').format(DateTime.now()));
 
   String? _selectedDepartment;
   String _selectedCurrency = "MMK";
@@ -51,6 +53,16 @@ class _EntryFormState extends State<EntryForm> {
   final List<String> _currencies = ['MMK', 'USD'];
   //final List<String> _requestable=['Yes','No'];
 
+void _clearText() {
+    setState(() {
+      projectController.text = "";
+      desciptionController.text = "";
+      amountController.text = "";
+      _selectedDepartment = null;
+      _selectedCurrency = 'MMK';
+    });
+  }
+
   void _submitForm() {
     if (_formkey.currentState!.validate()) {
       List<Map<String, dynamic>> newProject = [
@@ -65,6 +77,8 @@ class _EntryFormState extends State<EntryForm> {
         }
       ];
       widget.onProjectAdded(newProject);
+     
+   
       Navigator.pop(context);
     }
   }
@@ -95,19 +109,7 @@ class _EntryFormState extends State<EntryForm> {
               key: _formkey,
               child: Column(
                 children: [
-                  TextFormField(
-                    controller: dateController,
-                    decoration: const InputDecoration(
-                      labelText: "Date",
-                      labelStyle: TextStyle(fontSize: 15, color: Colors.black),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter date";
-                      }
-                      return null;
-                    },
-                  ),
+                 
                   TextFormField(
                     controller: projectController,
                     decoration: const InputDecoration(
@@ -189,6 +191,22 @@ class _EntryFormState extends State<EntryForm> {
                     validator: (value) =>
                         value == null ? 'Select a currency' : null,
                   ),
+                  const SizedBox(height: 10),
+                   TextFormField(
+                    controller: dateController,
+                    decoration: const InputDecoration(
+                      
+                      labelText: "Date",
+                      labelStyle: TextStyle(fontSize: 15, color: Colors.black),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter date";
+                      }
+                      return null;
+                    },
+                    readOnly: true,
+                  ),
                   const SizedBox(height: 5),
                   DropdownButtonFormField<String>(
                     decoration: const InputDecoration(
@@ -228,24 +246,68 @@ class _EntryFormState extends State<EntryForm> {
                     readOnly: true,
                   ),
                   const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _submitForm,
-                      child: const Text('Register'),
-                      style: ElevatedButton.styleFrom(
-                        textStyle: const TextStyle(
-                          fontSize: 15,
+                  // Center(
+                  //   child: ElevatedButton(
+                  //     onPressed: _submitForm,
+                  //     child: const Text('Submit'),
+                  //     style: ElevatedButton.styleFrom(
+                  //       textStyle: const TextStyle(
+                  //         fontSize: 15,
+                  //       ),
+                  //       backgroundColor: Colors.lightBlueAccent,
+                  //       foregroundColor: Colors.black,
+                  //       padding: const EdgeInsets.symmetric(
+                  //           horizontal: 20, vertical: 12),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(8),
+                  //       ),
+                  //     ),
+                  //   ),
+                    
+                  // ),
+
+
+
+                  Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: _submitForm,
+                              style: ElevatedButton.styleFrom(
+                                textStyle: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text("Submit"),
+                            ),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            ElevatedButton(
+                              onPressed: _clearText,
+                              style: ElevatedButton.styleFrom(
+                                textStyle: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Text("Cancel"),
+                            ),
+                          ],
                         ),
-                        backgroundColor: Colors.lightBlueAccent,
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
