@@ -1,3 +1,5 @@
+import 'package:advance_budget_request_system/views/budgetcode.dart';
+import 'package:advance_budget_request_system/views/project.dart';
 import 'package:advance_budget_request_system/views/trip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,9 +19,9 @@ class _DashboardState extends State<Dashboard>
 
   static final List<Widget> _widgetOptions = <Widget>[
     const DashboardView(),
-    const Center(child: Text('Budget Code')),
+    budgetcode(),
     const Center(child: Text("Budget Amount")),
-    const Center(child: Text("Project Information")),
+    ProjectInfo(),
     const TripInfo(),
     const Center(child: Text("Advance Request")),
     const Center(child: Text("Cash Payment")),
@@ -64,7 +66,7 @@ class _DashboardState extends State<Dashboard>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(142, 224, 249, 0.855),
+        backgroundColor: Color.fromRGBO(100, 207, 198, 0.855),
         title: const Text("Advance Budget Request System"),
         leading: IconButton(
           onPressed: _toggleMenuBar,
@@ -368,7 +370,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -432,7 +434,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -496,7 +498,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -564,7 +566,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -628,7 +630,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -692,7 +694,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -760,7 +762,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -824,7 +826,7 @@ class _DashboardViewState extends State<DashboardView> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          color: Colors.blue,
+                          color: Color.fromARGB(255, 106, 197, 185),
                           // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
