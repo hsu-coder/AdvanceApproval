@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:advance_budget_request_system/views/tripEntry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -19,7 +21,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '200000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-10-29',
@@ -28,7 +34,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '500000',
       'currency': 'MMK',
       'department': 'HR',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-10-30',
@@ -37,7 +47,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '700000',
       'currency': 'MMK',
       'department': 'Marketing',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-10-31',
@@ -46,7 +60,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '400000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2025-02-04',
@@ -55,7 +73,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '500000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2025-02-05',
@@ -64,7 +86,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '300000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2025-02-06',
@@ -73,7 +99,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '100000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2025-10-28',
@@ -82,7 +112,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '300000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-11-01',
@@ -91,7 +125,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '200000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-11-02',
@@ -100,7 +138,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '800000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-11-03',
@@ -109,7 +151,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '300000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-11-04',
@@ -118,7 +164,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '400000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-11-05',
@@ -127,7 +177,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '500000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-11-06',
@@ -136,7 +190,11 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '200000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
       'Date': '2023-11-07',
@@ -145,16 +203,24 @@ class _TripInfoState extends State<TripInfo> {
       'Total Amount': '300000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
     {
-      'Date': '2023-11-08',
+      'Date': '2023-10-8',
       'tripID': '16',
       'description': 'Camping',
       'Total Amount': '100000',
       'currency': 'MMK',
       'department': 'Admin',
-      'Requestable': 'Pending'
+      'Requestable': 'Pending',
+       "BudgetDetails": [
+        {"Budget Code": "B0001", "Description": "For Marketing"},
+        {"Budget Code": "B11123", "Description": "Expenses"},
+      ],
     },
   ];
   List<Map<String, dynamic>> filteredData = [];
@@ -175,6 +241,7 @@ class _TripInfoState extends State<TripInfo> {
 
   // Date filter
 
+  // ignore: unused_element
   String _getDateFilterDisplayName(String value) {
     switch (value) {
       case 'today':
@@ -260,6 +327,7 @@ class _TripInfoState extends State<TripInfo> {
       default:
         return;
     }
+    // ignore: unnecessary_null_comparison
     if (dateRange != null) {
       setState(() {
         selectedDate = filterType;
@@ -375,11 +443,12 @@ class _TripInfoState extends State<TripInfo> {
     });
   }
 
-  void _addTrip(List<Map<String, dynamic>> newTrip) {
-    setState(() {
-      tripData.addAll(newTrip);
-    });
-  }
+  // ignore: unused_element
+  // void _addTrip(List<Map<String, dynamic>> newTrip) {
+  //   setState(() {
+  //     tripData.addAll(newTrip);
+  //   });
+  // }
 
   //Delete
   void _deleteConfirmation(int index) async {
@@ -415,15 +484,14 @@ class _TripInfoState extends State<TripInfo> {
   }
 
   //refresh Data
-  void _refreshData(){
+  void _refreshData() {
     setState(() {
       _searchController.clear();
-      selectedDateRange=null;
-      selectedDate=null;
-      startDate=null;
-      endDate=null;
-      filteredData=tripData;
-
+      selectedDateRange = null;
+      selectedDate = null;
+      startDate = null;
+      endDate = null;
+      filteredData = tripData;
     });
   }
 
@@ -528,6 +596,7 @@ class _TripInfoState extends State<TripInfo> {
                                     builder: (context) =>
                                         AddTrip(onTripAdded: (newTrip) {
                                           setState(() {
+                                            _refreshData();
                                             tripData.addAll(newTrip);
                                           });
                                         })));
@@ -657,7 +726,9 @@ class _TripInfoState extends State<TripInfo> {
                   6: FlexColumnWidth(0.5),
                   7: FlexColumnWidth(0.7),
                 },
-                children: filteredData.map((row) {
+                children: filteredData.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  var row = entry.value;
                   return TableRow(children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -693,7 +764,22 @@ class _TripInfoState extends State<TripInfo> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditTrip(
+                                      tripData: tripData[index],
+                                      onTripUpdated: (updatedTrip) {
+                                        setState(() {
+                                          _refreshData();
+                                          tripData[index] = updatedTrip;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
                               icon: const Icon(Icons.edit),
                               color: Colors.black),
                           IconButton(
@@ -703,7 +789,15 @@ class _TripInfoState extends State<TripInfo> {
                               icon: const Icon(Icons.delete),
                               color: Colors.black),
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetailTrip(tripData: tripData[index]),
+                                  ),
+                                );
+                              },
                               icon: const Icon(Icons.more_horiz_outlined),
                               color: Colors.black),
                         ],
@@ -718,4 +812,119 @@ class _TripInfoState extends State<TripInfo> {
       ),
     );
   }
+}
+
+// Detail Trip
+class DetailTrip extends StatefulWidget {
+  final Map<String, dynamic> tripData;
+
+  const DetailTrip({super.key, required this.tripData});
+
+  @override
+  State<DetailTrip> createState() => _DetailTripState();
+}
+
+class _DetailTripState extends State<DetailTrip> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Trip Details")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildRow("Trip ID", widget.tripData["tripID"], "Amount",
+                widget.tripData["Total Amount"]),
+            _buildRow("Description", widget.tripData["description"], "Currency",
+                widget.tripData["currency"]),
+            _buildRow("Date", widget.tripData["Date"], "Name",
+                widget.tripData["Name"] ?? 'May'),
+            _buildRow("Department", widget.tripData["department"],
+                "Requestable", widget.tripData["Requestable"]),
+            const SizedBox(height: 20),
+            const Text("Budget Details",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            _buildBudgetTable(),
+            const SizedBox(height: 20),
+            Center(
+                child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Back"))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRow(
+      String label1, String value1, String label2, String? value2) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildInlineText(label1, value1),
+          if (label2.isNotEmpty) _buildInlineText(label2, value2 ?? "N/A"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInlineText(String label, String value) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: RichText(
+          text: TextSpan(
+            style: const TextStyle(fontSize: 16, color: Colors.black),
+            children: [
+              TextSpan(
+                  text: "$label: ",
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: value),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBudgetTable() {
+    List<Map<String, String>> budgetTable =
+        List<Map<String, String>>.from(widget.tripData["BudgetDetails"] ?? []);
+    return Table(
+      border: TableBorder.all(),
+      columnWidths: const {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
+      children: [
+        TableRow(
+          decoration: const BoxDecoration(color: Colors.blue),
+          children: [
+            _buildTableCell("Budget Code", isHeader: true),
+            _buildTableCell("Description", isHeader: true),
+          ],
+        ),
+        for (var row in budgetTable)
+          TableRow(
+            children: [
+              _buildTableCell(row["Budget Code"] ?? ""),
+              _buildTableCell(row["Description"] ?? ""),
+            ],
+          )
+      ],
+    );
+  }
+}
+
+Widget _buildTableCell(String text, {bool isHeader = false}) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+        fontSize: 16,
+      ),
+    ),
+  );
 }
