@@ -64,6 +64,7 @@ class _DashboardState extends State<Dashboard>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromRGBO(142, 224, 249, 0.855),
         title: const Text("Advance Budget Request System"),
         leading: IconButton(
           onPressed: _toggleMenuBar,
