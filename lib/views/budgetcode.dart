@@ -14,17 +14,33 @@ class _budgetcodeState extends State<budgetcode> {
   dynamic hoverRow;
   String? selectedDateFilter;
   DateTimeRange? customDateRange;
-  TextEditingController _searchingController = TextEditingController();
+
+  // formfield controller
+  final TextEditingController _searchingController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController(
+      text:"${DateFormat('yyyy-MM-dd').format(DateTime.now())}"
+          //"${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}"
+          );
+  final TextEditingController _revisedAmountController =
+      TextEditingController(text: "0");
+  final TextEditingController _budget_codeController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _initialAmountController =
+      TextEditingController();
+  String _selectedCurrency = '';
+
   final numberFormat = NumberFormat("#,##0");
+
+  //List<Map<String, dynamic>> budgetInfo = [];
   List<Map<String, dynamic>> budgetInfo = List.generate(100, (int index) {
     return {
-      'date': DateTime.now().add(Duration(days: index * 30)),
-      'budget_code': 'B- $index',
-      'description': 'BudgetDescription $index',
-      'initial_amount': 400000,
-      'revised_amount': 0,
-      'currency': 'MMK',
-      'action': '',
+      'Date': DateTime.now().add(Duration(days: index * 30)),
+      'Budget_Code': 'B- $index',
+      'Description': 'BudgetDescription $index',
+      'Initial_Amount': 400000,
+      'Revised_Amount': 0,
+      'Currency': 'MMK',
+      'Action': '',
     };
   });
   String? sortColumn;
@@ -34,76 +50,72 @@ class _budgetcodeState extends State<budgetcode> {
 
 //budgetEntry form initialize variable
   final _formKey = GlobalKey<FormState>();
-  String budgetCode = '';
-  String description = '';
-  double initialAmount = 0.0;
+ 
 
-  //function of popup
-
+  //function of Add popup
   void _showBudgetPopup(BuildContext context) {
-    String currentDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    String? selectedCurrency = 'MMK';
-    double revisedAmount = 0.0;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          
-        
+          backgroundColor: const Color.fromARGB(255, 189, 231, 248),
           title: Text("Add New Budget"),
           content: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                //date field
                 TextFormField(
-                  
-                  decoration: InputDecoration(labelText: "Date",border: OutlineInputBorder()),
-                  initialValue: currentDateTime,
+                  controller: _dateController,
+                  decoration: InputDecoration(
+                      labelText: "Date", border: OutlineInputBorder()),
                   readOnly: true,
-                
-                  // validator: (value) {
-                  //   if (value == null || value.isEmpty) {
-                  //     return "Please enter a budget code";
-                  //   }
-                  //   return null;
-                  // },
-                  onSaved: (value) {
-                  
-                    budgetCode = value!;
-                  },
-                ),SizedBox(height: 10,),
+                ),
+
+                SizedBox(
+                  height: 10,
+                ),
+
                 // Budget Code Field
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Budget Code",border: OutlineInputBorder()),
+                  controller: _budget_codeController,
+                  decoration: InputDecoration(
+                      labelText: "Budget Code", border: OutlineInputBorder()),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter a budget code";
                     }
                     return null;
                   },
-                  onSaved: (value) {
-                    budgetCode = value!;
-                  },
                 ),
-                SizedBox(height: 10,),
+
+                SizedBox(
+                  height: 10,
+                ),
                 // Description Field
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Description",border: OutlineInputBorder()),
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                      labelText: "Description", border: OutlineInputBorder()),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter a description";
                     }
                     return null;
                   },
-                  onSaved: (value) {
-                    description = value!;
-                  },
                 ),
-                SizedBox(height: 10,),
+
+                SizedBox(
+                  height: 10,
+                ),
+
                 // Initial Amount Field
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Initial Amount",border: OutlineInputBorder()),
+                  controller: _initialAmountController,
+                  decoration: InputDecoration(
+                      labelText: "Initial_Amount",
+                      border: OutlineInputBorder()),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null ||
@@ -113,26 +125,37 @@ class _budgetcodeState extends State<budgetcode> {
                     }
                     return null;
                   },
-                  onSaved: (value) {
-                    initialAmount = double.parse(value!);
-                  },
                 ),
-                SizedBox(height: 10,),
+
+                SizedBox(
+                  height: 10,
+                ),
+
                 TextFormField(
-                  decoration: InputDecoration(labelText: "Revised Amount",border: OutlineInputBorder()),
-                  initialValue: revisedAmount.toString(),
+                  controller: _revisedAmountController,
+                  decoration: InputDecoration(
+                      labelText: "Revised_Amount",
+                      border: OutlineInputBorder()),
                   readOnly: true, // Prevent editing
                 ),
-                SizedBox(height: 10,),
+
+                SizedBox(
+                  height: 10,
+                ),
+
                 DropdownButtonFormField(
-                    decoration: InputDecoration(labelText: "Currency",border: OutlineInputBorder()),
-                    items: ['MMK', 'USD'].map((String currency) {
-                      return DropdownMenuItem<String>(
-                          value: currency, child: Text(currency));
-                    }).toList(),
+                    decoration: InputDecoration(
+                        labelText: "Currency", 
+                        border: OutlineInputBorder()),
+                        items: ['MMK', 'USD'].map((String currency) {
+                            return DropdownMenuItem<String>(
+                              value: currency, child: Text(currency));
+                        }).toList(),
                     onChanged: (newValue) {
-                      selectedCurrency = newValue!;
-                    })
+                      _selectedCurrency = newValue!;
+                    },
+                    validator: (value) =>
+                        value == null ? 'Please select a currency' : null),
               ],
             ),
           ),
@@ -147,24 +170,17 @@ class _budgetcodeState extends State<budgetcode> {
             // Submit Button
             ElevatedButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save(); // Save form data
-                  setState(() {
-                    // Add new entry to the existing list
-                    budgetInfo.add({
-                      'date': currentDateTime,
-                      'budgetCode': budgetCode,
-                      'description': description,
-                      'initialAmount': initialAmount,
-                      'revisedAmount': revisedAmount,
-                      'currency': selectedCurrency,
-                    });
-                  });
-                  Navigator.of(context).pop(); // Close the popup
+                if (_dateController.text.isEmpty ||
+                    _budget_codeController.text.isEmpty ||
+                    _descriptionController.text.isEmpty ||
+                    _initialAmountController.text.isEmpty ||
+                    _revisedAmountController.text.isEmpty ||
+                    _selectedCurrency.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Budget entry added successfully!")),
-                  );
+                      SnackBar(content: Text('Please fill all the fields!!')));
+                  return;
                 }
+                _submit();
               },
               child: Text("Submit"),
             ),
@@ -174,24 +190,194 @@ class _budgetcodeState extends State<budgetcode> {
     );
   }
 
+//  // submit button function of add popup
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      // _formKey.currentState!.save(); // Save form data
+      setState(() {
+        DateTime parsedDate =
+            DateFormat('yyyy-MM-dd').parse(_dateController.text);
+        // Add new entry to the existing list
+        budgetInfo.add({
+          'Date': _dateController.text.isEmpty ? "Unknown Date" : parsedDate,
+          'Budget_Code': _budget_codeController.text.isEmpty
+              ? "Unknown Code"
+              : _budget_codeController.text,
+          'Description': _descriptionController.text.isEmpty
+              ? "No Description"
+              : _descriptionController.text,
+          'Initial_Amount': _initialAmountController.text.isEmpty
+              ? "0"
+              :  _initialAmountController.text,
+          'Revised_Amount': _revisedAmountController.text.isEmpty
+              ? "0"
+              : _revisedAmountController.text,
+          'Currency': _selectedCurrency ?? "Unknown Currency",
+        });
+        filteredData = List.from(budgetInfo); // Update filtered data
+//         print(budgetInfo);
+//        print(budgetInfo.runtimeType);
+//        Map<String, dynamic> item = budgetInfo[0]; // Get first index
+//       item.forEach((key, value) {
+//   print("$key: ${value.runtimeType}");
+// });
+      });
+      Navigator.of(context).pop(); // Close the popup
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Budget entry added successfully!")),
+      );
+      // Clear input fields
+      // _dateController.clear();
+      _budget_codeController.clear();
+      _descriptionController.clear();
+      _initialAmountController.clear();
+      // _revisedAmountController.clear();
+      _selectedCurrency = 'USD';
+    }
+  }
+
+//edit popup function
+  void _editPopup(BuildContext context, Map<String, dynamic> item, int index) {
+   // final _formKey = GlobalKey<FormState>();
+    // Controllers for form fields
+    final TextEditingController _dateController = TextEditingController(
+        text: DateFormat('yyyy-MM-dd').format(item['Date']));
+    final TextEditingController _budgetCodeController =
+        TextEditingController(text: item['Budget_Code']);
+    final TextEditingController _descriptionController =
+        TextEditingController(text: item['Description']);
+    final TextEditingController _initialAmountController =
+        TextEditingController(text: item['Initial_Amount'].toString());
+    final TextEditingController _revisedAmountController =
+        TextEditingController(text: item['Revised_Amount'].toString());
+    String _selectedCurrency = item['Currency'];
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Edit Budget Information"),
+            content: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _dateController,
+                    decoration: InputDecoration(
+                      labelText: "Date",
+                    ),
+                    
+                  ),
+                  TextField(
+                    controller: _budgetCodeController,
+                    decoration: InputDecoration(labelText: 'Budget_Code'),
+                  ),
+                  TextField(
+                    controller: _descriptionController,
+                    decoration: InputDecoration(labelText: 'Description'),
+                  ),
+                  TextField(
+                    controller: _initialAmountController,
+                    decoration: InputDecoration(labelText: 'Initial Amount'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  TextField(
+                    controller: _revisedAmountController,
+                    decoration: InputDecoration(labelText: 'Revised Amount'),
+                    keyboardType: TextInputType.number,
+                  ),
+                  
+                  DropdownButtonFormField<String>(
+                    value: _selectedCurrency,
+                    onChanged: (String? newValue) {
+                      _selectedCurrency = newValue!;
+                    },
+                    items: [
+                      'USD',
+                      'MMK',
+                    ]
+                        .map((currency) => DropdownMenuItem<String>(
+                              value: currency,
+                              child: Text(currency),
+                            ))
+                        .toList(),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                   DateTime parsedUpadedDate =
+                      DateFormat('yyyy-MM-dd').parse(_dateController.text);
+                  // Save the updated data back to the list
+                  Map<String, dynamic> updatedItem = {
+                    'Date': parsedUpadedDate,//_dateController.text,
+                    'Budget_Code': _budgetCodeController.text,
+                    'Description': _descriptionController.text,
+                    'Initial_Amount':
+                        double.parse(_initialAmountController.text),
+                    'Revised_Amount':
+                        double.parse(_revisedAmountController.text),
+                    'Currency': _selectedCurrency,
+                  };
+
+                  // Update the item at the specified index
+                  budgetInfo[index] = updatedItem;
+
+                  // Close the dialog and refresh the UI
+                  Navigator.pop(context);
+                },
+                child: Text('Save'),
+              ),
+            ],
+          );
+        });
+  }
+
+
+
+//Delete
+  void _deleteConfirmation(int index) async {
+    bool? confirm = await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Delete Confirmation"),
+            content: Text("Are you sure to delete this Budget Data?"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text("Cancel")),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text("Delete")),
+            ],
+          );
+        });
+
+    if (confirm != null && confirm) {
+      setState(() {
+        filteredData.removeAt(index);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Budget Data is deleted successfully")));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     filteredData = budgetInfo;
-  }
-
-// Searchbarfilter f
-  void _searchFilter(String query) {
-    setState(() {
-      searchQuery = query;
-      filteredData = budgetInfo
-          .where((item) =>
-              item['budget_code'].toLowerCase().contains(query.toLowerCase()) ||
-              item['description'].toLowerCase().contains(query.toLowerCase()) ||
-              item['initial_amount'].toString().contains(query) ||
-              item['currency'].toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
   }
 
   // Date filter function
@@ -361,7 +547,7 @@ class _budgetcodeState extends State<budgetcode> {
   void _filterDataByDateRange(DateTimeRange dateRange) {
     setState(() {
       filteredData = budgetInfo.where((data) {
-        final dataDate = data['date'] as DateTime;
+        final dataDate = data['Date'] as DateTime;
         return dataDate.isAfter(dateRange.start.subtract(Duration(days: 1))) &&
             dataDate.isBefore(dateRange.end.add(Duration(days: 1)));
       }).toList();
@@ -398,10 +584,34 @@ class _budgetcodeState extends State<budgetcode> {
           return 0;
         }
       });
+    });
+  }
 
-      // Reset to first page after sorting
-      // currentPage = 1;
-      // _updatePagination();
+// Searchbarfilter fuction
+  void _searchFilter(String query) {
+    setState(() {
+      searchQuery = query;
+      filteredData = budgetInfo
+          .where((item) =>
+              item['Budget_Code'].toLowerCase().contains(query.toLowerCase()) ||
+              item['Description'].toLowerCase().contains(query.toLowerCase()) ||
+              item['Initial_Amount'].toString().contains(query) ||
+              item['Currency'].toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  //Refresh function
+  void _refreshList() {
+    setState(() {
+      _searchingController.clear();
+      selectedRequester = '';
+      selectedDateRange = null;
+      startDate = null;
+      filteredData = List.from(budgetInfo);
+      selectedDateFilter= null;
+      sortColumn = null;
+      isAscending = true;
     });
   }
 
@@ -527,8 +737,8 @@ class _budgetcodeState extends State<budgetcode> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
               child: Container(
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Expanded(
                         flex: 1,
                         child: Text('Date',
@@ -566,8 +776,29 @@ class _budgetcodeState extends State<budgetcode> {
               child: filteredData.isNotEmpty
                   ? ListView.builder(
                       itemCount: filteredData.length,
+                      // itemCount: budgetInfo.length,
                       itemBuilder: (context, index) {
                         final item = filteredData[index];
+                        final fields = [
+                          {'value': item['Date'], 'flex': 1}, // DateTime type
+                          {
+                            'value': item['Budget_Code'],
+                            'flex': 1
+                          }, // String type
+                          {
+                            'value': item['Description'],
+                            'flex': 3
+                          }, // String type
+                          {
+                            'value': item['Initial_Amount'],
+                            'flex': 2
+                          }, // double type
+                          {
+                            'value': item['Revised_Amount'],
+                            'flex': 2
+                          }, // double type
+                          {'value': item['Currency'], 'flex': 1}, // String type
+                        ];
                         return Column(
                           children: [
                             Padding(
@@ -575,47 +806,81 @@ class _budgetcodeState extends State<budgetcode> {
                                   vertical: 8, horizontal: 12),
                               child: Row(
                                 children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      
-                                        "${item['date'].year}-${item['date'].month}-${item['date'].day}"),
-                                  ),
-                                  Expanded(
-                                      flex: 1,
-                                      child: Text(item['budget_code'])),
-                                  Expanded(
-                                      flex: 3,
-                                      child: Text(item['description'])),
-                                  Expanded(
-                                      flex: 2,
-                                      child: Text(numberFormat
-                                          .format(item['initial_amount']))),
-                                  Expanded(
-                                      flex: 2,
-                                      child: Text(numberFormat
-                                          .format(item['revised_amount']))),
-                                  Expanded(
-                                      flex: 1, child: Text(item['currency'])),
+                                  ...fields.map((field) {
+                                    final value =
+                                        field['value']; // Extract the value
+                                    String displayValue;
+
+                                    // Handle type formatting
+                                    if (value is DateTime) {
+                                      displayValue =DateFormat('yyyy-MM-dd').format(value);
+                                         // "${value.year}-${value.month}-${value.day}";
+                                    } else if (value is num) {
+                                      displayValue = numberFormat
+                                          .format(value); // Format numbers
+                                    } else {
+                                      displayValue =
+                                          value.toString(); // Default to string
+                                    }
+
+                                    return Expanded(
+                                      flex: field['flex'] as int,
+                                      child: Text(
+                                        displayValue,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList(),
+
+                                  // Expanded(
+                                  //   flex: 1,
+                                  //   child: Text(//'${item['date']}'
+                                  //       "${item['date'].year}-${item['date'].month}-${item['date'].day}"
+                                  //      // "${item['Date']}"
+                                  //       ),
+                                  // ),
+                                  // Expanded(
+                                  //     flex: 1,
+                                  //     child: Text("${item['Budget_Code']}")
+                                  //    // Text(item['budget_code'])
+                                  //     ),
+                                  // Expanded(
+                                  //     flex: 3,
+                                  //     child: Text("${item['Description']}"
+                                  //       //item['description']
+                                  //       )),
+                                  // Expanded(
+                                  //     flex: 2,
+                                  //     child: Text(numberFormat.format("${item['Initial_Amount']}")
+                                  //         //.format(item['initial_amount'])
+                                  //         )),
+                                  // Expanded(
+                                  //     flex: 2,
+                                  //     child: Text(numberFormat.format("${item['Revised_Amount']}")
+                                  //         //.format(item['revised_amount'])
+                                  //         )),
+                                  // Expanded(
+                                  //     flex: 1, child: Text("${item['Currency']}"
+                                  //       //item['currency']
+                                  //       )),
                                   Expanded(
                                     flex: 1,
                                     child: Row(
                                       children: [
                                         IconButton(
+                                          onPressed: () {
+                                            _editPopup(context,
+                                                budgetInfo[index], index);
+                                            print(
+                                                "Edit button pressed for index: $index");
+                                          },
                                           icon: const Icon(Icons.edit,
                                               color: Colors.blueAccent),
-                                          onPressed: () {
-                                            // Handle edit action
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                  content: Text(
-                                                      "Edit ${item['budget_code']}")),
-                                            );
-                                          },
                                         ),
                                         IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              _deleteConfirmation(index);
+                                            },
                                             icon: Icon(
                                               Icons.delete,
                                               color: Colors.blueAccent,
@@ -640,18 +905,4 @@ class _budgetcodeState extends State<budgetcode> {
       ),
     );
   }
-
-  void _refreshList() {
-    setState(() {
-      _searchingController.clear();
-      selectedRequester = '';
-      selectedDateRange = null;
-      startDate = null;
-      filteredData = List.from(budgetInfo);
-      sortColumn = null;
-      isAscending = true;
-    });
-  }
 }
-
-
