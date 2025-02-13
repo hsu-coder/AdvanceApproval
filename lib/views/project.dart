@@ -54,7 +54,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
        "BudgetDetails": [
         {"Budget Code": "B0001", "Description": "For Marketing"},
         {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
+      ], 
     },
     {
       'Date': '2025-02-01',
@@ -769,8 +769,8 @@ class _ProjectInfoState extends State<ProjectInfo> {
                       outside: BorderSide(color: Colors.grey, width: 1),
                     ),
                     columnWidths: const {
-                      0: FlexColumnWidth(0.5),
-                      1: FlexColumnWidth(1),
+                      0: FlexColumnWidth(0.7),
+                      1: FlexColumnWidth(0.8),
                       2: FlexColumnWidth(2.5),
                       3: FlexColumnWidth(1.3),
                       4: FlexColumnWidth(0.5),
@@ -839,8 +839,8 @@ class _ProjectInfoState extends State<ProjectInfo> {
                     outside: BorderSide(color: Colors.black, width: 1),
                   ),
                   columnWidths: const {
-                    0: FlexColumnWidth(0.5),
-                    1: FlexColumnWidth(1),
+                    0: FlexColumnWidth(0.7),
+                    1: FlexColumnWidth(0.8),
                     2: FlexColumnWidth(2.5),
                     3: FlexColumnWidth(1.3),
                     4: FlexColumnWidth(0.5),
