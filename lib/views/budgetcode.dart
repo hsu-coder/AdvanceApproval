@@ -165,7 +165,7 @@ class _budgetcodeState extends State<budgetcode> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the popup
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             // Submit Button
             ElevatedButton(
@@ -182,7 +182,7 @@ class _budgetcodeState extends State<budgetcode> {
                 }
                 _submit();
               },
-              child: Text("Submit"),
+              child: const Text("Submit"),
             ),
           ],
         );
@@ -253,11 +253,15 @@ class _budgetcodeState extends State<budgetcode> {
     String _selectedCurrency = item['Currency'];
 
     showDialog(
+    
         context: context,
         builder: (context) {
           return AlertDialog(
+            
             title: Text("Edit Budget Information"),
+            backgroundColor: const Color.fromARGB(255, 189, 231, 248),
             content: Form(
+              
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -381,6 +385,7 @@ class _budgetcodeState extends State<budgetcode> {
   }
 
   // Date filter function
+  // ignore: unused_element
   String _getDateFilterDisplayName(String value) {
     switch (value) {
       case 'today':
@@ -402,7 +407,7 @@ class _budgetcodeState extends State<budgetcode> {
     DateTime now = DateTime.now();
     DateTime startOfWeek =
         now.subtract(Duration(days: now.weekday - 1)); // Monday
-    DateTime endOfWeek = startOfWeek.add(Duration(days: 6)); // Sunday
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Sunday
     return '${DateFormat.yMd().format(startOfWeek)} - ${DateFormat.yMd().format(endOfWeek)}';
   }
 
@@ -429,14 +434,14 @@ class _budgetcodeState extends State<budgetcode> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Custom Date Range'),
+          title: const Text('Custom Date Range'),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Select Start Date:'),
-                  SizedBox(height: 10),
+                  const Text('Select Start Date:'),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () async {
                       DateTime? pickedStartDate = await showDatePicker(
@@ -453,9 +458,9 @@ class _budgetcodeState extends State<budgetcode> {
                     },
                     child: Text(DateFormat.yMd().format(initialStartDate)),
                   ),
-                  SizedBox(height: 20),
-                  Text('Select End Date:'),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 20),
+                  const Text('Select End Date:'),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () async {
                       DateTime? pickedEndDate = await showDatePicker(
@@ -478,7 +483,7 @@ class _budgetcodeState extends State<budgetcode> {
           ),
           actions: [
             TextButton(
-              child: Text('Apply'),
+              child: const Text('Apply'),
               onPressed: () {
                 if (initialStartDate.isBefore(initialEndDate)) {
                   setState(() {
@@ -491,13 +496,13 @@ class _budgetcodeState extends State<budgetcode> {
                   Navigator.of(context).pop(); // Close dialog
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please select valid dates.')),
+                    const SnackBar(content: Text('Please select valid dates.')),
                   );
                 }
               },
             ),
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -519,7 +524,7 @@ class _budgetcodeState extends State<budgetcode> {
       case 'this_week':
         DateTime startOfWeek =
             now.subtract(Duration(days: now.weekday - 1)); // Monday
-        DateTime endOfWeek = startOfWeek.add(Duration(days: 6)); // Sunday
+        DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Sunday
         dateRange = DateTimeRange(start: startOfWeek, end: endOfWeek);
         break;
       case 'this_month':
@@ -552,12 +557,12 @@ class _budgetcodeState extends State<budgetcode> {
             dataDate.isBefore(dateRange.end.add(Duration(days: 1)));
       }).toList();
 
-      // Reset to first page
-      // Your method to update pagination based on the new filtered data
+
     });
   }
 
   // Sorting function
+  // ignore: unused_element
   void _sortData(String column, bool ascending) {
     setState(() {
       sortColumn = column;
@@ -623,46 +628,46 @@ class _budgetcodeState extends State<budgetcode> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Budget_Code Information",
               style: TextStyle(fontSize: 18),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(right: 30),
+                  padding: const EdgeInsets.only(right: 30),
                   child: DropdownButton<String>(
                     value: selectedDateFilter,
-                    hint: Text('Filter by Date'),
+                    hint: const Text('Filter by Date'),
                     items: [
                       DropdownMenuItem(
                         value: 'today',
                         child: Tooltip(
                           message: DateFormat.yMd().format(DateTime.now()),
-                          child: Text('Today'),
+                          child: const Text('Today'),
                         ),
                       ),
                       DropdownMenuItem(
                         value: 'this_week',
                         child: Tooltip(
                           message: _getThisWeekRange(),
-                          child: Text('This Week'),
+                          child: const Text('This Week'),
                         ),
                       ),
                       DropdownMenuItem(
                           value: 'this_month',
                           child: Tooltip(
                             message: _getThisMonthRange(),
-                            child: Text('This Month'),
+                            child: const Text('This Month'),
                           )),
                       DropdownMenuItem(
                           value: 'this_year',
                           child: Tooltip(
                             message: _getThisYearRange(),
-                            child: Text('This Year'),
+                            child: const Text('This Year'),
                           )),
                       DropdownMenuItem(
                           value: 'custom',
@@ -670,7 +675,7 @@ class _budgetcodeState extends State<budgetcode> {
                             message: customDateRange != null
                                 ? '${DateFormat.yMd().format(customDateRange!.start)} - ${DateFormat.yMd().format(customDateRange!.end)}'
                                 : 'Select a custom date range',
-                            child: Text('Custom'),
+                            child: const Text('Custom'),
                           )),
                     ],
                     onChanged: (String? newValue) {
@@ -685,7 +690,7 @@ class _budgetcodeState extends State<budgetcode> {
                     },
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 SizedBox(
@@ -693,11 +698,11 @@ class _budgetcodeState extends State<budgetcode> {
                   width: MediaQuery.of(context).size.width / 2,
                   child: SearchBar(
                     onChanged: _searchFilter,
-                    leading: Icon(Icons.search),
+                    leading: const Icon(Icons.search),
                     hintText: "Search",
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 50,
                 ),
                 Row(
@@ -711,19 +716,19 @@ class _budgetcodeState extends State<budgetcode> {
                         //       MaterialPageRoute(
                         //           builder: (context) => BudgetEntryForm()));
                         // },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.add,
                           color: Colors.blueGrey,
                         )),
                     IconButton(
                         onPressed: _refreshList,
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.refresh,
                           color: Colors.blueGrey,
                         )),
                     IconButton(
                         onPressed: () {},
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.download,
                           color: Colors.blueGrey,
                         ))
@@ -731,7 +736,7 @@ class _budgetcodeState extends State<budgetcode> {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Padding(
@@ -769,8 +774,9 @@ class _budgetcodeState extends State<budgetcode> {
                             style: TextStyle(fontWeight: FontWeight.bold))),
                   ],
                 ),
-              ),
+              )
             ),
+            
             const Divider(height: 1, thickness: 1),
             Expanded(
               child: filteredData.isNotEmpty
