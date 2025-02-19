@@ -554,6 +554,14 @@ class _ProjectInfoState extends State<ProjectInfo> {
   }
 
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> getBudgetDetails() {
+  return [
+    {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
+    {'Budget Code': 'B002', 'Description': 'Short Trip'},
+    {'Budget Code': 'B003', 'Description': 'Foreign Trip'},
+    {'Budget Code': 'B004', 'Description': 'On Job Training'},
+  ];
+}
     // {
     //   'Project Code': 'PRJ-2324-001',
     //   'Description': 'Final Project',
@@ -926,13 +934,33 @@ class _ProjectInfoState extends State<ProjectInfo> {
                                 IconButton(
                                   icon: const Icon(Icons.more_horiz_outlined,
                                       color: Colors.black),
+                                  // onPressed: () {
+                                      
+                                  //   print("Details for ${row["Project Code"]}");
+                                  //   Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //       builder: (context) => ProjectDetailPage(projectData[index])));
+                                  // },
+
                                   onPressed: () {
-                                    print("Details for ${row["Project Code"]}");
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProjectDetailPage(projectData[index])));
-                                  },
+  Map<String, dynamic> selectedProject = projectData[index];
+
+  selectedProject["BudgetDetails"] = getBudgetDetails()
+      .where((budget) =>
+          budget["Budget Code"] == selectedProject["Budget Code"])
+      .toList();
+
+  print("Updated Project Data: $selectedProject"); // Debug print
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ProjectDetailPage(selectedProject),
+    ),
+  );
+},
+
                                 ),
                               ],
                             ),
@@ -1308,12 +1336,7 @@ class _AdvancedSearchDialogState extends State<AdvancedSearchDialog> {
 
 class ProjectDetailPage extends StatefulWidget {
   final Map<String, dynamic> projectData;
-  // final List<Map<String, String>> budgetTable = [
-  //   {"BudgetCode": "B0001", "Description": "For Marketing"},
-  //   {"BudgetCode": "B11123", "Description": "Expenses"},
-  //   {"BudgetCode": "B2001", "Description": "IT Equipment"},
-  //   {"BudgetCode": "B21123", "Description": "Maintenance"},
-  // ];
+ 
   ProjectDetailPage(this.projectData, {super.key});
 
   @override
@@ -1413,6 +1436,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
   Widget _buildBudgetTable() {
     List<Map<String, String>> budgetTable = List<Map<String, String>>.from(
         widget.projectData["BudgetDetails"] ?? []);
+
+        print("Budget Table Data: $budgetTable");
     return Table(
       border: TableBorder.all(),
       columnWidths: {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},

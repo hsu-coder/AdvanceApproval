@@ -53,7 +53,13 @@ class _EntryFormState extends State<EntryForm> {
     {'Budget Code': 'B004', 'Description': 'On Job Training'},
     {'Budget Code': 'B004', 'Description': 'On Job Training'},
   ];
-
+ Map<String, String> getBudgetDetail(String code) {
+    final budget = BudgetDetails.firstWhere(
+      (item) => item['Budget Code'] == code,
+      orElse: () => {'Budget Code': 'N/A', 'Description': 'No budget details available'},
+    );
+    return {'code': budget['Budget Code']!, 'description': budget['Description']!};
+  }
   //Budget Alert Dialog
 //Budget Alert Dialog
   void _showBudgetCodeDialog() {
