@@ -1,4 +1,6 @@
-import 'package:advance_budget_request_system/views/budgetcode.dart';
+
+import 'package:advance_budget_request_system/views/budgetamount.dart';
+import 'package:advance_budget_request_system/views/budgetcodeview.dart';
 import 'package:advance_budget_request_system/views/project.dart';
 import 'package:advance_budget_request_system/views/trip.dart';
 import 'package:flutter/material.dart';
@@ -17,10 +19,12 @@ class _DashboardState extends State<Dashboard>
   bool isMenuBar = false;
   int _selectedIndex = 0;
 
+
   static final List<Widget> _widgetOptions = <Widget>[
-    const DashboardView(),
-    budgetcode(),
-    const Center(child: Text("Budget Amount")),
+    const Dashboard(),
+    const Budgetcodeview(),
+    Budgetamount(),
+  
     ProjectInfo(),
     const TripInfo(),
     const Center(child: Text("Advance Request")),
