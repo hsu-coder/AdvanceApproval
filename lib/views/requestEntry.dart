@@ -117,7 +117,7 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
                             rows: budget.map((budgetCode) {
                               bool isSelected = selectedBudgetCodes.any(
                                   (code) =>
-                                      code.budgetCode == budgetCode.budgetCode);
+                                      code.BudgetCode == budgetCode.BudgetCode);
 
                               return DataRow(
                                 cells: [
@@ -130,8 +130,8 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
                                               setState(() {
                                                 selectedBudgetCodes.removeWhere(
                                                     (code) =>
-                                                        code.budgetCode ==
-                                                        code.description);
+                                                        code.BudgetCode ==
+                                                        code.Description);
                                               });
                                               Navigator.pop(context);
                                               _showBudgetCodeDialog();
@@ -139,8 +139,8 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
                                           )
                                         : const SizedBox.shrink(),
                                   ),
-                                  DataCell(Text(budgetCode.budgetCode)),
-                                  DataCell(Text(budgetCode.description)),
+                                  DataCell(Text(budgetCode.BudgetCode)),
+                                  DataCell(Text(budgetCode.Description)),
                                 ],
                                 onSelectChanged: (selected) {
                                   if (selected != null && selected) {
@@ -494,9 +494,9 @@ void _submitForm() async {
                                               .indexOf(budgetCode);
                                           return DataRow(cells: [
                                             DataCell(
-                                                Text(budgetCode.budgetCode)),
+                                                Text(budgetCode.BudgetCode)),
                                             DataCell(
-                                                Text(budgetCode.description)),
+                                                Text(budgetCode.Description)),
                                             if (selectedType == "operation")
                                               DataCell(
                                                 IconButton(

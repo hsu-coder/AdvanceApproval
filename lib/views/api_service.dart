@@ -10,30 +10,110 @@ class ApiService {
   final String tripEndPoint = "/tripinfo";
   final String advanceRequestEndPoint = "/advancerequest";
   final String cashPaymentEndPoint="/cashpayment";
+  
+ // final String projectEndpoint = "/project";
+ // final String projectbudgetEndpoint ="/project/budgetcode";
+
+  
 
   Future<List<Budget>> fetchBudgetCodeData() async {
     final response = await http.get(Uri.parse(baseUrl + budgetCodeEndpoint));
-   if (response.statusCode == 200) {
-      List<dynamic> body = json.decode(response.body);
-      print("Budget Data: $body");
+    // print("Response Status Code: ${response.statusCode}");
+   // print("Response Body: ${response.body}");
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
       return body.map((dynamic item) => Budget.fromJson(item)).toList();
+     
     } else {
-      throw Exception('Failed to load projects');
+      throw Exception('Failed to load data');
     }
   }
 
-  Future<void> postBudgetCode(Budget newbudgetCode) async {
+  Future<bool> postBudgetCode(Budget newbudgetCode) async {
+    //  print("API Call: ${jsonEncode(newbudgetCode .toJson())}");
     final response = await http.post(Uri.parse(baseUrl + budgetCodeEndpoint),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(newbudgetCode));
+        body: jsonEncode(newbudgetCode.toJson()));
+    //print("Response Status Code: ${response.statusCode}");
+    // print("Response Body: ${response.body}");
     if (response.statusCode != 201) {
       throw Exception('Failed to insert budget code');
+    } else {
+      return true;
     }
   }
 
-//project
+  Future<bool> updateBudget(Budget budget) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl$budgetCodeEndpoint/${budget.id}/'),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+      body: json.encode(budget.toJson()),
+    );
+
+    // Debug: Check the full URL
+    // print("Final API URL: ${'$baseUrl$budgetCodeEndpoint/${budget.id}'}");
+    // print("Response Status Code: ${response.statusCode}");
+    // print("Response Body: ${response.body}");
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update budget');
+    } else {
+      return true;
+    }
+  }
+
+  Future<void> deleteBudget(String id) async {
+    final response =
+        await http.delete(Uri.parse('$baseUrl$budgetCodeEndpoint/$id'));
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete BudgetCode');
+    }
+  }
+
+  Future<List<BudgetAmount>> fetchBudgetAmount() async {
+    final response = await http.get(Uri.parse(baseUrl + budgetAmountEndpoint));
+    if (response.statusCode == 200) {
+      List<dynamic> body = jsonDecode(response.body);
+      return body.map((dynamic item) => BudgetAmount.fromJson(item)).toList();
+    } else {
+      throw Exception('Fail to load Data');
+    }
+  }
+
+  Future<bool> postBudgetAmount(BudgetAmount newBudgetAmount) async {
+    final response = await http.post(Uri.parse(baseUrl + budgetAmountEndpoint),
+        headers: <String, String>{'Content': 'application/json'},
+        body: jsonEncode(newBudgetAmount.toJson()));
+    if (response.statusCode != 201) {
+      throw Exception('Failed to insert budget code');
+    } else {
+      return true;
+    }
+  }
+
+  Future<bool> updateBudgetAmount(BudgetAmount BudgetAmount) async {
+    final response = await http.put(
+        Uri.parse('$baseUrl$budgetAmountEndpoint/${BudgetAmount.id}'),
+        headers: {'Contents': 'application/json'},
+        body: json.encode(BudgetAmount.toJson()));
+    if (response.statusCode != 200) {
+      throw Exception('Fail to update BudgetAmount');
+    }
+    else{
+      return true;
+    }
+  }
+
+  Future<void> deletBudgetAmount(String id) async {
+    final response =
+        await http.delete(Uri.parse('$baseUrl$budgetAmountEndpoint/$id'));
+    if (response.statusCode != 200) {
+      throw Exception('Fail to delete BudgetAmount');
+    }
+  }
+
+  //project
   Future<List<ProjectInfo>> fetchProjectInfoData() async {
     final response = await http.get(Uri.parse(baseUrl + projectEndPoint));
     if (response.statusCode == 200) {
@@ -132,4 +212,7 @@ class ApiService {
       // print('Request can create successfully!');
     } 
   }
+
+
+
 }

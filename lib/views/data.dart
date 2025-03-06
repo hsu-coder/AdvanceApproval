@@ -1,32 +1,61 @@
 import 'package:intl/intl.dart';
 
-
-// for Budget Code 
 class Budget {
-  final String budgetCode;
-  final String description;
   final String id;
+  final String BudgetCode;
+  final String Description;
+  final int InitialAmount;
 
-  Budget({required this.budgetCode,required this.description, required this.id});
+  Budget(
+      {required this.id, required this.BudgetCode, required this.Description,required this.InitialAmount});
 
   factory Budget.fromJson(Map<String, dynamic> json) {
     return Budget(
-      budgetCode: json['BudgetCode']??'des',
-      description: json['Description']?? 'abc',
-      id:json['id']
+      id: json['id']??'',
+      BudgetCode: json['BudgetCode']??'',
+      Description: json['Description']??'',
+    InitialAmount: json['InitialAmount']?? 0
     );
   }
 
-   Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
-      'BudgetCode': budgetCode,
-      'Description': description,
-      'id': id
+      'id': id,
+      'BudgetCode': BudgetCode,
+      'Description': Description,
+      'InitialAmount': InitialAmount
     };
   }
-
 }
+class BudgetAmount {
+  final String? id;
+  final String? BudgetCode;
+  final String? Description;
+  final int? InitialAmount;
 
+  BudgetAmount(
+      {required this.id,
+      required this.BudgetCode,
+      required this.Description,
+      required this.InitialAmount});
+
+  factory BudgetAmount.fromJson(Map<String, dynamic> json) {
+    return BudgetAmount(
+        id: json['id'],
+        BudgetCode: json['BudgetCode'],
+        Description: json['Description'],
+        InitialAmount: json['InitialAmount']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'BudgetCode': BudgetCode,
+      'Description': Description,
+      'InitialAmount': InitialAmount
+    };
+  }
+}
 //for project
 
 class ProjectInfo {
@@ -153,7 +182,8 @@ class AdvanceRequest {
     );
   }
 
-   Map<String, dynamic> toJson() {
+
+Map<String, dynamic> toJson() {
     return {
       'Date':  DateFormat('yyyy-MM-dd').format(date),
       'RequestNo': requestNo,

@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectEntry extends StatefulWidget {
   const ProjectEntry({super.key});
@@ -35,7 +38,7 @@ class _EntryFormState extends State<EntryForm> {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController dateController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
-  final String lastProjectCode = "PRJ-000-000";
+int lastProjectNumber =0;
   List<Map<String, dynamic>> chooseBudgetCodes = [];
   final List<Map<String, dynamic>> BudgetDetails = [
     {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
@@ -46,20 +49,15 @@ class _EntryFormState extends State<EntryForm> {
     {'Budget Code': 'B006', 'Description': 'Software Purchase'},
     {'Budget Code': 'B007', 'Description': 'New Equipment'},
     {'Budget Code': 'B008', 'Description': 'Annual Conference'},
-    {'Budget Code': 'B009', 'Description': 'Miscellaneous'},
+    {'Budget Code': 'B009', 'Description': 'Miscellaneous'}, 
   ];
-  Map<String, String> getBudgetDetail(String code) {
-    final budget = BudgetDetails.firstWhere(
-      (item) => item['Budget Code'] == code,
-      orElse: () =>
-          {'Budget Code': 'N/A', 'Description': 'No budget details available'},
-    );
-    return {
-      'code': budget['Budget Code']!,
-      'description': budget['Description']!
-    };
-  }
-
+//  Map<String, String> getBudgetDetail(String code) {
+//     final budget = BudgetDetails.firstWhere(
+//       (item) => item['Budget Code'] == code,
+//       orElse: () => {'Budget Code': 'N/A', 'Description': 'No budget details available'},
+//     );
+//     return {'code': budget['Budget Code']!, 'description': budget['Description']!};
+//   }
   //Budget Alert Dialog
 //Budget Alert Dialog
   void _showBudgetCodeDialog() {
@@ -176,7 +174,7 @@ class _EntryFormState extends State<EntryForm> {
   }
 
   String? _selectedDepartment;
-  String? selectedBudgetCode;
+  //String? selectedBudgetCode;
   String _selectedCurrency = "MMK";
   //String? _selectedRequestable='No';
   final List<String> _departments = [
@@ -203,24 +201,60 @@ class _EntryFormState extends State<EntryForm> {
     });
   }
 
-  void _submitForm() {
+
+
+@override
+  void initState() {
+    super.initState();
+_initializeProjectCode();  }
+Future<void> _initializeProjectCode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      lastProjectNumber = prefs.getInt('lastProjectNumber') ?? 0;
+      projectController.text = _generateProjectCode(lastProjectNumber + 1);
+    });
+  }
+
+  /// Generate a new project code based on the lastProjectNumber
+  String _generateProjectCode(int number) {
+    return 'PRJ-000-${number.toString().padLeft(3, '0')}';
+  }
+
+  /// Save the updated last project number
+  Future<void> _saveLastProjectNumber() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('lastProjectNumber', lastProjectNumber);
+  }
+  
+
+  void _submitForm() async {
     if (_formkey.currentState!.validate()) {
+      lastProjectNumber++; // Increment the last used project number
+      await _saveLastProjectNumber();
       List<Map<String, dynamic>> newProject = [
         {
+
           "Date": dateController.text,
+           // "ProjectID": projectCode,
           "ProjectID": projectController.text,
           "Description": desciptionController.text,
           "Total Budget Amount": amountController.text,
           "Currency": _selectedCurrency,
           "Department": _selectedDepartment ?? '',
           "Requestable": 'No',
-          "Budget Code": chooseBudgetCodes.isNotEmpty
-              ? chooseBudgetCodes.map((e) => e['Budget Code']).join(",")
-              : '',
+          // "Budget Code": chooseBudgetCodes.isNotEmpty 
+          //               ? chooseBudgetCodes.map((e) => e['Budget Code']).join(",")
+          //               : '',
+          'BudgetDetails': jsonEncode(chooseBudgetCodes),
         }
       ];
 
       widget.onProjectAdded(newProject);
+      // String newCode = await generateProjectCode();
+       
+      setState(() {
+        projectController.text =  _generateProjectCode(lastProjectNumber + 1);
+      });
 
       Navigator.pop(context);
     }
@@ -232,24 +266,7 @@ class _EntryFormState extends State<EntryForm> {
     });
   }
 
-// @override
-//   void initState(){
-//     super.initState();
-//     _loadLastProjectCode();
-//   }
 
-//   Future<void> _loadLastProjectCode()async {
-//     final prefs =await SharedPreferences.getInstance();
-//     setState(() {
-//       lastProjectCode = (prefs.getInt('lastProjectCode') ?? 'PRJ-000-000') + 1;
-//       projectController.text =lastProjectCode.toString();
-//         });
-//   }
-
-//  Future<void> _saveLastProjectCode()async {
-//   final prefs = await SharedPreferences.getInstance();
-//   await prefs.setInt('lastProjectCode',lastProjectCode
-//  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -257,514 +274,266 @@ class _EntryFormState extends State<EntryForm> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Container(
-                width: MediaQuery.of(context).size.width * 0.5,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 149, 239, 233),
-                  borderRadius: BorderRadius.circular(15), // Rounded corners
-                  border:
-                      Border.all(color: Colors.black, width: 1), // Border color
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3), // Shadow color
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Form(
-                    key: _formkey,
-                    child: Column(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Center(
-                            child: Text(
-                              'Add Project Request',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
+          child: Container(
+              width: MediaQuery.of(context).size.width * 0.5,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 149, 239, 233),
+                borderRadius: BorderRadius.circular(15), // Rounded corners
+                border:
+                    Border.all(color: Colors.black, width: 1), // Border color
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3), // Shadow color
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Form(
+                  key: _formkey,
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(
+                            'Add Project Request',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    title: TextFormField(
-                                      controller: projectController,
-                                      decoration: const InputDecoration(
-                                          labelText: "Enter Project Code"),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Enter Project Code";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: TextFormField(
-                                      controller: desciptionController,
-                                      decoration: const InputDecoration(
-                                          labelText: "Enter Project Description"),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Enter Project Description";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: TextFormField(
-                                      controller: amountController,
-                                      decoration: const InputDecoration(
-                                        labelText: "Enter Total Amount",
-                                      ),
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'^\d*\.?\d*')),
-                                      ],
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Enter Total Amount";
-                                        }
-                                        final amount = double.tryParse(value);
-                                        if (amount == null) {
-                                          return "Enter a valid amount";
-                                        }
-                                        if (amount <= 0) {
-                                          return "Your Request Amount must be greater than 0";
-                                        }
-            
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    title: TextFormField(
-                                      controller: dateController,
-                                      decoration: const InputDecoration(
-                                          labelText: "Request Date"),
-                                      readOnly: true,
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: DropdownButtonFormField(
-                                      decoration: const InputDecoration(
-                                        labelText: "Choose your Department",
-                                      ),
-                                      items: _departments.map((department) {
-                                        return DropdownMenuItem(
-                                            value: department,
-                                            child: Text(department));
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedDepartment = value!;
-                                        });
-                                      },
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Choose your Department";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                  ListTile(
-                                    title: DropdownButtonFormField(
-                                      decoration: const InputDecoration(),
-                                      value: _selectedCurrency,
-                                      items: ['MMK', 'USD'].map((currency) {
-                                        return DropdownMenuItem(
-                                            value: currency,
-                                            child: Text(currency));
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedCurrency = value!;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              ElevatedButton(
-                                onPressed: _showBudgetCodeDialog,
-                                style: ElevatedButton.styleFrom(
-                                  textStyle: const TextStyle(fontSize: 15),
-                                  backgroundColor: Colors.green,
-                                  foregroundColor: Colors.black,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text("Add Budget Code"),
-                              ),
-                              const SizedBox(height: 10),
-                              Container(
-                                height: MediaQuery.of(context).size.height * 0.3,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.vertical,
-                                  child: DataTable(
-                                    border: TableBorder.all(),
-                                    showCheckboxColumn: false,
-                                    columns: const [
-                                      DataColumn(label: Text("Budget Code")),
-                                      DataColumn(label: Text("Description")),
-                                      DataColumn(label: Text("Action")),
-                                    ],
-                                    rows: chooseBudgetCodes.map((budgetCode) {
-                                      final index =
-                                          chooseBudgetCodes.indexOf(budgetCode);
-                                      return DataRow(
-                                        cells: [
-                                          DataCell(
-                                              Text(budgetCode['Budget Code'])),
-                                          DataCell(
-                                              Text(budgetCode['Description'])),
-                                          DataCell(
-                                            IconButton(
-                                              onPressed: () {
-                                                _deleteBudgetCode(index);
-                                              },
-                                              icon: const Icon(Icons.delete),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                _submitForm();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                textStyle: const TextStyle(
-                                  fontSize: 15,
-                                ),
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text("Submit"),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _clearText();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                textStyle: const TextStyle(
-                                  fontSize: 15,
-                                ),
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: const Text("Clear"),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ))),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ProjectBudgetEntry extends StatefulWidget {
-  @override
-  _ProjectBudgetEntryFormState createState() => _ProjectBudgetEntryFormState();
-}
-
-class _ProjectBudgetEntryFormState extends State<ProjectBudgetEntry> {
-  List<Map<String, String>> budgetData = [
-    {"Budget Code": "", "Description": ""}
-  ]; // First row is always there
-
-  // Dummy budget selection data
-  final List<Map<String, String>> availableBudgetCodes = [
-    {"Budget Code": "B001", "Description": "Marketing Expenses"},
-    {"Budget Code": "B002", "Description": "Travel Expenses"},
-    {"Budget Code": "B003", "Description": "Office Supplies"},
-  ];
-
-  void _showBudgetSelectionDialog(int rowIndex) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Select Budget Code"),
-          content: Container(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Table(
-                  border: TableBorder.all(),
-                  columnWidths: {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
-                  children: [
-                    TableRow(
-                      decoration: BoxDecoration(color: Colors.grey[300]),
-                      children: [
-                        _buildTableCell("Budget Code", isHeader: true),
-                        _buildTableCell("Description", isHeader: true),
-                      ],
-                    ),
-                    for (var budget in availableBudgetCodes)
-                      TableRow(
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                budgetData[rowIndex] = {
-                                  "Budget Code": budget["Budget Code"]!,
-                                  "Description": budget["Description"]!
-                                };
+                          Expanded(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: TextFormField(
+                                    controller: projectController,
+                                    readOnly: true,
+                                    decoration: const InputDecoration(
+                                        labelText: "Enter Project Code"
+                                       ),
+                                        
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Enter Project Code";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                ListTile(
+                                  title: TextFormField(
+                                    controller: desciptionController,
+                                    decoration: const InputDecoration(
+                                        labelText: "Enter Project Description"),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Enter Project Description";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                ListTile(
+                                  title: TextFormField(
+                                    controller: amountController,
+                                    decoration: const InputDecoration(
+                                      labelText: "Enter Total Amount",
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d*')),
+                                    ],
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Enter Total Amount";
+                                      }
+                                      final amount = double.tryParse(value);
+                                      if (amount == null) {
+                                        return "Enter a valid amount";
+                                      }
+                                      if (amount <= 0) {
+                                        return "Your Request Amount must be greater than 0";
+                                      }
 
-                                if (rowIndex == budgetData.length - 1) {
-                                  budgetData.add(
-                                      {"Budget Code": "", "Description": ""});
-                                }
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: _buildTableCell(budget["Budget Code"] ?? ""),
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                budgetData[rowIndex] = {
-                                  "Budget Code": budget["Budget Code"]!,
-                                  "Description": budget["Description"]!
-                                };
-
-                                if (rowIndex == budgetData.length - 1) {
-                                  budgetData.add(
-                                      {"Budget Code": "", "Description": ""});
-                                }
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: _buildTableCell(budget["Description"] ?? ""),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  title: TextFormField(
+                                    controller: dateController,
+                                    decoration: const InputDecoration(
+                                        labelText: "Request Date"),
+                                    readOnly: true,
+                                  ),
+                                ),
+                                ListTile(
+                                  title: DropdownButtonFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: "Choose your Department",
+                                    ),
+                                    items: _departments.map((department) {
+                                      return DropdownMenuItem(
+                                          value: department,
+                                          child: Text(department));
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedDepartment = value!;
+                                      });
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Choose your Department";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                ListTile(
+                                  title: DropdownButtonFormField(
+                                    decoration: const InputDecoration(),
+                                    value: _selectedCurrency,
+                                    items: ['MMK', 'USD'].map((currency) {
+                                      return DropdownMenuItem(
+                                          value: currency,
+                                          child: Text(currency));
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedCurrency = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _deleteRow(int index) {
-    setState(() {
-      if (index == 0) {
-        // First row can't be removed, only cleared
-        budgetData[index] = {"Budget Code": "", "Description": ""};
-      } else {
-        budgetData.removeAt(index);
-      }
-    });
-  }
-
-  void _submitProject() {
-    List<Map<String, String>> selectedBudgetData =
-        budgetData.where((row) => row["Budget Code"]!.isNotEmpty).toList();
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ProjectDetailScreen(budgetData: selectedBudgetData),
-      ),
-    );
-  }
-
-  Widget _buildTableCell(String text, {bool isHeader = false}) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Project Entry Form")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Select Budget Codes",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Table(
-              border: TableBorder.all(),
-              columnWidths: {
-                0: FlexColumnWidth(1),
-                1: FlexColumnWidth(2),
-                2: FlexColumnWidth(1)
-              },
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(color: Colors.grey[300]),
-                  children: [
-                    _buildTableCell("Budget Code", isHeader: true),
-                    _buildTableCell("Description", isHeader: true),
-                    _buildTableCell("Action", isHeader: true),
-                  ],
-                ),
-                for (int i = 0; i < budgetData.length; i++)
-                  TableRow(
-                    children: [
-                      GestureDetector(
-                        onTap: () => _showBudgetSelectionDialog(i),
-                        child:
-                            _buildTableCell(budgetData[i]["Budget Code"] ?? ""),
-                      ),
-                      GestureDetector(
-                        onTap: () => _showBudgetSelectionDialog(i),
-                        child:
-                            _buildTableCell(budgetData[i]["Description"] ?? ""),
-                      ),
                       Padding(
-                        padding: EdgeInsets.all(8),
-                        child: i == 0
-                            ? SizedBox.shrink()
-                            : IconButton(
-                                icon: Icon(Icons.delete, color: Colors.red),
-                                onPressed: () => _deleteRow(i),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: _showBudgetCodeDialog,
+                              style: ElevatedButton.styleFrom(
+                                textStyle: const TextStyle(fontSize: 15),
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
+                              child: const Text("Add Budget Code"),
+                            ),
+                            const SizedBox(height: 10),
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                child: DataTable(
+                                  border: TableBorder.all(),
+                                  showCheckboxColumn: false,
+                                  columns: const [
+                                    DataColumn(label: Text("Budget Code")),
+                                    DataColumn(label: Text("Description")),
+                                    DataColumn(label: Text("Action")),
+                                  ],
+                                  rows: chooseBudgetCodes.map((budgetCode) {
+                                    final index =
+                                        chooseBudgetCodes.indexOf(budgetCode);
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(
+                                            Text(budgetCode['Budget Code'])),
+                                        DataCell(
+                                            Text(budgetCode['Description'])),
+                                        DataCell(
+                                          IconButton(
+                                            onPressed: () {
+                                              _deleteBudgetCode(index);
+                                            },
+                                            icon: const Icon(Icons.delete),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              _submitForm();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              textStyle: const TextStyle(
+                                fontSize: 15,
+                              ),
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text("Submit"),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              _clearText();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              textStyle: const TextStyle(
+                                fontSize: 15,
+                              ),
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text("Clear"),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
                       ),
                     ],
-                  ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: _submitProject,
-                child: Text("Submit"),
-              ),
-            ),
-          ],
+                  ))),
         ),
       ),
     );
   }
 }
 
-class ProjectDetailScreen extends StatelessWidget {
-  final List<Map<String, String>> budgetData;
 
-  ProjectDetailScreen({required this.budgetData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Project Details")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Selected Budget Details",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
-            Table(
-              border: TableBorder.all(),
-              columnWidths: {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(color: Colors.grey[300]),
-                  children: [
-                    _buildTableCell("Budget Code", isHeader: true),
-                    _buildTableCell("Description", isHeader: true),
-                  ],
-                ),
-                for (var row in budgetData)
-                  TableRow(
-                    children: [
-                      _buildTableCell(row["Budget Code"] ?? ""),
-                      _buildTableCell(row["Description"] ?? ""),
-                    ],
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTableCell(String text, {bool isHeader = false}) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-}
