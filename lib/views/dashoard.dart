@@ -21,10 +21,10 @@ class _DashboardState extends State<Dashboard>
 
 
   static final List<Widget> _widgetOptions = <Widget>[
-    const Dashboard(),
-    const Budgetcodeview(),
-    Budgetamount(),
-  
+   
+   const DashboardView(),
+   const Budgetcodeview(),
+   const Budgetamount(),
     ProjectInfo(),
     const TripInfo(),
     const Center(child: Text("Advance Request")),

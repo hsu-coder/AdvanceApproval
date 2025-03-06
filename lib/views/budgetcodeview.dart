@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:advance_budget_request_system/views/api_service.dart';
+import 'package:advance_budget_request_system/views/data.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -10,36 +13,60 @@ class Budgetcodeview extends StatefulWidget {
 }
 
 class _BudgetcodeviewState extends State<Budgetcodeview> {
-  // List<Map<String, dynamic>> budgetInformation =
-  //     List.generate(100, (int index) {
-  //   return {
-  //     'BudgetCode': 'B-$index',
-  //     'Description': 'BudgetDescription $index',
-  //     'Action': '',
-  //   };
-  // });
+  // List<Map<String, dynamic>> budgetInformation = [];
+  // List<dynamic> budgetInformation = [];
+  // List<dynamic> filteredData = [];
+  List<Budget> budgetInformation = [];
+  List<Budget> filteredData = [];
 
-
-
-  List<Map<String, dynamic>> budgetInformation = [];
-
-  Future<List<dynamic>>fetchBudgetCodeData() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/budgetInformation'));
-    if (response.statusCode == 200) {
-    return jsonDecode(response.body);
-  } else {
-    throw Exception('Failed to load data');
-  }
-  }
-
-  List<Map<String, dynamic>> filteredData = [];
   String searchQuery = '';
-
   final TextEditingController _searchingController = TextEditingController();
 
+  Future<void> fetchBudgetCodes() async {
+    final apiService = ApiService();
+    try {
+      List<Budget> data = await apiService.fetchBudgetCodeData();
+      setState(() {
+        budgetInformation = data;
+        filteredData = data;
+        // if (filteredData.isNotEmpty) {
+        //   int maxID = filteredData
+        //       .map((b) => int.parse(b.BudgetCode.split('-')[2]))
+        //       .reduce((a, b) => a > b ? a : b);
+        // }
+      });
+      print("Fetched Budget Codes: $data");
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
+  }
+
+  // void addnewBudgetcode(String BudgetCode, String Description) async {
+  //   final apiService = ApiService();
+  //   Map<String, dynamic> newbg = {
+  //     "BudgetCode": BudgetCode,
+  //     "Description": Description
+  //   };
+
+  //   bool success = await apiService.postBudgetCode(newbg);
+  //   if (success) {
+  //     setState(() {
+  //       fetchBudgetCodes();
+  //     });
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Budget Code added successfully!")),
+  //     );
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Failed to add Budget Code!")),
+  //     );
+  //   }
+  // }
+
+  @override
   void initState() {
     super.initState();
-    filteredData = List.from(budgetInformation);
+    fetchBudgetCodes();
   }
 
   // Searchbarfilter fuction
@@ -48,8 +75,8 @@ class _BudgetcodeviewState extends State<Budgetcodeview> {
       searchQuery = query;
       filteredData = budgetInformation
           .where((item) =>
-              item['BudgetCode'].toLowerCase().contains(query.toLowerCase()) ||
-              item['Description'].toLowerCase().contains(query.toLowerCase()))
+              item.BudgetCode.toLowerCase().contains(query.toLowerCase()) ||
+              item.Description.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -62,7 +89,7 @@ class _BudgetcodeviewState extends State<Budgetcodeview> {
     });
   }
 
- void _deleteConfirmation(int index) async {
+  void _deleteConfirmation(int index) async {
     bool? confirm = await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -127,17 +154,17 @@ class _BudgetcodeviewState extends State<Budgetcodeview> {
                   IconButton(
                     onPressed: () async {
                       // ignore: unused_local_variable
-                      final List<Map<String, dynamic>>? newBudget =
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => BudgetCodeEntry(
-                                          onBudgetAdded: (newBudget) {
-                                        setState(() {
-                                          _refreshTable();
-                                          budgetInformation.addAll(newBudget);
-                                        });
-                                      })));
+                      final List<Budget>? newBudget = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BudgetCodeEntry(
+                                      onBudgetAdded:
+                                          (List<Budget> newBudgetList) {
+                                    setState(() {
+                                      _refreshTable();
+                                      budgetInformation.addAll(newBudgetList);
+                                    });
+                                  })));
                     },
                     icon: Icon(Icons.add),
                     color: Colors.blueGrey,
@@ -207,47 +234,72 @@ class _BudgetcodeviewState extends State<Budgetcodeview> {
                     2: FlexColumnWidth(2.5),
                   },
                   children: filteredData.asMap().entries.map((entry) {
-                  int index = entry.key;
+                    int index = entry.key;
                     var row = entry.value;
                     return TableRow(children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(row['BudgetCode'] ?? '1'),
+                        // child: Text(row.'BudgetCode' ?? '1'),
+                        child: Text(row.BudgetCode ?? '1'),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(row['Description'] ?? 'null'),
+                        // child: Text(row['Description'] ?? 'null'),
+                        child: Text(row.Description ?? 'null'),
                       ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon:
-                                const Icon(Icons.edit, color: Colors.blueGrey),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => BudgetCodeEdit(
-                                          budgetInformation:
-                                              budgetInformation[index],
-                                          onBudgetUpdated: (updatedBudget){
-                                            setState(() {
-                                              _refreshTable();
-                                              budgetInformation[index]= updatedBudget;
-                                            });
-                                          })));
-                              //  print("Edit for ${row["Project Code"]}");
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete,
-                                color: Colors.blueGrey),
-                            onPressed: () {
-                              _deleteConfirmation(index);
-                              //  print("Edit for ${row["Project Code"]}");
-                            },
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit,
+                                  color: Colors.blueGrey),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BudgetCodeEdit(
+                                            budgetInformation:
+                                                budgetInformation[index],
+                                            onBudgetUpdated: (updatedBudget) {
+                                              setState(() {
+                                                int index = budgetInformation
+                                                    .indexWhere((element) =>
+                                                        element.id ==
+                                                        updatedBudget.id);
+
+                                                if (index != -1) {
+                                                  budgetInformation[index] =
+                                                      updatedBudget;
+                                                           // Ensure it's not a list
+                                                  _refreshTable();
+                                                } else {
+                                                  print(
+                                                      "Error: Budget code not found in the list.");
+                                                }
+
+                                                // int index = budgetInformation
+                                                //     .indexOf(row);
+                                                // budgetInformation[index] =
+                                                //     updatedBudget;
+                                                // _refreshTable();
+                                                // budgetInformation[index] =
+                                                //     updatedBudget;
+                                              });
+                                            })));
+                                print("Edit for ${row.BudgetCode }");
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete,
+                                  color: Colors.blueGrey),
+                              onPressed: () {
+                                _deleteConfirmation(index);
+                                //  print("Edit for ${row["Project Code"]}");
+                              },
+                            ),
+                          ],
+                        ),
                       )
                     ]);
                   }).toList()),
@@ -260,11 +312,11 @@ class _BudgetcodeviewState extends State<Budgetcodeview> {
 }
 
 class BudgetCodeEntry extends StatefulWidget {
-  final Function(List<Map<String, dynamic>>) onBudgetAdded;
+  //final Function(List<Map<String, dynamic>>) onBudgetAdded;
+  final Function(List<Budget>) onBudgetAdded;
 
   const BudgetCodeEntry({Key? key, required this.onBudgetAdded})
       : super(key: key);
-
   //const BudgetCodeEntry({super.key});
   @override
   State<BudgetCodeEntry> createState() => _BudgetCodeEntryState();
@@ -273,22 +325,48 @@ class BudgetCodeEntry extends StatefulWidget {
 class _BudgetCodeEntryState extends State<BudgetCodeEntry> {
   //budgetEntry form initialize variable
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _budgetcodeController = TextEditingController();
-
   final TextEditingController _descriptionController = TextEditingController();
+  final ApiService apiService = ApiService();
 
-  void _submitForm() {
+  String generateBudgetCodeID(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    Random rnd = Random();
+    return length > 0
+        ? List.generate(length, (_) => chars[rnd.nextInt(chars.length)]).join()
+        : '0000';
+  }
+
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      List<Map<String, dynamic>> newProject = [
-        {
-          "BudgetCode": _budgetcodeController.text,
-          "Description": _descriptionController.text,
+      Budget newBudgetAdd = Budget(
+          id:generateBudgetCodeID(4),
+          BudgetCode: _budgetcodeController.text,
+          Description: _descriptionController.text,
+          InitialAmount: 0);
+          
+          
+      try {
+        //print("Budget Payload:$newBudgetAdd");
+        // Budget budgetObj = Budget.fromJson(newBudgetAdd);
+        bool isSuccess = await apiService.postBudgetCode(newBudgetAdd);
+        if (isSuccess) {
+          widget.onBudgetAdded([newBudgetAdd]);
+          Navigator.pop(context);
         }
-      ];
-      widget.onBudgetAdded(newProject);
-      Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to add Budget Code: $e")),
+        );
+      }
     }
+  }
+
+  void _clearText() {
+    setState(() {
+      _descriptionController.clear();
+      _budgetcodeController.clear();
+    });
   }
 
   @override
@@ -357,14 +435,17 @@ class _BudgetCodeEntryState extends State<BudgetCodeEntry> {
                       children: [
                         ElevatedButton(
                             onPressed: () {
-                              
                               _submitForm();
                             },
                             child: Text("Submit")),
                         SizedBox(
                           width: 10,
                         ),
-                        ElevatedButton(onPressed: () {}, child: Text("Cancel")),
+                        ElevatedButton(
+                            onPressed: () {
+                              _clearText();
+                            },
+                            child: Text("Cancel")),
                       ],
                     )
                   ],
@@ -376,16 +457,21 @@ class _BudgetCodeEntryState extends State<BudgetCodeEntry> {
   }
 }
 
-class BudgetCodeEdit extends StatefulWidget {
-  final Map<String, dynamic> budgetInformation;
 
-  final Function(Map<String, dynamic>) onBudgetUpdated;
+
+
+
+
+class BudgetCodeEdit extends StatefulWidget {
+  final Function(Budget) onBudgetUpdated;
+  // final Map<String, dynamic> budgetInformation;
+  final Budget budgetInformation;
+  // final Function(Map<String, dynamic>) onBudgetUpdated;
   const BudgetCodeEdit(
       {Key? key,
       required this.budgetInformation,
       required this.onBudgetUpdated})
       : super(key: key);
-
   // const BudgetCodeEdit({super.key});
 
   @override
@@ -395,26 +481,56 @@ class BudgetCodeEdit extends StatefulWidget {
 class _BudgetCodeEditState extends State<BudgetCodeEdit> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _budgetcodeController = TextEditingController();
-
   final TextEditingController _descriptionController = TextEditingController();
+  final ApiService apiService = ApiService();
 
+  @override
   void initState() {
     super.initState();
-
-    _budgetcodeController.text = widget.budgetInformation['BudgetCode'];
-    _descriptionController.text = widget.budgetInformation['Description'];
+    _budgetcodeController.text = widget.budgetInformation.BudgetCode;
+    _descriptionController.text = widget.budgetInformation.Description;
   }
 
-  void _submiteditForm() {
-    if (_formKey.currentState!.validate()) {
-      Map<String, dynamic> updatedBudget = {
-        'BudgetCode': _budgetcodeController.text,
-        'Description': _descriptionController.text,
-        // Keep the existing status
-      };
+  String generateBudgetCodeID(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    Random rnd = Random();
+    return length > 0
+        ? List.generate(length, (_) => chars[rnd.nextInt(chars.length)]).join()
+        : '0000';
+  }
 
-     widget.onBudgetUpdated(updatedBudget);
-      Navigator.pop(context);
+  Future<void> _submiteditForm() async {
+    if (_formKey.currentState!.validate()) {
+      Budget updatedBudget = Budget(
+        id:widget.budgetInformation.id,
+        // generateBudgetCodeID(4),
+        BudgetCode: _budgetcodeController.text,
+        Description: _descriptionController.text,
+         InitialAmount: 0
+        //InitialAmount: int.tryParse('')
+        // Keep the existing status
+      );
+      try {
+        //print("Budget Payload:$newBudgetAdd");
+        // Budget budgetObj = Budget.fromJson(newBudgetAdd);
+        bool isSuccess = await apiService.updateBudget(updatedBudget);
+        if (isSuccess) {
+          widget.onBudgetUpdated(updatedBudget);
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to Update Budget Code: $e")),
+        );
+      }
+
+      // bool success = await ApiService().upBudgetCode(widget. BudgetCode,updatedBudget);
+      // if(success){
+      //    widget.onBudgetUpdated(updatedBudget);
+      // Navigator.pop(context);
+      // }else {
+      //   print('Failed to update Budget');
+      // }
     }
   }
 
@@ -424,8 +540,6 @@ class _BudgetCodeEditState extends State<BudgetCodeEdit> {
       _budgetcodeController.clear();
     });
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -457,41 +571,33 @@ class _BudgetCodeEditState extends State<BudgetCodeEdit> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
-                    controller: _budgetcodeController,
-                    decoration: InputDecoration(
-                      labelText: 'BudgetCode',
-                      
-                    ),
-                   
-                    validator:(value){
-                      if(value == null || value.isEmpty){
-                        return "Please enter BudgetCode";
-                      }
-                      return null;
-                    }
-                  ),
+                      controller: _budgetcodeController,
+                      decoration: InputDecoration(
+                        labelText: 'BudgetCode',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter BudgetCode";
+                        }
+                        return null;
+                      }),
                   TextFormField(
-                    controller: _descriptionController,
-                    decoration: InputDecoration(
-                      labelText: 'Description'),
-                      validator:(value){
-                      if(value == null || value.isEmpty){
-                        return "Please enter Description";
-                      }
-                      return null;
-                    }
+                      controller: _descriptionController,
+                      decoration: InputDecoration(labelText: 'Description'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter Description";
+                        }
+                        return null;
+                      }),
+                  SizedBox(
+                    height: 10,
                   ),
-                  SizedBox(height: 10,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                          onPressed: 
-                          
-                            _submiteditForm,
-                            
-                          
-                          child: Text("Submit")),
+                          onPressed: _submiteditForm, child: Text("Submit")),
                       SizedBox(
                         width: 10,
                       ),

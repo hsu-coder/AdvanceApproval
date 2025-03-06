@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:advance_budget_request_system/views/api_service.dart';
+import 'package:advance_budget_request_system/views/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -9,51 +13,60 @@ class Budgetamount extends StatefulWidget {
 }
 
 class _BudgetamountState extends State<Budgetamount> {
-   List<Map<String, dynamic>> budgetamountInformation =
-      List.generate(100, (int index) {
-    return {
-      'BudgetCode': 'B-$index',
-      'Description': 'BudgetDescription $index',
-      'InitialAmount':'0',
-      'Action': '',
-    };
-  });
-  List<Map<String, dynamic>> filteredBudgetAmount = [];
-   String searchQuery = '';
-
-   TextEditingController _searchingController = TextEditingController();
-
-  void initState() {
-    super.initState();
-    filteredBudgetAmount = List.from(budgetamountInformation);
-  }
+  
+  List<BudgetAmount> budgetamountInformation = [];
+  List<BudgetAmount> filteredBudgetAmount = [];
+  String searchQuery = '';
+  TextEditingController _searchingController = TextEditingController();
 
   
+  // List<Map<String, dynamic>> filteredBudgetAmount = [];
+  Future<void> fetchBudgetAmount() async {
+    final apiService = ApiService();
+    try {
+    
+      List<BudgetAmount> data = await apiService.fetchBudgetAmount();
+      setState(() {
+        budgetamountInformation = data;
+        filteredBudgetAmount = data;
+        // if (filteredBudgetAmount.isNotEmpty) {
+        //   int maxID = filteredBudgetAmount
+        //       .map((b) => int.parse(b.BudgetCode.split('-')[2]))
+        //       .reduce((a, b) => a > b ? a : b);
+        // }
+      });
+    //  print("Fetched Budget Amount: $data");
+    } catch (e) {
+      print("Error fetching data: $e");
+    }
+  }
 
-    // Searchbarfilter fuction
+  @override
+  void initState() {
+    super.initState();
+    fetchBudgetAmount();
+    // filteredBudgetAmount = List.from(budgetamountInformation);
+  }
+
+  // Searchbarfilter fuction
   void _searchFilter(String query) {
     setState(() {
       searchQuery = query;
       filteredBudgetAmount = budgetamountInformation
           .where((item) =>
-              item['BudgetCode'].toLowerCase().contains(query.toLowerCase()) ||
-              item['Description'].toLowerCase().contains(query.toLowerCase())
-              
-              )
+              item.BudgetCode!.toLowerCase().contains(query.toLowerCase()) ||
+              item.Description!.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
-  
-   //Refresh function
+
+  //Refresh function
   void _refreshbudgetamountTable() {
     setState(() {
       _searchingController.clear();
       filteredBudgetAmount = List.from(budgetamountInformation);
     });
   }
-
-  
-  
 
   @override
   Widget build(BuildContext context) {
@@ -147,69 +160,83 @@ class _BudgetamountState extends State<Budgetamount> {
               ],
             ),
             Expanded(
+              child:SingleChildScrollView(
+            
+              
               child: Table(
-                 border: const TableBorder.symmetric(
-                      inside: BorderSide(color: Colors.grey, width: 1),
-                      outside: BorderSide(color: Colors.grey, width: 1),
-                    ),
-                     columnWidths: const {
-                  0: FlexColumnWidth(1.5),
-                  1: FlexColumnWidth(2.5),
-                  2: FlexColumnWidth(2.5),
-                  3: FlexColumnWidth(2.5)
-                },
-                children: filteredBudgetAmount.asMap().entries.map((entry){
-                  int index= entry.key ;
-                  var row = entry.value;
-                  return TableRow(children: [
-                     Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(row['BudgetCode'] ?? '1'),
-                        ),
-                         Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(row['Description'] ?? 'no'),
-                        ),
-                         Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(row['InitialAmount'] ?? '0'),
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: (){
-                                print(budgetamountInformation);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>BudgetInitialAmount(
-                                     budgetamountInformation :
-                                              budgetamountInformation[index],
-                                          OnBudgetAmountUpdated: (UpdatedInitialAmount){
-                                            setState(() {
-                                              _refreshbudgetamountTable();
-                                              budgetamountInformation[index]= UpdatedInitialAmount;
-                                            });
-                                          })));
-                              }, 
-                              icon: Icon(Icons.input,color:Colors.blueGrey,)),
-                               IconButton(
-                              onPressed: (){}, 
-                              icon: Icon(Icons.edit ,color:Colors.blueGrey,)),
-                              
-                          ],
+                  border: const TableBorder.symmetric(
+                    inside: BorderSide(color: Colors.grey, width: 1),
+                    outside: BorderSide(color: Colors.grey, width: 1),
+                  ),
+                  columnWidths: const {
+                    0: FlexColumnWidth(1.5),
+                    1: FlexColumnWidth(2.5),
+                    2: FlexColumnWidth(2.5),
+                    3: FlexColumnWidth(2.5)
+                  },
+                  children: filteredBudgetAmount.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    var row = entry.value;
+                    return TableRow(children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(row.BudgetCode ?? '1'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(row.Description ?? 'no'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(row.InitialAmount?.toString() ?? '0'),
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                              onPressed: ()  {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => BudgetInitialAmount(
+                                            budgetamountInformation:
+                                                budgetamountInformation[index],
+                                           OnBudgetAmountUpdated: (AddInitialAmount) {
+                                              setState(() {
+                                                int index = budgetamountInformation
+                                                    .indexWhere((element) =>
+                                                        element.id ==
+                                                        AddInitialAmount.id);
+
+                                                if (index != -1) {
+                                                  budgetamountInformation[index] =
+                                                      AddInitialAmount;
+                                                         
+                                                _refreshbudgetamountTable();
+                                                } else {
+                                                  print(
+                                                      "Error: Budget code not found in the list.");
+                                                }
+
                           
-                          
-                        )
-              
-                  ]
-              
-                  );
-              
-                }).toList()
-                
-              
-              ),
+                                              });
+                                            })));
+
+                              },
+                              icon: Icon(
+                                Icons.input,
+                                color: Colors.blueGrey,
+                              )),
+                          IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.edit,
+                                color: Colors.blueGrey,
+                              )),
+                        ],
+                      )
+                    ]);
+                  }).toList()),
+            )
             )
           ],
         ),
@@ -219,48 +246,83 @@ class _BudgetamountState extends State<Budgetamount> {
 }
 
 class BudgetInitialAmount extends StatefulWidget {
-  final Map<String,dynamic> budgetamountInformation;
-  final Function(Map<String,dynamic>) OnBudgetAmountUpdated;
 
-  const BudgetInitialAmount({Key?key , required this.budgetamountInformation , required this.OnBudgetAmountUpdated}):super(key: key); 
+ //  final Map<String, dynamic> budgetamountInformation;
+   
+   final BudgetAmount budgetamountInformation;
+  //final Function(Map<String, dynamic>) OnBudgetAmountUpdated;
+   final Function(BudgetAmount) OnBudgetAmountUpdated;
+
+
+
+  const BudgetInitialAmount(
+      {Key? key,
+       required this.budgetamountInformation,
+      required this.OnBudgetAmountUpdated})
+      : super(key: key);
 
   @override
   State<BudgetInitialAmount> createState() => _BudgetInitialAmountState();
 }
 
 class _BudgetInitialAmountState extends State<BudgetInitialAmount> {
-final   _formKey = GlobalKey<FormState>();
-
-final  TextEditingController _budgetCodeController = TextEditingController();
-final TextEditingController _descriptionController = TextEditingController();
-final TextEditingController _initialamountController = TextEditingController();
-
-void initState(){
-  super.initState();
-  _budgetCodeController.text = widget.budgetamountInformation['BudgetCode'];
-   _descriptionController.text = widget.budgetamountInformation['Description'];
-   _initialamountController.text = widget.budgetamountInformation['InitialAmount'];
-
-}
-
-void _submitInitialAmount(){
-  if(_formKey.currentState!.validate()){
-    Map<String,dynamic> UpdatedInitialAmount=
-
-    {
-    'BudgetCode': _budgetCodeController.text,
-    'Description':_descriptionController.text,
-    'InitialAmount':_initialamountController.text,
-    } ;
-    
-
-   widget.OnBudgetAmountUpdated(UpdatedInitialAmount);
-      Navigator.pop(context);
-
-   
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _budgetCodeController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _initialamountController =TextEditingController();
+  final ApiService apiService = ApiService();
+   String generateBudgetAmountID(int length) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    Random rnd = Random();
+    return length > 0
+        ? List.generate(length, (_) => chars[rnd.nextInt(chars.length)]).join()
+        : '0000';
   }
 
-}
+  
+
+
+
+  void initState() {
+    super.initState();
+    _budgetCodeController.text = widget.budgetamountInformation.BudgetCode?? ''; 
+    _descriptionController.text = widget.budgetamountInformation.Description?? ''; 
+    _initialamountController.text = widget.budgetamountInformation.InitialAmount?.toString() ?? '';
+  }
+
+  void _submitInitialAmount()  async {
+    if (_formKey.currentState!.validate()) {
+      BudgetAmount AddInitialAmount = BudgetAmount(
+        id: widget.budgetamountInformation.id,
+        BudgetCode:_budgetCodeController.text, 
+        Description: _descriptionController.text,
+        InitialAmount:  int .tryParse(_initialamountController.text));
+
+        try{
+           bool isSuccess = await apiService.updateBudgetAmount(AddInitialAmount);
+        if (isSuccess) {
+          widget.OnBudgetAmountUpdated(AddInitialAmount);
+          Navigator.pop(context);
+        }
+
+        }
+        catch(e){
+          ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to add BudgetAmount: $e")),
+        );
+
+        }
+      // {
+      //   'BudgetCode': _budgetCodeController.text,
+      //   'Description': _descriptionController.text,
+      //   'InitialAmount': _initialamountController.text,
+      // };
+
+      // widget.OnBudgetAmountUpdated(UpdatedInitialAmount);
+      // Navigator.pop(context);
+    }
+  }
+
   void _clearText() {
     setState(() {
       _descriptionController.clear();
@@ -269,34 +331,29 @@ void _submitInitialAmount(){
     });
   }
 
-  
-  
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: AppBar(title: Text("Initial Budget Amount")),
-     body: Padding(
-       padding: const EdgeInsets.all(16.0),
-       child: Center(
-         child: Container(
-            width: MediaQuery.of(context).size.width / 3,
+        appBar: AppBar(title: Text("Initial Budget Amount")),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Container(
+                width: MediaQuery.of(context).size.width / 3,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(255, 149, 239, 233),
                   borderRadius: BorderRadius.circular(15), // Rounded corners
                   border: Border.all(color: Colors.black, width: 1),
-                   boxShadow: [
+                  boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.3), // Shadow color
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
                   ],
-                   ),
-                   child:  Form(
+                ),
+                child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -305,56 +362,49 @@ void _submitInitialAmount(){
                         controller: _budgetCodeController,
                         decoration: InputDecoration(
                           labelText: 'BudgetCode',
-                          
                         ),
-                       
-                        validator:(value){
-                          if(value == null || value.isEmpty){
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
                             return "Please enter BudgetCode";
                           }
                           return null;
                         },
                         readOnly: true,
                       ),
-         
                       TextFormField(
                         controller: _descriptionController,
-                        decoration: InputDecoration(
-                          labelText: 'Description'),
-                          validator:(value){
-                          if(value == null || value.isEmpty){
+                        decoration: InputDecoration(labelText: 'Description'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
                             return "Please enter Description";
                           }
                           return null;
                         },
                         readOnly: true,
                       ),
-         
                       TextFormField(
                         controller: _initialamountController,
-                        decoration: InputDecoration(
-                          labelText: 'InitialAmount'),
-                          validator:(value){
-                          if(value == null || value.isEmpty){
+                        decoration: InputDecoration(labelText: 'InitialAmount'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
                             return "Please enter InitialAmount";
                           }
                           return null;
                         },
                       ),
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ElevatedButton(
-                              onPressed: (){
+                              onPressed: () {
                                 _submitInitialAmount();
-                               
-                                
-
                               },
-                              
+
                               //  _submiteditForm,
-                              
+
                               child: Text("Submit")),
                           SizedBox(
                             width: 10,
@@ -368,15 +418,8 @@ void _submitInitialAmount(){
                       )
                     ],
                   ),
-                )
-         
-          
-         
-         ),
-       ),
-     )
-
-    );
-
+                )),
+          ),
+        ));
   }
 }
