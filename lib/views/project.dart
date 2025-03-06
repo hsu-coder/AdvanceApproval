@@ -28,6 +28,11 @@ class _ProjectInfoState extends State<ProjectInfo> {
   List<Map<String, dynamic>> filterData = [];
   String searchQuery = '';
 
+  final List<Map<String, dynamic>> chooseBudgetCodes = [];
+  // String selectedBudgetCode = "";
+  // List<String> selectedBudgetCodes = [];
+  //Set<String> selectedBudgetCodes = {};
+
   List<String> selectedFilters = [];
   List<Map<String, dynamic>> projectData = [
     {
@@ -38,9 +43,9 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Currency': 'MMK', // 'Approved Amount': '60,000 MMK',''
       'Department': 'IT',
       'Requestable': 'Yes',
-       "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
+      "BudgetDetails": [
+        {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
+        {'Budget Code': 'B002', 'Description': 'Short Trip'},
       ],
     },
     {
@@ -51,9 +56,9 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Currency': 'MMK', // 'Approved Amount': '60,000 MMK',''
       'Department': 'IT',
       'Requestable': 'Yes',
-       "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
+      "BudgetDetails": [
+        {'Budget Code': 'B004', 'Description': 'On Job Training'},
+        {'Budget Code': 'B005', 'Description': 'Team Building'},
       ],
     },
     {
@@ -178,7 +183,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-     'Date': '2025-02-01',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-016',
       'Description': 'Final Project',
       'Total Budget Amount': '7000,000 ',
@@ -205,7 +210,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'No',
     },
     {
-     'Date': '2025-02-01',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-019',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -214,7 +219,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
       'Requestable': 'Yes',
     },
     {
-     'Date': '2025-02-01',
+      'Date': '2025-02-01',
       'ProjectID': 'PRJ-2324-020',
       'Description': 'Final Project',
       'Total Budget Amount': '100,000 ',
@@ -242,6 +247,18 @@ class _ProjectInfoState extends State<ProjectInfo> {
     },
   ];
 
+  final List<Map<String, dynamic>> BudgetDetails = [
+    {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
+    {'Budget Code': 'B002', 'Description': 'Short Trip'},
+    {'Budget Code': 'B003', 'Description': 'Foreign Trip'},
+    {'Budget Code': 'B004', 'Description': 'On Job Training'},
+    {'Budget Code': 'B005', 'Description': 'Team Building'},
+    {'Budget Code': 'B006', 'Description': 'Software Purchase'},
+    {'Budget Code': 'B007', 'Description': 'New Equipment'},
+    {'Budget Code': 'B008', 'Description': 'Annual Conference'},
+    {'Budget Code': 'B009', 'Description': 'Miscellaneous'},
+  ];
+
   // ignore: unused_element
   void _addProject(List<Map<String, String>> newProject) {
     setState(() {
@@ -254,9 +271,32 @@ class _ProjectInfoState extends State<ProjectInfo> {
     setState(() {
       _searchController.clear();
       selectedDateRange = null;
+      selectedDate = null;
       startDate = null;
       endDate = null;
       filterData = projectData;
+    });
+  }
+
+  void _searchData(String query) {
+    setState(() {
+      List<Map<String, dynamic>> sourceData = projectData;
+      filterData = sourceData.where((Map<String, dynamic> data) {
+        final tripID = data['ProjectID'].toLowerCase();
+        final description = data['Description'].toLowerCase();
+        final totalAmt = data['Total Budget Amount'];
+        final currency = data['Currency'].toLowerCase();
+        final department = data['Department'].toLowerCase();
+        final requestable = data['Requestable'].toLowerCase();
+        final String searchLower = query.toLowerCase();
+
+        return tripID.contains(searchLower) ||
+            description.contains(searchLower) ||
+            totalAmt.contains(searchLower) ||
+            currency.contains(searchLower) ||
+            department.contains(searchLower) ||
+            requestable.contains(searchLower);
+      }).toList();
     });
   }
 
@@ -265,8 +305,8 @@ class _ProjectInfoState extends State<ProjectInfo> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Delete Confirmation"),
-            content: Text("Are you sure to delete this Project Data?"),
+            title: const Text("Delete Confirmation"),
+            content: const Text("Are you sure to delete this Project Data?"),
             actions: [
               TextButton(
                   onPressed: () {
@@ -489,7 +529,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
             actions: [
               TextButton(
                   onPressed: () {
-                    if (initialStartDate.isBefore(initialEndDate) || 
+                    if (initialStartDate.isBefore(initialEndDate) ||
                         initialStartDate.isAtSameMomentAs(initialEndDate)) {
                       setState(() {
                         CustomDateRange = DateTimeRange(
@@ -514,7 +554,6 @@ class _ProjectInfoState extends State<ProjectInfo> {
         });
   }
 
-  
   void _openAdvancedSearchDialog() {
     showDialog(
       context: context,
@@ -553,172 +592,142 @@ class _ProjectInfoState extends State<ProjectInfo> {
   }
 
   Widget build(BuildContext context) {
-    // {
-    //   'Project Code': 'PRJ-2324-001',
-    //   'Description': 'Final Project',
-    //   'Department': 'IT',
-    //   'Total Budget Amount': '100,000 ',
-    //  'Currency':'MMK', // 'Approved Amount': '60,000 MMK',''
-    //   // 'Status': 'Active',
-    //   'Requestable': 'Yes',
-    // },
-
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Project Information"),
-      ),
-      
       body: Padding(
-        
         padding: const EdgeInsets.all(8.0),
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            
+            const Text("Project Request Information",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-               Padding(
-                 padding: const EdgeInsets.only(left: 20),
-                 child: DropdownButton(
-                     value: selectedDate,
-                     hint: const Text('Filter by Date'),
-                     items: [
-                       DropdownMenuItem(
-                           value: 'today',
-                           child: Tooltip(
-                             message: DateFormat.yMd().format(DateTime.now()),
-                             child: const Text('Today'),
-                           )),
-                       DropdownMenuItem(
-                           value: 'this_week',
-                           child: Tooltip(
-                             message: _getThisWeekRange(),
-                             child: const Text('This Week'),
-                           )),
-                       DropdownMenuItem(
-                           value: 'this_month',
-                           child: Tooltip(
-                             message: _getThisMonthRange(),
-                             child: const Text('This Month'),
-                           )),
-                       DropdownMenuItem(
-                           value: 'this_year',
-                           child: Tooltip(
-                             message: _getThisYearRange(),
-                             child: const Text('This Year'),
-                           )),
-                       DropdownMenuItem(
-                           value: 'custom_date',
-                           child: Tooltip(
-                             message: CustomDateRange != null
-                                 ? '${DateFormat.yMd().format(CustomDateRange!.start)} - ${DateFormat.yMd().format(CustomDateRange!.end)}'
-                                 : 'Choose a Custom Date Range',
-                             child: const Text('Custom Date'),
-                           )),
-                     ],
-                     onChanged: (String? newValue) {
-                       setState(() {
-                         selectedDate = newValue;
-                         if (newValue == 'custom_date') {
-                           _showCustomDateRangeDialog(context);
-                         } else if (newValue != null) {
-                           _filterByPresetDate(newValue);
-                         }
-                       });
-                     }),
-               ),
-                const SizedBox(
-                  width: 20,
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: DropdownButton(
+                      value: selectedDate,
+                      hint: const Text('Filter by Date'),
+                      items: [
+                        DropdownMenuItem(
+                            value: 'today',
+                            child: Tooltip(
+                              message: DateFormat.yMd().format(DateTime.now()),
+                              child: const Text('Today'),
+                            )),
+                        DropdownMenuItem(
+                            value: 'this_week',
+                            child: Tooltip(
+                              message: _getThisWeekRange(),
+                              child: const Text('This Week'),
+                            )),
+                        DropdownMenuItem(
+                            value: 'this_month',
+                            child: Tooltip(
+                              message: _getThisMonthRange(),
+                              child: const Text('This Month'),
+                            )),
+                        DropdownMenuItem(
+                            value: 'this_year',
+                            child: Tooltip(
+                              message: _getThisYearRange(),
+                              child: const Text('This Year'),
+                            )),
+                        DropdownMenuItem(
+                            value: 'custom_date',
+                            child: Tooltip(
+                              message: CustomDateRange != null
+                                  ? '${DateFormat.yMd().format(CustomDateRange!.start)} - ${DateFormat.yMd().format(CustomDateRange!.end)}'
+                                  : 'Choose a Custom Date Range',
+                              child: const Text('Custom Date'),
+                            )),
+                      ],
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedDate = newValue;
+                          if (newValue == 'custom_date') {
+                            _showCustomDateRangeDialog(context);
+                          } else if (newValue != null) {
+                            _filterByPresetDate(newValue);
+                          }
+                        });
+                      }),
                 ),
-                // SizedBox(
-                //   height: 40,
-                //   width: MediaQuery.of(context).size.width / 2,
-                //   child: SearchBar(
-                //     onChanged: _searchFilter,
-                //     leading: Icon(Icons.search),
-                //     hintText: "Search",
-                //   ),
-                // ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.search, color: Colors.black),
-                          onPressed: () {
-                            _filterTable(_searchController.text);
-                          },
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: _searchController,
-                            onChanged: (query) {
-                              _filterTable(query);
-                            },
-                            // textDirection: TextDirection.LTR,
-                            textAlign: TextAlign.start,
-                            decoration: const InputDecoration(
-                              hintText: "Search",
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(8.0),
-                              isCollapsed: true,
-                            ),
+
+                const SizedBox(width: 30),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.search, color: Colors.black),
+                        onPressed: () {
+                          _filterTable(_searchController.text);
+                        },
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _searchData,
+                          textAlign: TextAlign.start,
+                          decoration: const InputDecoration(
+                            hintText: "Search",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.all(8.0),
+                            isCollapsed: true,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: 8.0,
-                          runSpacing: 4.0,
-                          children: selectedFilters.map((filter) {
-                            return Chip(
-                              label: Text(filter),
-                              backgroundColor: Colors.blue.shade100,
-                              deleteIcon: const Icon(Icons.close,
-                                  size: 18, color: Colors.red),
-                              onDeleted: () => _removeFilter(filter),
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        children: selectedFilters.map((filter) {
+                          return Chip(
+                            label: Text(filter),
+                            backgroundColor: Colors.blue.shade100,
+                            deleteIcon: const Icon(Icons.close,
+                                size: 18, color: Colors.red),
+                            onDeleted: () => _removeFilter(filter),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
                 ),
 
                 // 🏷️ Wrap for Filters
 
                 const SizedBox(
-                    width: 30), // Space between search bar and filters button
+                    width: 10), // Space between search bar and filters button
 
-                ElevatedButton.icon(
+                IconButton(
                   icon: const Icon(Icons.more_vert),
-                  label: const Text("Filters"),
+                  // label: const Text("Filters"),
                   onPressed: _openAdvancedSearchDialog,
                 ),
 
-                SizedBox(width: MediaQuery.of(context).size.width / 3.3),
-
+                // SizedBox(width: MediaQuery.of(context).size.width / 3.3),
+                const SizedBox(width: 10),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 150, 212, 234),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.greenAccent),
+                    borderRadius: BorderRadius.circular(10),
+                    // border: Border.all(color: Colors.greenAccent),
                   ),
                   child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.add, color: Colors.black),
@@ -769,14 +778,15 @@ class _ProjectInfoState extends State<ProjectInfo> {
                       outside: BorderSide(color: Colors.grey, width: 1),
                     ),
                     columnWidths: const {
-                      0: FlexColumnWidth(0.7),
-                      1: FlexColumnWidth(0.8),
+                      0: FlexColumnWidth(0.6),
+                      1: FlexColumnWidth(0.7),
                       2: FlexColumnWidth(2.5),
-                      3: FlexColumnWidth(1.3),
+                      3: FlexColumnWidth(1.0),
                       4: FlexColumnWidth(0.5),
-                      5: FlexColumnWidth(0.5),
+                      5: FlexColumnWidth(0.7),
                       6: FlexColumnWidth(0.6),
                       7: FlexColumnWidth(0.8),
+                      8: FlexColumnWidth(0.9),
                     },
                     children: const [
                       TableRow(
@@ -820,6 +830,11 @@ class _ProjectInfoState extends State<ProjectInfo> {
                           ),
                           Padding(
                             padding: EdgeInsets.all(8.0),
+                            child: Text("Budget code",
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(8.0),
                             child: Text("Action",
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                           ),
@@ -832,88 +847,86 @@ class _ProjectInfoState extends State<ProjectInfo> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                
                 child: Table(
                   border: const TableBorder.symmetric(
                     inside: BorderSide(color: Colors.grey, width: 1),
                     outside: BorderSide(color: Colors.black, width: 1),
                   ),
                   columnWidths: const {
-                    0: FlexColumnWidth(0.7),
-                    1: FlexColumnWidth(0.8),
+                    0: FlexColumnWidth(0.6),
+                    1: FlexColumnWidth(0.7),
                     2: FlexColumnWidth(2.5),
-                    3: FlexColumnWidth(1.3),
+                    3: FlexColumnWidth(1.0),
                     4: FlexColumnWidth(0.5),
-                    5: FlexColumnWidth(0.5),
+                    5: FlexColumnWidth(0.7),
                     6: FlexColumnWidth(0.6),
                     7: FlexColumnWidth(0.8),
+                    8: FlexColumnWidth(0.9),
                   },
-                  children: filterData.asMap().entries.map((entry)  {
-                   int index = entry.key;
-                    var row = entry.value;
-                   
+                  children: filterData.asMap().entries.map(
+                    (entry) {
+                      int index = entry.key;
+                      var row = entry.value;
+
                       return TableRow(
                         children: [
-                        //  for (var key in row.keys)
-                            // Padding(
-                            //   padding: const EdgeInsets.all(8.0),
-                            //   child: Text(row[key]!),
-                            // ),
-
-
-                            Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Date'] ?? '2025-2-7'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(row['ProjectID'] ?? '1'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Description'] ?? 'fd'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Total Budget Amount'] ?? '0'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Currency'] ?? 'USD'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Department'] ?? 'HR'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Requestable'] ?? 'Pending'),
-                    ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['Date'] ?? '2025-2-7'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['ProjectID'] ?? '1'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['Description'] ?? 'fd'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['Total Budget Amount'] ?? '0'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['Currency'] ?? 'USD'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['Department'] ?? 'HR'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['Requestable'] ?? 'Pending'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(row['Budget Code'] ?? ''),
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditProject(
-                                      
-                                      projectData: projectData[index],
-                                      onProjectUpdated: (updatedProject) {
-                                        setState(() {
-                                          _refreshData();
-                                         projectData[index] = updatedProject;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.edit),
-                              color: Colors.black),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditProject(
+                                            projectData: projectData[index],
+                                            onProjectUpdated: (updatedProject) {
+                                              setState(() {
+                                                _refreshData();
+                                                projectData[index] =
+                                                    updatedProject;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.edit),
+                                    color: Colors.black),
                                 IconButton(
                                     onPressed: () {
                                       _deleteConfirmation(
@@ -925,12 +938,69 @@ class _ProjectInfoState extends State<ProjectInfo> {
                                   icon: const Icon(Icons.more_horiz_outlined,
                                       color: Colors.black),
                                   onPressed: () {
+                                    print(
+                                        "Details for ${projectData[index]["Project Code"]}");
+                                    String selectedBudgetCode =
+                                        projectData[index]["Budget Code"] ??
+                                            "N/A";
 
-                                    print("Details for ${row["Project Code"]}");
+                                    List<String> selectedBudgetCodes = [];
+                                    var rawBudgetCodes =
+                                        projectData[index]["Budget Code"];
+                                    if (rawBudgetCodes is String) {
+                                      selectedBudgetCodes = rawBudgetCodes
+                                          .split(',')
+                                          .map((e) => e.trim())
+                                          .toList();
+                                    } else if (rawBudgetCodes is List) {
+                                      selectedBudgetCodes =
+                                          List<String>.from(rawBudgetCodes);
+                                    }
+                                    print(
+                                        "Selected Budget Codes: $selectedBudgetCodes");
+                                    print(
+                                        "Selected Budget Code: $selectedBudgetCode");
+
+                                    List<Map<String, dynamic>> budgetDetails =
+                                        [];
+
+                                    if (selectedBudgetCodes.isNotEmpty) {
+                                      budgetDetails = BudgetDetails.where(
+                                              (budget) =>
+                                                  selectedBudgetCodes.contains(
+                                                      budget["Budget Code"]))
+                                          .toList();
+                                    } else if (selectedBudgetCode != "N/A") {
+                                      budgetDetails = BudgetDetails.where(
+                                          (budget) =>
+                                              budget["Budget Code"] ==
+                                              selectedBudgetCode).toList();
+                                    }
+
+                                    // If no matching budget details are found, add a fallback entry
+                                    if (budgetDetails.isEmpty) {
+                                      budgetDetails = [
+                                        {
+                                          "Budget Code": "N/A",
+                                          "Description":
+                                              "No budget details available"
+                                        }
+                                      ];
+                                    }
+                                    print(
+                                        "Filtered Budget Details: $budgetDetails");
                                     Navigator.push(
-                                      context, 
+                                      context,
                                       MaterialPageRoute(
-                                        builder: (context) => ProjectDetailPage(projectData[index])));
+                                        builder: (context) => ProjectDetailPage(
+                                          projectData: projectData[index],
+                                          selectedBudgetCode:
+                                              selectedBudgetCode,
+                                          selectedBudgetCodes: budgetDetails,
+                                          budgetDetails: budgetDetails,
+                                        ),
+                                      ),
+                                    );
                                   },
                                 ),
                               ],
@@ -972,13 +1042,14 @@ class _EditProjectState extends State<EditProject> {
   String _selectedCurrency = 'MMK';
   final List<String> departments = [
     'HR',
-      'IT',
-      'Finance',
-      'Admin',
-      'Production',
-      'Engineering',
-      'Marketing',
-      'Sales'];
+    'IT',
+    'Finance',
+    'Admin',
+    'Production',
+    'Engineering',
+    'Marketing',
+    'Sales'
+  ];
   String? _selectedDepartment;
 
   @override
@@ -997,7 +1068,7 @@ class _EditProjectState extends State<EditProject> {
       Map<String, dynamic> updatedProject = {
         'Date': dateController.text,
         'ProjectID': _projectController.text,
-        'Description':_descriptionController.text,
+        'Description': _descriptionController.text,
         'Total Budget Amount': _amountController.text,
         'Currency': _selectedCurrency,
         'Department': _selectedDepartment ?? '',
@@ -1131,7 +1202,7 @@ class _EditProjectState extends State<EditProject> {
                               labelText: "Choose your Department",
                             ),
                             value: _selectedDepartment,
-                            items: departments.map(( String department) {
+                            items: departments.map((String department) {
                               return DropdownMenuItem(
                                   value: department, child: Text(department));
                             }).toList(),
@@ -1304,16 +1375,19 @@ class _AdvancedSearchDialogState extends State<AdvancedSearchDialog> {
   }
 }
 
-
-class ProjectDetailPage extends StatefulWidget{
+class ProjectDetailPage extends StatefulWidget {
   final Map<String, dynamic> projectData;
-  final List<Map<String, String>> budgetTable = [
-    {"BudgetCode": "B0001", "Description": "For Marketing"},
-    {"BudgetCode": "B11123", "Description": "Expenses"},
-    {"BudgetCode": "B2001", "Description": "IT Equipment"},
-    {"BudgetCode": "B21123", "Description": "Maintenance"},
-  ];
-   ProjectDetailPage(this.projectData, {super.key});
+  final List<Map<String, dynamic>> selectedBudgetCodes;
+  final String selectedBudgetCode;
+
+  final List<Map<String, dynamic>> budgetDetails;
+  ProjectDetailPage({
+    Key? key,
+    required this.projectData,
+    required this.selectedBudgetCodes,
+    required this.selectedBudgetCode,
+    required this.budgetDetails,
+  }) : super(key: key);
 
   @override
   State<ProjectDetailPage> createState() => _ProjectDetailPageState();
@@ -1321,64 +1395,89 @@ class ProjectDetailPage extends StatefulWidget{
 
 class _ProjectDetailPageState extends State<ProjectDetailPage> {
   @override
-  Widget build(BuildContext context) {
-   return Scaffold(
-    appBar: AppBar(
-      title: Text("Project Details Information"),
-      
-    ),
-    body:Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-           _buildRow("ProjectID", widget.projectData["ProjectID"] ?? "N/A", "Amount", widget.projectData["Total Budget Amount"]?.toString() ?? "0"),
-           const SizedBox(height: 10),
-              _buildRow("Description", widget.projectData["Description"]?.toString() ?? "No Description", "Curency", widget.projectData["Currency"] ?? "Unknown"),
-            const SizedBox(height: 10),
-              _buildRow("Date", widget.projectData["Date"] ?? "N/A", "Name", widget.projectData["Name"] ?? "Hsu"),
-            const SizedBox(height: 10), 
-              _buildRow("Department", widget.projectData["Department"] ?? "N/A", "Requestable", widget.projectData["Requestable"] ?? "N/A"),
-              SizedBox(height: 20),
-              Text("Budget Details", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              _buildBudgetTable(),
-              SizedBox(height: 60),
-              Center(
-                
-                child: ElevatedButton(
-                  
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                  
-                  
-                   child: Text("Back")),
-                   ), 
-          ],
-        ),
-      ),) ,
-   );
-
+  void initState() {
+    super.initState();
+    print("Project Data: ${widget.projectData}");
+    print("Selected Budget Codes: ${widget.selectedBudgetCodes}");
   }
- 
 
+  // final List<Map<String, dynamic>> BudgetDetails = [
+  //   {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
+  //   {'Budget Code': 'B002', 'Description': 'Short Trip'},
+  //   {'Budget Code': 'B003', 'Description': 'Foreign Trip'},
+  //   {'Budget Code': 'B004', 'Description': 'On Job Training'},
+  //   {'Budget Code': 'B005', 'Description': 'Team Building'},
+  //   {'Budget Code': 'B006', 'Description': 'Software Purchase'},
+  //   {'Budget Code': 'B007', 'Description': 'New Equipment'},
+  //   {'Budget Code': 'B008', 'Description': 'Annual Conference'},
+  //   {'Budget Code': 'B009', 'Description': 'Miscellaneous'},
+  // ];
 
- Widget _buildRow(String label1, String value1, String label2, String? value2) {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Project Details Information"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildRow(
+                  "ProjectID",
+                  widget.projectData["ProjectID"] ?? "N/A",
+                  "Amount",
+                  widget.projectData["Total Budget Amount"]?.toString() ?? "0"),
+              const SizedBox(height: 10),
+              _buildRow(
+                  "Description",
+                  widget.projectData["Description"]?.toString() ??
+                      "No Description",
+                  "Curency",
+                  widget.projectData["Currency"] ?? "Unknown"),
+              const SizedBox(height: 10),
+              _buildRow("Date", widget.projectData["Date"] ?? "N/A", "Name",
+                  widget.projectData["Name"] ?? "Hsu"),
+              const SizedBox(height: 10),
+              _buildRow("Department", widget.projectData["Department"] ?? "N/A",
+                  "Requestable", widget.projectData["Requestable"] ?? "N/A"),
+              const SizedBox(height: 20),
+              const Text("Budget Details",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              _buildBudgetTable(),
+              const SizedBox(height: 60),
+              Center(
+                child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("Back")),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRow(
+      String label1, String value1, String label2, String? value2) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildInlineText(label1, value1),
-          if (label2.isNotEmpty) _buildInlineText(label2, value2 ?? "N/A"),
+          if (label2.isNotEmpty) _buildInlineText(label2, value2 ?? ""),
         ],
       ),
     );
@@ -1390,9 +1489,11 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: RichText(
           text: TextSpan(
-            style: TextStyle(fontSize: 16, color: Colors.black),
+            style: const TextStyle(fontSize: 16, color: Colors.black),
             children: [
-              TextSpan(text: "$label: ", style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(
+                  text: "$label: ",
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
               TextSpan(text: value),
             ],
           ),
@@ -1401,50 +1502,61 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
     );
   }
 
-
   Widget _buildBudgetTable() {
-    List<Map<String, String>> budgetTable =
-        List<Map<String, String>>.from(widget.projectData["BudgetDetails"] ?? []);
     return Table(
       border: TableBorder.all(),
-      columnWidths: {0: FlexColumnWidth(1), 1: FlexColumnWidth(2)},
       children: [
-        TableRow(
-          decoration: BoxDecoration(color: const Color.fromARGB(255, 124, 244, 240)),
+        const TableRow(
+          decoration: BoxDecoration(color: Colors.lightBlueAccent),
           children: [
-            _buildTableCell("Budget Code", isHeader: true),
-            _buildTableCell("Description", isHeader: true),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text("Budget Code",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text("Description",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
           ],
         ),
-        for (var row in budgetTable)
-          TableRow(
-            children: [
-              _buildTableCell(row["Budget Code"] ?? ""),
-              _buildTableCell(row["Description"] ?? ""),
-            ],
-          )
+        ...widget.budgetDetails.map((budget) => TableRow(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(budget["Budget Code"]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(budget["Description"]),
+                ),
+              ],
+            )),
       ],
     );
   }
 }
 
-  Widget _buildTableCell(String text,{bool isHeader = false}){
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
-          fontSize: 16,
-        ),
-      ),);
-  }
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text("Project Infomation"),
+// ignore: unused_element
+Widget _buildTableCell(String text, {bool isHeader = false}) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+        fontSize: 16,
+      ),
     ),
   );
 }
+
+// @override
+// Widget build(BuildContext context) {
+//   return Scaffold(
+//     appBar: AppBar(
+//       title: const Text("Project Infomation"),
+//     ),
+//   );
+// }
