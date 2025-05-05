@@ -22,8 +22,26 @@ jobs:
         with:
           submodules: true
           lfs: false
+
+      # 🟢 Add Flutter setup step
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'  # Use your Flutter version
+
+      # 🟢 Get dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 🟢 Build Flutter web output
+      - name: Build Flutter web
+        run: flutter build web
+
+      # Existing: Install OIDC Client
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
+
+      # Existing: Get Id Token
       - name: Get Id Token
         uses: actions/github-script@v6
         id: idtoken
@@ -32,19 +50,19 @@ jobs:
                const coredemo = require('@actions/core')
                return await coredemo.getIDToken()
            result-encoding: string
+
+      # ✅ Upload the pre-built web app
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_SMOKE_002A2DB00 }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "build/web" # Built app content directory - optional
+          app_location: "/" 
+          api_location: "" 
+          output_location: "build/web"
           github_id_token: ${{ steps.idtoken.outputs.result }}
-          ###### End of Repository/Build Configurations ######
+          app_build_command: ""  # 👈 Must be empty to skip Oryx
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
