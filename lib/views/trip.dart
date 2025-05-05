@@ -1,11 +1,17 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:convert';
+import 'dart:html' as html;
+import 'dart:io';
 
+import 'package:advance_budget_request_system/views/api_service.dart';
+import 'package:advance_budget_request_system/views/data.dart';
 import 'package:advance_budget_request_system/views/tripEntry.dart';
+import 'package:csv/csv.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 class TripInfo extends StatefulWidget {
   const TripInfo({super.key});
@@ -15,217 +21,9 @@ class TripInfo extends StatefulWidget {
 }
 
 class _TripInfoState extends State<TripInfo> {
-  List<Map<String, dynamic>> tripData = [
-    {
-      'Date': '2023-10-28',
-      'tripID': '1',
-      'description': 'Job Training',
-      'Total Amount': '200000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-10-29',
-      'tripID': '2',
-      'description': 'Camping',
-      'Total Amount': '500000',
-      'currency': 'MMK',
-      'department': 'HR',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-10-30',
-      'tripID': '3',
-      'description': 'Trip',
-      'Total Amount': '700000',
-      'currency': 'MMK',
-      'department': 'Marketing',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-10-31',
-      'tripID': '4',
-      'description': 'Oversea',
-      'Total Amount': '400000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2025-02-04',
-      'tripID': '5',
-      'description': 'Oversesa meeting',
-      'Total Amount': '500000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2025-02-05',
-      'tripID': '6',
-      'description': 'Mandalay site vist',
-      'Total Amount': '300000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2025-02-06',
-      'tripID': '7',
-      'description': 'Trip',
-      'Total Amount': '100000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2025-10-28',
-      'tripID': '8',
-      'description': 'Oversea',
-      'Total Amount': '300000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-11-01',
-      'tripID': '9',
-      'description': 'Camping',
-      'Total Amount': '200000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-11-02',
-      'tripID': '10',
-      'description': 'Training',
-      'Total Amount': '800000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-11-03',
-      'tripID': '11',
-      'description': 'Trip',
-      'Total Amount': '300000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-11-04',
-      'tripID': '12',
-      'description': 'Oversea',
-      'Total Amount': '400000',
-      'currency': 'MMK',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-11-05',
-      'tripID': '13',
-      'description': 'Site visit',
-      'Total Amount': '500000',
-      'currency': 'MMK',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-11-06',
-      'tripID': '14',
-      'description': 'Training',
-      'Total Amount': '200000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-11-07',
-      'tripID': '15',
-      'description': 'Oversea',
-      'Total Amount': '300000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-    {
-      'Date': '2023-10-8',
-      'tripID': '16',
-      'description': 'Camping',
-      'Total Amount': '100000',
-      'currency': 'MMK',
-      'department': 'Admin',
-      "BudgetDetails": [
-        {"Budget Code": "B0001", "Description": "For Marketing"},
-        {"Budget Code": "B11123", "Description": "Expenses"},
-      ],
-    },
-  ];
-
-  final List<Map<String, dynamic>> BudgetDetails = [
-    {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
-    {'Budget Code': 'B002', 'Description': 'Short Trip'},
-    {'Budget Code': 'B003', 'Description': 'Foreign Trip'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-  ];
-
-  List<Map<String, dynamic>> filteredData = [];
+  List<Trip> tripData = [];
+  List<Trip> filteredData = [];
+  List<Budget> BudgetDetail = [];
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -238,10 +36,34 @@ class _TripInfoState extends State<TripInfo> {
   String? sortColumn;
   bool sortAscending = true;
 
+  int rowsPerPage = 10;
+  int currentPage = 1;
+  int totalPages = 1;
+
   @override
   void initState() {
     super.initState();
-    filteredData = List.from(tripData);
+    _fetchData();
+    _refreshData();
+    currentPage = 1;
+    _updatePagination();
+  }
+
+  void _fetchData() async {
+    try {
+      List<Trip> trips = await ApiService().fetchTripinfoData();
+   List<Budget> BudgetDetails = await ApiService().fetchBudgetCodeData();
+      print("Fetched trips: ${trips.length}");
+      setState(() {
+        BudgetDetail =BudgetDetails;
+        tripData = trips;
+        filteredData = List.from(tripData);
+        _updatePagination();
+        // _refreshData();
+      });
+    } catch (e) {
+      print('Fail to request: $e');
+    }
   }
 
   // Date filter
@@ -292,15 +114,11 @@ class _TripInfoState extends State<TripInfo> {
   void _filterDataByDateRange(DateTimeRange dateRange) {
     setState(() {
       filteredData = tripData.where((data) {
-        final dateString = data['Date'];
-        if (dateString == null) return false;
-        final DateTime? dataDate =
-            dateString is DateTime ? dateString : DateTime.tryParse(dateString);
-        if (dataDate == null) return false;
-        return dataDate
+        return data.date
                 .isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
-            dataDate.isBefore(dateRange.end.add(const Duration(days: 1)));
+            data.date.isBefore(dateRange.end.add(const Duration(days: 1)));
       }).toList();
+      _updatePagination();
     });
   }
 
@@ -428,13 +246,13 @@ class _TripInfoState extends State<TripInfo> {
   //Search function
   void _searchData(String query) {
     setState(() {
-      List<Map<String, dynamic>> sourceData = tripData;
-      filteredData = sourceData.where((Map<String, dynamic> data) {
-        final tripID = data['tripID'].toLowerCase();
-        final description = data['description'].toLowerCase();
-        final totalAmt = data['Total Amount'];
-        final currency = data['currency'].toLowerCase();
-        final department = data['department'].toLowerCase();
+      List<Trip> sourceData = tripData;
+      filteredData = sourceData.where((data) {
+        final tripID = data.Trip_Code.toLowerCase();
+        final description = data.description.toLowerCase();
+        final totalAmt = data.totalAmount.toString();
+        final currency = data.currency.toLowerCase();
+        final department = data.departmentName.toLowerCase();
         final String searchLower = query.toLowerCase();
 
         return tripID.contains(searchLower) ||
@@ -443,6 +261,7 @@ class _TripInfoState extends State<TripInfo> {
             currency.contains(searchLower) ||
             department.contains(searchLower);
       }).toList();
+      _updatePagination();
     });
   }
 
@@ -457,8 +276,38 @@ class _TripInfoState extends State<TripInfo> {
       }
 
       filteredData.sort((a, b) {
-        final aValue = a[column];
-        final bValue = b[column];
+        dynamic aValue;
+        dynamic bValue;
+
+        switch (column) {
+          case 'Date':
+            aValue = a.date;
+            bValue = b.date;
+            break;
+          case 'Trip_Code':
+            aValue = a.Trip_Code;
+            bValue = b.Trip_Code;
+            break;
+          case 'Description':
+            aValue = a.description;
+            bValue = b.description;
+            break;
+          case 'Total Amount':
+            aValue = a.totalAmount;
+            bValue = b.totalAmount;
+            break;
+          case 'Currency':
+            aValue = a.currency;
+            bValue = b.currency;
+            break;
+          case 'Department':
+            aValue = a.departmentName;
+            bValue = b.departmentName;
+            break;
+          default:
+            return 0;
+        }
+
         if (aValue == null || bValue == null) return 0;
 
         if (sortAscending) {
@@ -467,6 +316,7 @@ class _TripInfoState extends State<TripInfo> {
           return bValue.compareTo(aValue);
         }
       });
+      _updatePagination();
     });
   }
 
@@ -492,7 +342,7 @@ class _TripInfoState extends State<TripInfo> {
   }
 
   //Delete
-  void _deleteConfirmation(int index) async {
+  void _deleteConfirmation(Trip trip) async {
     bool? confirm = await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -515,12 +365,18 @@ class _TripInfoState extends State<TripInfo> {
         });
 
     if (confirm != null && confirm) {
-      setState(() {
-        tripData.removeAt(index);
-      });
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Trip Data is deleted successfully")));
+      try {
+        await ApiService().deleteTrip(trip.id.toString());
+        setState(() {
+          tripData.removeWhere((item) => item.id == trip.id);
+          filteredData.remove(trip);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Trip Data is deleted successfully")));
+        });
+        _fetchData();
+      } catch (e) {
+        print("Failed to delete trip $e");
+      }
     }
   }
 
@@ -529,20 +385,160 @@ class _TripInfoState extends State<TripInfo> {
     setState(() {
       _searchController.clear();
       selectedDateRange = null;
-      selectedDate = null;
+      selectedDate = null; 
       startDate = null;
-      endDate = null;
-      filteredData = tripData;
-      sortColumn=null;
-      sortAscending=true;
+      endDate = null; 
+      filteredData = List.from(tripData);
+      sortColumn = null;
+      sortAscending = true;
+      currentPage = 1;
+      _updatePagination();
+      // _fetchData();
     });
+  }
+
+  //reset pagination
+  void _updatePagination() {
+    setState(() {
+      totalPages = (filteredData.length / rowsPerPage).ceil();
+      if (currentPage > totalPages && totalPages != 0) {
+        currentPage = totalPages;
+      } else if (totalPages == 0) {
+        currentPage = 1;
+      }
+    });
+  }
+
+  //Pagination
+  Widget _buildPaginationControls() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Previous Button
+          IconButton(
+            onPressed: currentPage > 1
+                ? () {
+                    setState(() {
+                      currentPage--;
+                      _updatePagination();
+                    });
+                  }
+                : null,
+            icon: const Icon(Icons.arrow_back),
+          ),
+          // Page Indicator
+          Text('Page $currentPage of $totalPages'),
+          // Next Button
+          IconButton(
+            onPressed: currentPage < totalPages
+                ? () {
+                    setState(() {
+                      currentPage++;
+                      _updatePagination();
+                    });
+                  }
+                : null,
+            icon: const Icon(Icons.arrow_forward),
+          ),
+          const SizedBox(width: 20),
+          // Rows per page selector
+          DropdownButton<int>(
+            value: rowsPerPage,
+            items: [10, 15, 20].map((int value) {
+              return DropdownMenuItem<int>(
+                value: value,
+                child: Text('$value rows'),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  rowsPerPage = value;
+                  currentPage =
+                      1; // Reset to page 1 when rows per page is changed
+                  _updatePagination();
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Trip> get paginatedData {
+    int start = (currentPage - 1) * rowsPerPage;
+    int end = start + rowsPerPage < filteredData.length
+        ? start + rowsPerPage
+        : filteredData.length;
+    return filteredData.sublist(start, end);
+  }
+
+  //Download button CSV
+  Future<void> exportToCSV() async {
+    try {
+      // Convert the projectData list to a list of lists (CSV rows)
+      List<List<dynamic>> csvData = [];
+
+      //Add the header row
+      csvData.add([
+        "Request Date",
+        "Trip Code",
+        "Description",
+        "Total Budget Amount",
+        "Currency",
+        "Department",
+        "Budget Detail"
+      ]);
+
+      // Add the data rows
+      for (var trip in tripData) {
+        csvData.add([
+          DateFormat('yyyy-MM-dd').format(trip.date),
+          trip.Trip_Code,
+          trip.description,
+          trip.totalAmount,
+          trip.currency,
+          trip.departmentName,
+          serializeBudgetDetails(trip.budgetDetails)
+        ]);
+      }
+      String csv = const ListToCsvConverter().convert(csvData);
+
+      if (kIsWeb) {
+        final bytes = utf8.encode(csv);
+        final blob = html.Blob([bytes]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.AnchorElement(href: url)
+          ..setAttribute("download", "tripData.csv")
+          ..click();
+
+        html.Url.revokeObjectUrl(url);
+        print("CSV file downloaded in browser.");
+      } else {
+        final directory = await getApplicationDocumentsDirectory();
+        final path = "${directory.path}/tripData.csv";
+        final file = File(path);
+        await file.writeAsString(csv);
+
+        print("CSV file saved to $path");
+      }
+    } catch (e) {
+      print("Error exporting to CSV: $e");
+    }
+  }
+
+  //Budget Detail in CSV
+  String serializeBudgetDetails(List<Budget> budgetDetails) {
+    return budgetDetails.map((budget) {
+      return '${budget.BudgetCode}: ${budget.Description}';
+    }).join('; ');
   }
 
   @override
   Widget build(BuildContext context) {
-    // List<Map<String, dynamic>> filteredTrip = tripData.where((trip) {
-    //   return filteredData.every((filter) => trip.values.contains(filter));
-    // }).toList();
     return Scaffold(
       body: Column(
         children: [
@@ -624,7 +620,9 @@ class _TripInfoState extends State<TripInfo> {
                   ),
                 ),
               ),
-              const SizedBox(width: 10,),
+              const SizedBox(
+                width: 10,
+              ),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -637,17 +635,20 @@ class _TripInfoState extends State<TripInfo> {
                   children: [
                     IconButton(
                       onPressed: () async {
-                        final List<Map<String, dynamic>>? newTrip =
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        AddTrip(onTripAdded: (newTrip) {
-                                          setState(() {
-                                            _refreshData();
-                                            tripData.addAll(newTrip);
-                                          });
-                                        })));
+                        final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    AddTrip(onTripAdded: (newTrip) {
+                                      setState(() {
+                                        tripData.add(newTrip);
+                                        filteredData = List.from(tripData);
+                                      });
+                                      _updatePagination();
+                                    })));
+                        if (result == true) {
+                          _fetchData();
+                        }
                       },
                       icon: const Icon(Icons.add),
                       color: Colors.black,
@@ -660,7 +661,9 @@ class _TripInfoState extends State<TripInfo> {
                       color: Colors.black,
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        exportToCSV();
+                      },
                       icon: const Icon(Icons.download),
                       color: Colors.black,
                     )
@@ -696,30 +699,29 @@ class _TripInfoState extends State<TripInfo> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child:
-                              _buildHeaderCell("Request Date", "Date"),
+                          child: _buildHeaderCell("Request Date", "Date"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: _buildHeaderCell("Trip Code", "tripID"),
+                          child: _buildHeaderCell("Trip Code", "Trip_Code"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: _buildHeaderCell(
-                              "Trip Description", "description"),
+                              "Trip Description", "Trip_Description"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child:
-                              _buildHeaderCell("Total Amount", "Total Amount"),
+                              _buildHeaderCell("Total Amount", "Total_Budget_Amount"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: _buildHeaderCell("Currency", "currency"),
+                          child: _buildHeaderCell("Currency", "Currency"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: _buildHeaderCell("Department", "department"),
+                          child: _buildHeaderCell("Department", "Department_Name"),
                         ),
                         const Padding(
                           padding: EdgeInsets.all(8.0),
@@ -752,33 +754,35 @@ class _TripInfoState extends State<TripInfo> {
                   5: FlexColumnWidth(0.6),
                   6: FlexColumnWidth(0.7),
                 },
-                children: filteredData.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  var row = entry.value;
+                children: paginatedData.map((row) {
                   return TableRow(children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Date']),
+                      child: Text(DateFormat('yyyy-MM-dd').format(row.date)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row['tripID'] ?? '1'),
+                      child: Text(row.Trip_Code),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row['description'] ?? 'fd'),
+                      child: Text(row.description),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row['Total Amount'] ?? '0'),
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            row.totalAmount.toString(),
+                          )),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row['currency'] ?? 'USD'),
+                      child: Text(row.currency),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row['department'] ?? 'HR'),
+                      child: Text(row.departmentName),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -788,83 +792,31 @@ class _TripInfoState extends State<TripInfo> {
                           IconButton(
                               onPressed: () {
                                 Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditTrip(
-                                      tripData: tripData[index],
-                                      onTripUpdated: (updatedTrip) {
-                                        setState(() {
-                                          _refreshData();
-                                          tripData[index] = updatedTrip;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                );
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditTrip(
+                                              tripData: row,
+                                              onTripUpdated: _fetchData,
+                                            )));
                               },
                               icon: const Icon(Icons.edit),
                               color: Colors.black),
                           IconButton(
                               onPressed: () {
-                                _deleteConfirmation(tripData.indexOf(row));
+                                _deleteConfirmation(row);
                               },
                               icon: const Icon(Icons.delete),
                               color: Colors.black),
                           IconButton(
-                            icon: const Icon(Icons.more_horiz_outlined,
-                                color: Colors.black),
-                            onPressed: () {
-                              String selectedBudgetCode =
-                                  tripData[index]["Budget Code"] ?? "N/A";
-
-                              List<String> selectedBudgetCodes = [];
-                              var rawBudgetCodes =
-                                  tripData[index]["Budget Code"];
-                              if (rawBudgetCodes is String) {
-                                selectedBudgetCodes = rawBudgetCodes
-                                    .split(',')
-                                    .map((e) => e.trim())
-                                    .toList();
-                              } else if (rawBudgetCodes is List) {
-                                selectedBudgetCodes =
-                                    List<String>.from(rawBudgetCodes);
-                              }
-
-                              List<Map<String, dynamic>> budgetDetails = [];
-
-                              if (selectedBudgetCodes.isNotEmpty) {
-                                budgetDetails = BudgetDetails.where((budget) =>
-                                    selectedBudgetCodes.contains(
-                                        budget["Budget Code"])).toList();
-                              } else if (selectedBudgetCode != "N/A") {
-                                budgetDetails = BudgetDetails.where((budget) =>
-                                    budget["Budget Code"] ==
-                                    selectedBudgetCode).toList();
-                              }
-
-                              // If no matching budget details are found, add a fallback entry
-                              if (budgetDetails.isEmpty) {
-                                budgetDetails = [
-                                  {
-                                    "Budget Code": "N/A",
-                                    "Description": "No budget details available"
-                                  }
-                                ];
-                              }
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailTrip(
-                                    tripData: tripData[index],
-                                    selectedBudgetCode: selectedBudgetCode,
-                                    selectedBudgetCodes: budgetDetails,
-                                    budgetDetails: budgetDetails,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                              icon: const Icon(Icons.more_horiz_outlined,
+                                  color: Colors.black),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            DetailTrip(tripData: row)));
+                              }),
                         ],
                       ),
                     ),
@@ -872,7 +824,8 @@ class _TripInfoState extends State<TripInfo> {
                 }).toList(),
               ),
             ),
-          ))
+          )),
+          _buildPaginationControls(),
         ],
       ),
     );
@@ -882,17 +835,12 @@ class _TripInfoState extends State<TripInfo> {
 //Detail Trip
 
 class DetailTrip extends StatefulWidget {
-  final Map<String, dynamic> tripData;
-  final List<Map<String, dynamic>> selectedBudgetCodes;
-  final String selectedBudgetCode;
-  final List<Map<String, dynamic>> budgetDetails;
+  final Trip tripData;
 
-  const DetailTrip(
-      {super.key,
-      required this.tripData,
-      required this.selectedBudgetCodes,
-      required this.selectedBudgetCode,
-      required this.budgetDetails});
+  const DetailTrip({
+    super.key,
+    required this.tripData,
+  });
 
   @override
   State<DetailTrip> createState() => _DetailTripState();
@@ -906,16 +854,6 @@ class _DetailTripState extends State<DetailTrip> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> budgetDetails = [];
-    if (widget.tripData["BudgetDetails"] != null) {
-      if (widget.tripData["BudgetDetails"] is String) {
-        budgetDetails = _parseBudgetDetails(widget.tripData["BudgetDetails"]);
-      } else if (widget.tripData["BudgetDetails"] is List) {
-        budgetDetails =
-            List<Map<String, String>>.from(widget.tripData["BudgetDetails"]);
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Trip Details"),
@@ -926,17 +864,19 @@ class _DetailTripState extends State<DetailTrip> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildRow("Trip Code", widget.tripData["tripID"], "Amount",
-                widget.tripData["Total Amount"]),
-            const SizedBox(height: 10),
-            _buildRow("Description", widget.tripData["description"], "Currency",
-                widget.tripData["currency"]),
-            const SizedBox(height: 10),
-            _buildRow("Date", widget.tripData["Date"], "Name",
-                widget.tripData["Name"] ?? 'May'),
-            const SizedBox(height: 10),
-            _buildRow("Department", widget.tripData["department"], "",
-                widget.tripData[""]),
+            _buildRow("Trip Code", widget.tripData.Trip_Code, "Amount",
+                widget.tripData.totalAmount.toString()),
+            const SizedBox(height: 20),
+            _buildRow("Description", widget.tripData.description, "Currency",
+                widget.tripData.currency),
+            const SizedBox(height: 20),
+            _buildRow(
+                "Date",
+                DateFormat('yyyy-MM-dd').format(widget.tripData.date),
+                "Name",
+                "May"),
+            const SizedBox(height: 20),
+            _buildRow("Department", widget.tripData.departmentName, " ", " "),
             const SizedBox(height: 10),
             const SizedBox(height: 20),
             const Text("Budget Details",
@@ -944,12 +884,13 @@ class _DetailTripState extends State<DetailTrip> {
             const SizedBox(
               height: 40,
             ),
-            _buildBudgetTable(),
+            Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: _buildBudgetTable(widget.tripData.budgetDetails)),
             const SizedBox(height: 40),
             Center(
                 child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Back"),
               style: ElevatedButton.styleFrom(
                 textStyle: const TextStyle(
                   fontSize: 15,
@@ -962,6 +903,7 @@ class _DetailTripState extends State<DetailTrip> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
+              child: const Text("Back"),
             )),
           ],
         ),
@@ -1002,7 +944,7 @@ class _DetailTripState extends State<DetailTrip> {
     );
   }
 
-  Widget _buildBudgetTable() {
+  Widget _buildBudgetTable(List<Budget> BudgetDetails) {
     return Table(
       border: TableBorder.all(),
       children: [
@@ -1021,15 +963,15 @@ class _DetailTripState extends State<DetailTrip> {
             ),
           ],
         ),
-        ...widget.budgetDetails.map((budget) => TableRow(
+        ...BudgetDetails.map((budget) => TableRow(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(budget["Budget Code"]),
+                  child: Text(budget.BudgetCode),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(budget["Description"]),
+                  child: Text(budget.Description),
                 ),
               ],
             )),
@@ -1049,18 +991,4 @@ Widget _buildTableCell(String text, {bool isHeader = false}) {
       ),
     ),
   );
-}
-
-List<Map<String, String>> _parseBudgetDetails(String budgetDetails) {
-  try {
-    // Replace single quotes with double quotes for JSON parsing
-    String formattedString = budgetDetails.replaceAll("'", '"');
-    // Parse the JSON string into a List of Maps
-    List<dynamic> parsedList = jsonDecode(formattedString);
-    // Convert to List<Map<String, String>>
-    return parsedList.map((item) => Map<String, String>.from(item)).toList();
-  } catch (e) {
-    print("Error parsing BudgetDetails: $e");
-    return [];
-  }
 }

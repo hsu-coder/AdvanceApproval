@@ -1,12 +1,19 @@
 import 'package:advance_budget_request_system/views/advanceRequest.dart';
+import 'package:advance_budget_request_system/views/approvalsetup.dart';
 import 'package:advance_budget_request_system/views/budgetAmount.dart';
-import 'package:advance_budget_request_system/views/budgetcode.dart';
+import 'package:advance_budget_request_system/views/budgetcodeview.dart';
+import 'package:advance_budget_request_system/views/cashPayment.dart';
+import 'package:advance_budget_request_system/views/data.dart';
+import 'package:advance_budget_request_system/views/login.dart';
+import 'package:advance_budget_request_system/views/permission.dart';
 import 'package:advance_budget_request_system/views/project.dart';
 import 'package:advance_budget_request_system/views/trip.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+  final Map<String, dynamic> userData;
+  const Dashboard({super.key, required this.userData});
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -16,24 +23,33 @@ class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
   bool isMenuBar = false;
+  // ignore: unused_field
   int _selectedIndex = 0;
+  final PageController _pageController = PageController();
+  late String userName;
+  late String userEmail;
+  late String department;
+  late String role;
 
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    const DashboardView(),
+  late List<Widget> _widgetOptions = <Widget>[
+    DashboardView(department: department),
     const Budgetcodeview(),
     const Budgetamount(),
     ProjectInfo(),
     const TripInfo(),
     const Advancerequest(),
-    const Center(child: Text("Cash Payment")),
-    const Center(child: Text("Settlement")),
-    const Center(child: Text("Approval Setup")),
+    const Cashpayment(),
+    // const Settlement(),
+    ApprovalSetupStep(),
   ];
 
   @override
   void initState() {
     super.initState();
+    userName = widget.userData['UserName'];
+    userEmail = widget.userData['User_Email'] ?? '';
+    department = widget.userData['Department_Name'] ?? '';
+    role = widget.userData['Role'] ?? '';
     controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -60,12 +76,43 @@ class _DashboardState extends State<Dashboard>
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _pageController.jumpToPage(index);
       _toggleMenuBar();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final department = Provider.of<UserProvider>(context).department;
+
+    List<Widget> pages = [];
+
+    if (department == 'HR' ||
+        department == 'Marketing' ||
+        department == 'Engineering') {
+      pages = [ProjectInfo(), const TripInfo(), const Advancerequest()];
+    } else if (department == 'Finance') {
+      pages = [
+        ProjectInfo(),
+        const TripInfo(),
+        const Advancerequest(),
+        Cashpayment(),
+        // Settlement()
+      ];
+    } else if (department == 'Admin') {
+      pages = [
+        DashboardView(department: department),
+        const Budgetcodeview(),
+        const Budgetamount(),
+        ProjectInfo(),
+        const TripInfo(),
+        const Advancerequest(),
+        const Cashpayment(),
+        // const Settlement(),
+        ApprovalSetupStep(),
+      ];
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(100, 207, 198, 0.855),
@@ -80,11 +127,6 @@ class _DashboardState extends State<Dashboard>
         actions: [
           Row(
             children: [
-              const IconButton(
-                onPressed: null,
-                icon: Icon(Icons.notifications),
-                color: Colors.black,
-              ),
               IconButton(
                   onPressed: () {
                     showDialog(
@@ -120,83 +162,91 @@ class _DashboardState extends State<Dashboard>
                                               ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(50.0),
-                                                child: Image.asset(
-                                                  "images/Kayla-Person.png",
-                                                  width: 70,
-                                                  height: 70,
-                                                  fit: BoxFit.cover,
+                                                // child: Image.asset(
+                                                //   "images/Kayla-Person.png",
+                                                //   width: 70,
+                                                //   height: 70,
+                                                //   fit: BoxFit.cover,
+                                                // ),
+                                                child: CircleAvatar(
+                                                  radius: 35,
+                                                  backgroundColor:
+                                                      Colors.deepPurple[100],
+                                                  child: Text(
+                                                    userName.isNotEmpty
+                                                        ? userName[0]
+                                                            .toUpperCase()
+                                                        : '',
+                                                    style: const TextStyle(
+                                                      fontSize: 30,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                               const Divider(),
-                                              const Row(
+                                              Row(
                                                 children: [
-                                                  Text("Name  "),
-                                                  Text(
+                                                  const Text("Name  "),
+                                                  const Text(
                                                     " - ",
                                                     style:
                                                         TextStyle(fontSize: 30),
                                                   ),
-                                                  Text("Emily")
+                                                  Text(userName)
                                                 ],
                                               ),
-                                              const Row(
+                                              Row(
                                                 children: [
-                                                  Text("Email "),
-                                                  Text(
+                                                  const Text("Email "),
+                                                  const Text(
                                                     " - ",
                                                     style:
                                                         TextStyle(fontSize: 30),
                                                   ),
-                                                  Text("emily@gmail.com")
+                                                  Text(userEmail)
                                                 ],
                                               ),
-                                              const Row(
+                                              Row(
                                                 children: [
-                                                  Text('Department'),
-                                                  Text(
+                                                  const Text('Department'),
+                                                  const Text(
                                                     ' - ',
                                                     style:
                                                         TextStyle(fontSize: 30),
                                                   ),
-                                                  Text('Admin')
+                                                  Text(department)
                                                 ],
                                               ),
-                                              const Row(
+                                              Row(
                                                 children: [
-                                                  Text('Role '),
-                                                  Text(
+                                                  const Text('Role '),
+                                                  const Text(
                                                     ' - ',
                                                     style:
                                                         TextStyle(fontSize: 30),
                                                   ),
-                                                  Text('Manager')
+                                                  Text(role)
                                                 ],
-                                              ),
-                                              ListTile(
-                                                leading: const Icon(Icons.key),
-                                                title: const Text(
-                                                  "Manage your password",
-                                                  style: TextStyle(
-                                                      color: Colors.blue),
-                                                ),
-                                                onTap: () {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(const SnackBar(
-                                                          content: Text(
-                                                              "Click the link!!")));
-                                                },
                                               ),
                                               Padding(
                                                 padding: const EdgeInsets.only(
                                                     top: 8.0, bottom: 10.0),
                                                 child: ElevatedButton(
                                                     onPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const Login()));
                                                       ScaffoldMessenger.of(
                                                               context)
                                                           .showSnackBar(
                                                               const SnackBar(
                                                                   content: Text(
-                                                                      "Click the Button!!")));
+                                                                      "LogOut successfully!!")));
                                                     },
                                                     child:
                                                         const Text("LogOut")),
@@ -215,7 +265,7 @@ class _DashboardState extends State<Dashboard>
                         });
                   },
                   icon: const Icon(Icons.person)),
-              const Text('Emily'),
+              Text(userName),
               SizedBox(
                 width: MediaQuery.of(context).size.width / 45,
               )
@@ -240,13 +290,21 @@ class _DashboardState extends State<Dashboard>
                   )),
             ),
             AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              left: isMenuBar ? 200 : 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              child: _widgetOptions[_selectedIndex],
-            ),
+                duration: const Duration(milliseconds: 300),
+                left: isMenuBar ? 200 : 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onPageChanged: (index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  children: _widgetOptions,
+                )),
           ],
         ),
       ),
@@ -266,76 +324,152 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
+    final department = Provider.of<UserProvider>(context).department;
+    final List<Widget> menuItems = [];
+    int _selectedIndex = 0;
+
+    late List<Widget> _widgetOptions = <Widget>[
+      DashboardView(department: department),
+      const Budgetcodeview(),
+      const Budgetamount(),
+      ProjectInfo(),
+      const TripInfo(),
+      const Advancerequest(),
+      const Cashpayment(),
+      // const Settlement(),
+      ApprovalSetupStep(),
+    ];
+
+    if (department == 'HR' ||
+        department == 'Marketing' ||
+        department == 'Engineering') {
+      menuItems.addAll([
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Project Information"),
+            onTap: () => widget.onItemTapped(3),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Trip Information"),
+            onTap: () => widget.onItemTapped(4),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Advance Request"),
+            onTap: () => widget.onItemTapped(5),
+          ),
+        ),
+      ]);
+    } else if (department == 'Finance') {
+      menuItems.addAll([
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Project Information"),
+            onTap: () => widget.onItemTapped(3),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Trip Information"),
+            onTap: () => widget.onItemTapped(4),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Advance Request"),
+            onTap: () => widget.onItemTapped(5),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Cash Payment"),
+            onTap: () => widget.onItemTapped(6),
+          ),
+        ),
+        // ListTile(
+        //   title: const Text("Settlement"),
+        //   onTap: () => widget.onItemTapped(7),
+        // ),
+      ]);
+    } else if (department == 'Admin') {
+      menuItems.addAll([
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Dashboard"),
+            onTap: () => widget.onItemTapped(0),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListTile(
+            title: const Text("Budget Code"),
+            onTap: () => widget.onItemTapped(1),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ListTile(
+              title: const Text('Budget Amount'),
+              onTap: () => widget.onItemTapped(2)),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ListTile(
+              title: const Text('Project Information'),
+              onTap: () => widget.onItemTapped(3)),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ListTile(
+              title: const Text('Trip Information'),
+              onTap: () => widget.onItemTapped(4)),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ListTile(
+              title: const Text('Advance Request'),
+              onTap: () => widget.onItemTapped(5)),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ListTile(
+              title: const Text('Cash Payment'),
+              onTap: () => widget.onItemTapped(6)),
+        ),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+        //   child: ListTile(
+        //       title: const Text('Settlement'),
+        //       onTap: () => widget.onItemTapped(7)),
+        // ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: ListTile(
+              title: const Text('Approval SetUp'),
+              onTap: () => widget.onItemTapped(8)),
+        ),
+      ]);
+    }
+
     return Drawer(
       child: Container(
         color: Colors.white,
-        width: MediaQuery.of(context).size.width / 2 * 1,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                title: const Text("Dashboard"),
-                onTap: () => widget.onItemTapped(0),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListTile(
-                title: const Text("Budget Code"),
-                onTap: () => widget.onItemTapped(1),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Budget Amount'),
-                  onTap: () => widget.onItemTapped(2)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Project Information'),
-                  onTap: () => widget.onItemTapped(3)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Trip Information'),
-                  onTap: () => widget.onItemTapped(4)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Advance Request'),
-                  onTap: () => widget.onItemTapped(5)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Cash Payment'),
-                  onTap: () => widget.onItemTapped(6)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Settlement'),
-                  onTap: () => widget.onItemTapped(7)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                  title: const Text('Approval SetUp'),
-                  onTap: () => widget.onItemTapped(8)),
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(vertical: 8.0),
-            //   child: ElevatedButton(
-            //     onPressed: () {},
-            //     child: const Text("LogOut"),
-            //   ),
-            // ),
-          ],
+        width: MediaQuery.of(context).size.width / 2,
+        child: SingleChildScrollView(
+          child: Column(
+            children: menuItems,
+          ),
         ),
       ),
     );
@@ -344,7 +478,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
 // Dashboard
 class DashboardView extends StatefulWidget {
-  const DashboardView({super.key});
+  final String department;
+  const DashboardView({super.key, required this.department});
 
   @override
   State<DashboardView> createState() => _DashboardViewState();
@@ -362,541 +497,58 @@ class _DashboardViewState extends State<DashboardView> {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Container(
-              width: isSmallScreen ? constraints.maxWidth/0.55 : containerWidth,
+              width:
+                  isSmallScreen ? constraints.maxWidth / 0.55 : containerWidth,
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.center,
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.money_rounded),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Budget Code"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.money_rounded),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Budget Amount"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.money_rounded),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Project Request"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Image(
+                      image: const AssetImage("images/budget-approvals.png"),
+                      width: MediaQuery.of(context).size.width,
+                      // height: MediaQuery.of(context).size.height,
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.airplane_ticket_outlined),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Trip Request"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Department ',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          widget.department,
+                          style: TextStyle(
+                            fontSize: 15,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.request_page),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Advance Request"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.payment),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Cash Payment"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.note_outlined),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Settlement"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          color: Color.fromARGB(255, 106, 197, 185),
-                          // width: isSmallScreen? constraints.maxWidth * 0.9 : containerWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Center(
-                                  child: Icon(Icons.approval),
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text("Approval SetUp"),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      children: [
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(Icons.add),
-                                          label: const Text(
-                                            "New",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                              iconColor: Colors.white),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        OutlinedButton.icon(
-                                          onPressed: null,
-                                          icon: const Icon(
-                                              Icons.more_horiz_outlined),
-                                          label: const Text(
-                                            "Detail",
-                                            style: TextStyle(color: Colors.white),
-                                          ),
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                color: Colors.white),
-                                            iconColor: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 7,
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+class LimitedDashboard extends StatelessWidget {
+  final Map<String, dynamic> userData;
+
+  const LimitedDashboard({super.key, required this.userData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Dashboard(userData: userData),
     );
   }
 }
