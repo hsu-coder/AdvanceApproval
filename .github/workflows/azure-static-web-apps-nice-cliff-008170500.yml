@@ -34,6 +34,6 @@ jobs:
           app_location: "/"
           output_location: "build/web"
           api_location: ""
-          app_build_command: "flutter build web" # No backend API
+          app_build_command: ""
 
 # No need for a separate cleanup job — Azure handles PR preview cleanup automatically on PR close
