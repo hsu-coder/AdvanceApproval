@@ -1,11 +1,14 @@
-// ignore: file_names
 import 'dart:convert';
+import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:advance_budget_request_system/views/api_service.dart';
+import 'package:advance_budget_request_system/views/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 class AddTrip extends StatefulWidget {
-  final Function(List<Map<String, dynamic>>) onTripAdded;
+  final Function(Trip) onTripAdded;
   const AddTrip({Key? key, required this.onTripAdded}) : super(key: key);
 
   @override
@@ -20,25 +23,40 @@ class _AddTripState extends State<AddTrip> {
   final TextEditingController _totalAmtController = TextEditingController();
   final TextEditingController _dateController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  final ApiService apiService = ApiService();
 
   String _selectedCurrency = 'MMK';
 
-  final List<String> departments = ['Admin', 'HR', 'Marketing'];
-  String? _selectedDepartment;
+  List<Department> departments = [];
+  String? _selectedDepartmentId;
+  String? _selectedDepartmentName;
 
-  List<Map<String, dynamic>> chooseBudgetCodes = [];
-  final List<Map<String, dynamic>> BudgetDetails = [
-    {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
-    {'Budget Code': 'B002', 'Description': 'Short Trip'},
-    {'Budget Code': 'B003', 'Description': 'Foreign Trip'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B005', 'Description': 'On Job Training'},
-    {'Budget Code': 'B006', 'Description': 'On Job Training'},
-    {'Budget Code': 'B007', 'Description': 'On Job Training'},
-    {'Budget Code': 'B008', 'Description': 'On Job Training'},
-    {'Budget Code': 'B009', 'Description': 'On Job Training'},
-    {'Budget Code': 'B010', 'Description': 'On Job Training'}
-  ];
+  List<Budget> chooseBudgetCodes = [];
+  List<Budget> BudgetDetail = [];
+  List<Trip> trip = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+    _initializeTripCode();
+  }
+
+  //fetchData
+  void _fetchData() async {
+    try {
+      List<Budget> budgetDetails = await ApiService().fetchBudgetCodeData();
+      List<Trip> trips = await ApiService().fetchTripinfoData();
+      List<Department> department = await ApiService().fetchDepartment();
+      setState(() {
+        BudgetDetail = budgetDetails;
+        trip = trips;
+        departments = department;
+      });
+    } catch (e) {
+      print("Fail to load $e");
+    }
+  }
 
   //Budget Alert Dialog
   void _showBudgetCodeDialog() {
@@ -72,10 +90,9 @@ class _AddTripState extends State<AddTrip> {
                               DataColumn(label: Text("Budget Code")),
                               DataColumn(label: Text("Description")),
                             ],
-                            rows: BudgetDetails.map((budgetCode) {
+                            rows: BudgetDetail.map((budgetCode) {
                               bool isSelected = chooseBudgetCodes.any((code) =>
-                                  code['Budget Code'] ==
-                                  budgetCode['Budget Code']);
+                                  code.BudgetCode == budgetCode.BudgetCode);
 
                               return DataRow(
                                 cells: [
@@ -88,9 +105,8 @@ class _AddTripState extends State<AddTrip> {
                                               setState(() {
                                                 chooseBudgetCodes.removeWhere(
                                                     (code) =>
-                                                        code['Budget Code'] ==
-                                                        budgetCode[
-                                                            'Budget Code']);
+                                                        code.BudgetCode ==
+                                                        budgetCode.BudgetCode);
                                               });
                                               Navigator.pop(context);
                                               _showBudgetCodeDialog();
@@ -98,8 +114,8 @@ class _AddTripState extends State<AddTrip> {
                                           )
                                         : const SizedBox.shrink(),
                                   ),
-                                  DataCell(Text(budgetCode['Budget Code'])),
-                                  DataCell(Text(budgetCode['Description'])),
+                                  DataCell(Text(budgetCode.BudgetCode)),
+                                  DataCell(Text(budgetCode.Description)),
                                 ],
                                 onSelectChanged: (selected) {
                                   if (selected != null && selected) {
@@ -153,23 +169,68 @@ class _AddTripState extends State<AddTrip> {
     });
   }
 
+  void _initializeTripCode() async {
+    try {
+      String nextCode = await apiService.fetchNextTripCode();
+      setState(() {
+        _tripCodeController.text = nextCode;
+      });
+    } catch (error) {
+      // Handle error appropriately.
+      print('Error fetching trip code: $error');
+    }
+  }
+
+  Future<int> generateTripCodeID() async {
+    List<Trip> existingTrips = await apiService.fetchTripinfoData();
+
+    if (existingTrips.isEmpty) {
+      return 1; // Start from 1 if no budget exists
+    }
+
+    // Find the highest existing ID
+    int maxId = existingTrips.map((b) => b.id).reduce((a, b) => a > b ? a : b);
+    return maxId + 1;
+  }
+
 //Submit Button
-  void _submitForm() {
+  void _submitForm() async {
     if (_formkey.currentState!.validate()) {
-      List<Map<String, String>> newTrip = [
-        {
-          'Date': _dateController.text,
-          'tripID': _tripCodeController.text,
-          'description': _tripDesController.text,
-          'Total Amount': _totalAmtController.text,
-          'currency': _selectedCurrency,
-          'department': _selectedDepartment ?? '',
-          'Requestable': 'Pending',
-          'BudgetDetails': jsonEncode(chooseBudgetCodes),
+      List<Trip> existingTrips = await apiService.fetchTripinfoData();
+      int nextId = await generateTripCodeID();
+      Trip newTrip = Trip(
+        id: nextId,
+        date: DateFormat('yyyy-MM-dd').parse(_dateController.text),
+        Trip_Code: _tripCodeController.text,
+        description: _tripDesController.text,
+        totalAmount: double.tryParse(_totalAmtController.text) ?? 0.0,
+        currency: _selectedCurrency,
+        departmentId: int.parse(_selectedDepartmentId.toString()),
+        departmentName: _selectedDepartmentName ?? '',
+        approveAmount: 0,
+        status: 1,
+        budgetDetails: chooseBudgetCodes,
+      );
+      print("Trip object: ${newTrip.toJson()}");
+      try {
+        await ApiService().postTripInfo(newTrip);
+        for (var budget in chooseBudgetCodes) {
+          await ApiService().postTripBudget(newTrip.id, budget.id);
+          _fetchData();
         }
-      ];
-      widget.onTripAdded(newTrip);
-      Navigator.pop(context);
+        Navigator.pop(context, true);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Trip data can request successfully!!")),
+        );
+        _fetchData();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add trip: $e')),
+        );
+      }
+
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> TripInfo()));
     }
   }
 
@@ -179,9 +240,9 @@ class _AddTripState extends State<AddTrip> {
       _tripCodeController.text = "";
       _tripDesController.text = "";
       _totalAmtController.text = "";
-      _selectedDepartment = null;
+      _selectedDepartmentName = null;
       _selectedCurrency = 'MMK';
-      chooseBudgetCodes = [];
+      chooseBudgetCodes.clear();
     });
   }
 
@@ -194,7 +255,9 @@ class _AddTripState extends State<AddTrip> {
       ),
       body: Center(
         child: Container(
-          color: const Color.fromARGB(255, 103, 207, 177),
+          decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 103, 207, 177),
+              borderRadius: BorderRadius.circular(15)),
           width: MediaQuery.of(context).size.width * 0.5,
           child: Padding(
             padding: const EdgeInsets.all(7.0),
@@ -235,6 +298,7 @@ class _AddTripState extends State<AddTrip> {
                                             }
                                             return null;
                                           },
+                                          readOnly: true,
                                         ),
                                       ),
                                       ListTile(
@@ -296,27 +360,28 @@ class _AddTripState extends State<AddTrip> {
                                         ),
                                       ),
                                       ListTile(
-                                        title: DropdownButtonFormField(
+                                        title: DropdownButtonFormField<String>(
+                                          value: _selectedDepartmentName,
                                           decoration: const InputDecoration(
-                                            labelText: "Choose your Department",
-                                          ),
-                                          items: departments.map((department) {
-                                            return DropdownMenuItem(
-                                                value: department,
-                                                child: Text(department));
+                                              labelText: "Department"),
+                                          items: departments.map((dept) {
+                                            return DropdownMenuItem<String>(
+                                              value: dept.departmentName,
+                                              child: Text(dept.departmentName),
+                                              onTap: () {
+                                                _selectedDepartmentId = dept.id
+                                                    .toString(); // Store ID
+                                              },
+                                            );
                                           }).toList(),
                                           onChanged: (value) {
                                             setState(() {
-                                              _selectedDepartment = value!;
+                                              _selectedDepartmentName = value;
                                             });
                                           },
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Choose your Department";
-                                            }
-                                            return null;
-                                          },
+                                          validator: (value) => value == null
+                                              ? "Select department"
+                                              : null,
                                         ),
                                       ),
                                       ListTile(
@@ -380,10 +445,10 @@ class _AddTripState extends State<AddTrip> {
                                               .indexOf(budgetCode);
                                           return DataRow(
                                             cells: [
-                                              DataCell(Text(
-                                                  budgetCode['Budget Code'])),
-                                              DataCell(Text(
-                                                  budgetCode['Description'])),
+                                              DataCell(
+                                                  Text(budgetCode.BudgetCode)),
+                                              DataCell(
+                                                  Text(budgetCode.Description)),
                                               DataCell(
                                                 IconButton(
                                                   onPressed: () {
@@ -462,10 +527,10 @@ class _AddTripState extends State<AddTrip> {
 
 // Edit Trip Request
 class EditTrip extends StatefulWidget {
-  final Map<String, dynamic> tripData;
-  final Function(Map<String, dynamic>) onTripUpdated;
+  final Trip tripData;
+  final Function() onTripUpdated;
   const EditTrip(
-      {Key? key, required this.tripData, required this.onTripUpdated})
+      {Key? key, required this.onTripUpdated, required this.tripData})
       : super(key: key);
 
   @override
@@ -481,56 +546,91 @@ class _EditTripState extends State<EditTrip> {
   final TextEditingController _dateController = TextEditingController();
 
   String _selectedCurrency = 'MMK';
-  final List<String> departments = ['Admin', 'HR', 'Marketing'];
-  String? _selectedDepartment;
-  List<Map<String, dynamic>> chooseBudgetCodes = [];
-  final List<Map<String, dynamic>> BudgetDetails = [
-    {'Budget Code': 'B001', 'Description': 'Marketing Campaign'},
-    {'Budget Code': 'B002', 'Description': 'Short Trip'},
-    {'Budget Code': 'B003', 'Description': 'Foreign Trip'},
-    {'Budget Code': 'B004', 'Description': 'On Job Training'},
-    {'Budget Code': 'B005', 'Description': 'On Job Training'},
-    {'Budget Code': 'B006', 'Description': 'On Job Training'},
-    {'Budget Code': 'B007', 'Description': 'On Job Training'},
-    {'Budget Code': 'B008', 'Description': 'On Job Training'},
-    {'Budget Code': 'B009', 'Description': 'On Job Training'},
-    {'Budget Code': 'B010', 'Description': 'On Job Training'}
-  ];
+  List<Department> departments = [];
+  String? _selectedDepartmentName;
+  String? _selectedDepartmentId;
+  List<Budget> chooseBudgetCodes = [];
+  List<Budget> BudgetDetail = [];
+  List<Trip> trip = [];
+
+  void _fetchData() async {
+    try {
+      List<Budget> BudgetDetails = await ApiService().fetchBudgetCodeData();
+      List<Trip> trips = await ApiService().fetchTripinfoData();
+      List<Department> department = await ApiService().fetchDepartment();
+      setState(() {
+        BudgetDetail = BudgetDetails;
+        trip = trips;
+        departments = department;
+
+      //   if (!departments
+      //       .any((dept) => dept.id.toString() == _selectedDepartmentId)) {
+      //     _selectedDepartmentId = widget.tripData.departmentId.toString();
+      //     _selectedDepartmentName = widget.tripData.departmentName;
+      //   }
+      // });
+       if (_selectedDepartmentId == null || 
+            !departments.any((dept) => dept.id.toString() == _selectedDepartmentId)) {
+          _selectedDepartmentId = widget.tripData.departmentId.toString();
+          _selectedDepartmentName = widget.tripData.departmentName;
+        }
+      });
+    } catch (e) {
+      print("Failed to load budget data: $e");
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _tripCodeController.text = widget.tripData['tripID'];
-    _tripDesController.text = widget.tripData['description'];
-    _totalAmtController.text = widget.tripData['Total Amount'];
-    _selectedCurrency = widget.tripData['currency'];
-    _selectedDepartment = widget.tripData['department'];
-    _dateController.text = widget.tripData['Date'];
-    // chooseBudgetCodes =
-    //     List<Map<String, dynamic>>.from(widget.tripData['BudgetDetails']);
-    if (widget.tripData['BudgetDetails'] is String) {
-      chooseBudgetCodes = List<Map<String, dynamic>>.from(
-          jsonDecode(widget.tripData['BudgetDetails']));
-    } else {
-      chooseBudgetCodes =
-          List<Map<String, dynamic>>.from(widget.tripData['BudgetDetails']);
-    }
+    _tripCodeController.text = widget.tripData.Trip_Code;
+    _tripDesController.text = widget.tripData.description;
+    _totalAmtController.text = widget.tripData.totalAmount.toString();
+    _selectedCurrency = widget.tripData.currency;
+    _selectedDepartmentName = widget.tripData.departmentName;
+    _dateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.tripData.date);
+
+    chooseBudgetCodes = List.from(widget.tripData.budgetDetails);
+    _fetchData();
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      Map<String, dynamic> updatedTrip = {
-        'Date': _dateController.text,
-        'tripID': _tripCodeController.text,
-        'description': _tripDesController.text,
-        'Total Amount': _totalAmtController.text,
-        'currency': _selectedCurrency,
-        'department': _selectedDepartment ?? '',
-        'BudgetDetails': jsonEncode(chooseBudgetCodes),
-      };
+      if (_selectedDepartmentId == null || _selectedDepartmentId == '0') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select a valid department.")),
+        );
+        return;
+      }
+      Trip updatedTrip = Trip(
+        id: widget.tripData.id,
+        date: DateFormat('yyyy-MM-dd').parse(_dateController.text),
+        Trip_Code: _tripCodeController.text,
+        description: _tripDesController.text,
+        totalAmount: double.tryParse(_totalAmtController.text) ?? 0.0,
+        currency: _selectedCurrency,
+        departmentId: int.parse(_selectedDepartmentId!),
+        departmentName:
+            _selectedDepartmentName ?? widget.tripData.departmentName,
+        approveAmount: 0,
+        status: 1,
+        budgetDetails: chooseBudgetCodes,
+      );
 
-      widget.onTripUpdated(updatedTrip);
-      Navigator.pop(context);
+      try {
+        await ApiService().updateTripInfo(updatedTrip);
+        widget.onTripUpdated();
+        Navigator.pop(context, true); // Close the edit form
+        _fetchData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Trip updated successfully!")),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update trip: $e')),
+        );
+      }
     }
   }
 
@@ -539,7 +639,7 @@ class _EditTripState extends State<EditTrip> {
       _tripCodeController.clear();
       _tripDesController.clear();
       _totalAmtController.clear();
-      _selectedDepartment = null;
+      _selectedDepartmentName = null;
       _selectedCurrency = 'MMK';
     });
   }
@@ -576,10 +676,9 @@ class _EditTripState extends State<EditTrip> {
                               DataColumn(label: Text("Budget Code")),
                               DataColumn(label: Text("Description")),
                             ],
-                            rows: BudgetDetails.map((budgetCode) {
+                            rows: BudgetDetail.map((budgetCode) {
                               bool isSelected = chooseBudgetCodes.any((code) =>
-                                  code['Budget Code'] ==
-                                  budgetCode['Budget Code']);
+                                  code.BudgetCode == budgetCode.BudgetCode);
 
                               return DataRow(
                                 cells: [
@@ -592,9 +691,8 @@ class _EditTripState extends State<EditTrip> {
                                               setState(() {
                                                 chooseBudgetCodes.removeWhere(
                                                     (code) =>
-                                                        code['Budget Code'] ==
-                                                        budgetCode[
-                                                            'Budget Code']);
+                                                        code.BudgetCode ==
+                                                        budgetCode.BudgetCode);
                                               });
                                               Navigator.pop(context);
                                               _showBudgetCodeDialog();
@@ -602,8 +700,8 @@ class _EditTripState extends State<EditTrip> {
                                           )
                                         : const SizedBox.shrink(),
                                   ),
-                                  DataCell(Text(budgetCode['Budget Code'])),
-                                  DataCell(Text(budgetCode['Description'])),
+                                  DataCell(Text(budgetCode.BudgetCode)),
+                                  DataCell(Text(budgetCode.Description)),
                                 ],
                                 onSelectChanged: (selected) {
                                   if (selected != null && selected) {
@@ -670,7 +768,9 @@ class _EditTripState extends State<EditTrip> {
       ),
       body: Center(
         child: Container(
-          color: const Color.fromARGB(255, 103, 207, 177),
+          decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 103, 207, 177),
+              borderRadius: BorderRadius.circular(15)),
           width: MediaQuery.of(context).size.width * 0.5,
           child: Padding(
             padding: const EdgeInsets.all(7.0),
@@ -765,6 +865,83 @@ class _EditTripState extends State<EditTrip> {
                                   ),
                                 ),
                                 ListTile(
+                                  title: DropdownButtonFormField<String>(
+                                    value: _selectedDepartmentName,
+                                    decoration: const InputDecoration(
+                                        labelText: "Department"),
+                                    items: departments.map((dept) {
+                                      return DropdownMenuItem<String>(
+                                        value: dept.departmentName,
+                                        child: Text(dept.departmentName),
+                                        // onTap: () {
+                                        //   setState(() {
+                                        //     _selectedDepartmentId =
+                                        //         dept.id.toString();
+                                        //     _selectedDepartmentName =
+                                        //         dept.departmentName;
+                                        //   });
+                                        // },
+                                      );
+                                    }).toList(),
+                                    // onChanged: (value) {
+                                    //   setState(() {
+                                    //     _selectedDepartmentName = value;
+                                    //     // Update the ID when name changes
+                                    //     _selectedDepartmentId = departments
+                                    //         .firstWhere((dept) =>
+                                    //             dept.departmentName == value)
+                                    //         .id
+                                    //         .toString();
+                                    //   });
+                                    // },
+          //                           onChanged: (value) {
+          //                             setState(() {
+          //                               _selectedDepartmentName = value;
+          //                               final selectedDept =
+          //                                   departments.firstWhere(
+          //                                 (dept) =>
+          //                                     dept.departmentName == value,
+          //                                 orElse: () =>  Department(
+          //   id: 0,
+          //   departmentName: 'Unknown',
+          //   departmentCode: '',
+          // ),
+          //                               );
+          //                               _selectedDepartmentId =
+          //                                   selectedDept.id.toString();
+          //                             });
+          //                           },
+          //                           validator: (value) => value == null
+          //                               ? "Select department"
+          //                               : null,
+          //                         ),
+          //                       ),
+         onChanged: (value) {
+  if (value != null) {
+    final selectedDept = departments.firstWhere(
+      (dept) => dept.departmentName == value,
+      orElse: () => Department(
+        id: 0,
+        departmentName: 'Unknown',
+        departmentCode: '',
+      ),
+    );
+    
+    setState(() {
+      _selectedDepartmentName = value;
+      _selectedDepartmentId = selectedDept.id.toString();
+    });
+  }
+},
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return "Please select a department";
+      }
+      return null;
+    },
+  ),
+),
+                                ListTile(
                                   title: DropdownButtonFormField(
                                     decoration: const InputDecoration(),
                                     value: _selectedCurrency,
@@ -777,30 +954,6 @@ class _EditTripState extends State<EditTrip> {
                                       setState(() {
                                         _selectedCurrency = value!;
                                       });
-                                    },
-                                  ),
-                                ),
-                                ListTile(
-                                  title: DropdownButtonFormField(
-                                    decoration: const InputDecoration(
-                                      labelText: "Choose your Department",
-                                    ),
-                                    value: _selectedDepartment,
-                                    items: departments.map((department) {
-                                      return DropdownMenuItem(
-                                          value: department,
-                                          child: Text(department));
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedDepartment = value!;
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return "Choose your Department";
-                                      }
-                                      return null;
                                     },
                                   ),
                                 ),
@@ -843,10 +996,8 @@ class _EditTripState extends State<EditTrip> {
                                       final index =
                                           chooseBudgetCodes.indexOf(budgetCode);
                                       return DataRow(cells: [
-                                        DataCell(
-                                            Text(budgetCode['Budget Code'])),
-                                        DataCell(
-                                            Text(budgetCode['Description'])),
+                                        DataCell(Text(budgetCode.BudgetCode)),
+                                        DataCell(Text(budgetCode.Description)),
                                         DataCell(IconButton(
                                             onPressed: () {
                                               _deleteBudgetCode(index);

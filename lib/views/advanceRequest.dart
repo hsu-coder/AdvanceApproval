@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:html' as html;
 import 'package:advance_budget_request_system/views/api_service.dart';
 import 'package:advance_budget_request_system/views/data.dart';
 import 'package:advance_budget_request_system/views/requestEntry.dart';
+import 'package:csv/csv.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Advancerequest extends StatefulWidget {
   const Advancerequest({super.key});
@@ -25,12 +31,18 @@ class _AdvancerequestState extends State<Advancerequest> {
   String? sortColumn;
   bool sortAscending = true;
 
+  int rowsPerPage = 10;
+  int currentPage = 1;
+  int totalPages = 1;
+
   @override
   void initState() {
     super.initState();
     // filteredData = List.from(advanceRequest);
     // filteredData= advanceRequest;
     _fetchRequest();
+    currentPage = 1;
+    _updatePagination();
   }
 
   void _fetchRequest() async {
@@ -41,6 +53,7 @@ class _AdvancerequestState extends State<Advancerequest> {
       setState(() {
         advanceRequest = advanceRequests;
         filteredData = List.from(advanceRequest);
+        _updatePagination();
       });
     } catch (e) {
       print('Fail to request: $e');
@@ -99,6 +112,7 @@ class _AdvancerequestState extends State<Advancerequest> {
                 .isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
             data.date.isBefore(dateRange.end.add(const Duration(days: 1)));
       }).toList();
+      _updatePagination();
     });
   }
 
@@ -229,7 +243,6 @@ class _AdvancerequestState extends State<Advancerequest> {
       List<AdvanceRequest> sourceData = advanceRequest;
       filteredData = sourceData.where((data) {
         final requestNo = data.requestNo.toLowerCase();
-        final requestCode = data.requestCode.toLowerCase();
         final requestType = data.requestType.toLowerCase();
         final currency = data.currency.toLowerCase();
         final requester = data.requester.toLowerCase();
@@ -237,38 +250,16 @@ class _AdvancerequestState extends State<Advancerequest> {
         final String searchLower = query.toLowerCase();
 
         return requestNo.contains(searchLower) ||
-            requestCode.contains(searchLower) ||
             requestType.contains(searchLower) ||
             currency.contains(searchLower) ||
             requester.contains(searchLower) ||
             status.contains(searchLower);
       }).toList();
+      _updatePagination();
     });
   }
 
   //Sorting
-  // void _sortDataColumn(String column) {
-  //   setState(() {
-  //     if (sortColumn == column) {
-  //       sortAscending = !sortAscending;
-  //     } else {
-  //       sortColumn = column;
-  //       sortAscending = true;
-  //     }
-
-  //     filteredData.sort((a, b) {
-  //       final aValue = a[column]?.toString();
-  //       final bValue = b[column]?.toString();
-  //       if (aValue == null || bValue == null) return 0;
-
-  //       if (sortAscending) {
-  //         return aValue.compareTo(bValue);
-  //       } else {
-  //         return bValue.compareTo(aValue);
-  //       }
-  //     });
-  //   });
-  // }
   void _sortDataColumn(String column) {
     setState(() {
       if (sortColumn == column) {
@@ -291,10 +282,10 @@ class _AdvancerequestState extends State<Advancerequest> {
             aValue = a.requestNo;
             bValue = b.requestNo;
             break;
-          case 'RequestCode':
-            aValue = a.requestCode;
-            bValue = b.requestCode;
-            break;
+          // case 'RequestCode':
+          //   aValue = a.requestCode;
+          //   bValue = b.requestCode;
+          //   break;
           case 'RequestType':
             aValue = a.requestType;
             bValue = b.requestType;
@@ -327,6 +318,7 @@ class _AdvancerequestState extends State<Advancerequest> {
           return bValue.compareTo(aValue);
         }
       });
+      _updatePagination();
     });
   }
 
@@ -362,7 +354,156 @@ class _AdvancerequestState extends State<Advancerequest> {
       filteredData = List.from(advanceRequest);
       sortColumn = null;
       sortAscending = true;
+      currentPage = 1;
+      _updatePagination();
     });
+  }
+
+  //reset pagination
+  void _updatePagination() {
+    setState(() {
+      totalPages = (filteredData.length / rowsPerPage).ceil();
+      if (currentPage > totalPages && totalPages != 0) {
+        currentPage = totalPages;
+      } else if (totalPages == 0) {
+        currentPage = 1;
+      }
+    });
+  }
+
+  //Pagination
+  Widget _buildPaginationControls() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Previous Button
+          IconButton(
+            onPressed: currentPage > 1
+                ? () {
+                    setState(() {
+                      currentPage--;
+                      _updatePagination();
+                    });
+                  }
+                : null,
+            icon: const Icon(Icons.arrow_back),
+          ),
+          // Page Indicator
+          Text('Page $currentPage of $totalPages'),
+          // Next Button
+          IconButton(
+            onPressed: currentPage < totalPages
+                ? () {
+                    setState(() {
+                      currentPage++;
+                      _updatePagination();
+                    });
+                  }
+                : null,
+            icon: const Icon(Icons.arrow_forward),
+          ),
+          const SizedBox(width: 20),
+          // Rows per page selector
+          DropdownButton<int>(
+            value: rowsPerPage,
+            items: [10, 15, 20].map((int value) {
+              return DropdownMenuItem<int>(
+                value: value,
+                child: Text('$value rows'),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() {
+                  rowsPerPage = value;
+                  currentPage =
+                      1; // Reset to page 1 when rows per page is changed
+                  _updatePagination();
+                });
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<AdvanceRequest> get paginatedData {
+    int start = (currentPage - 1) * rowsPerPage;
+    int end = start + rowsPerPage < filteredData.length
+        ? start + rowsPerPage
+        : filteredData.length;
+    return filteredData.sublist(start, end);
+  }
+
+  //download button to export CSV
+  Future<void> exportToCSV() async {
+    try {
+      // Convert the projectData list to a list of lists (CSV rows)
+      List<List<dynamic>> csvData = [];
+
+      //Add the header row
+      csvData.add([
+        "Request Date",
+        "Request No",
+        "Request Code",
+        "Request Type",
+        "Request Amount",
+        "Currency",
+        "Requester",
+        "Department",
+        "ApprovedAmount",
+        "Purpose",
+        "Status",
+        "Budget Details"
+      ]);
+
+      //Add the data rows
+      for (var advance in advanceRequest) {
+        csvData.add([
+          DateFormat('yyyy-MM-dd').format(advance.date),
+          advance.requestNo,
+          advance.requestCode,
+          advance.requestType,
+          advance.requestAmount,
+          advance.currency,
+          advance.requester,
+          advance.approveAmount,
+          advance.purpose,
+          advance.status,
+          // serializeBudgetDetails(advance.budgetDetails)
+        ]);
+      }
+
+      String csv = const ListToCsvConverter().convert(csvData);
+      if (kIsWeb) {
+        final bytes = utf8.encode(csv);
+        final blob = html.Blob([bytes]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.AnchorElement(href: url)
+          ..setAttribute("download", "advanceRequest.csv")
+          ..click();
+
+        html.Url.revokeObjectUrl(url);
+        print("CSV file downloaded in browser");
+      } else {
+        final directory = await getApplicationDocumentsDirectory();
+        final path = "${directory.path}/advanceRequest.csv";
+        final file = File(path);
+        await file.writeAsString(csv);
+      }
+    } catch (e) {
+      print("Error exporting to CSV: $e");
+    }
+  }
+
+  //Budget Details in CSV
+  String serializeBudgetDetails(List<Budget> budgetDetails) {
+    return budgetDetails.map((budget) {
+      return '${budget.BudgetCode}: ${budget.Description}';
+    }).join('; ');
   }
 
   @override
@@ -462,22 +603,23 @@ class _AdvancerequestState extends State<Advancerequest> {
                 child: Row(
                   children: [
                     IconButton(
-                      onPressed: () {
-                        Navigator.push(
+                      onPressed: () async {
+                        final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => AdvanceRequestEntry(
-                                      onRequestAdded: (newRequest) async {
-                                        try {
-                                          await ApiService()
-                                              .postAdvanceRequest(newRequest);
-                                             // print("newRequest: $newRequest");
-                                          _fetchRequest();
-                                        } catch (e) {
-                                          print("Failed to add request: $e");
-                                        }
+                                      onRequestAdded: (newRequest) {
+                                        setState(() {
+                                          advanceRequest.add(newRequest);
+                                          filteredData =
+                                              List.from(advanceRequest);
+                                        });
+                                        _updatePagination();
                                       },
                                     )));
+                        if (result == true) {
+                          _fetchRequest();
+                        }
                       },
                       icon: const Icon(Icons.add),
                       color: Colors.black,
@@ -490,7 +632,9 @@ class _AdvancerequestState extends State<Advancerequest> {
                       color: Colors.black,
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        exportToCSV();
+                      },
                       icon: const Icon(Icons.download),
                       color: Colors.black,
                     )
@@ -537,7 +681,7 @@ class _AdvancerequestState extends State<Advancerequest> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child:
-                              _buildHeaderCell("Request Code", "RequestCode"),
+                              _buildHeaderCell("Request Code", "Request Code"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -593,14 +737,12 @@ class _AdvancerequestState extends State<Advancerequest> {
                   7: FlexColumnWidth(0.5),
                   8: FlexColumnWidth(0.3)
                 },
-                children: filteredData.map((row) {
-                // filteredData.asMap().entries.map((entry) {
-                  // int index = entry.key;
-                  // var row = entry.value;
+                children: paginatedData.map((row) {
+                  
                   return TableRow(children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row.date.toString()),
+                      child: Text(DateFormat('yyyy-MM-dd').format(row.date)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -613,11 +755,12 @@ class _AdvancerequestState extends State<Advancerequest> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(row.requestType),
-
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(row.requestAmount.toString()),
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(row.requestAmount.toString())),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -634,12 +777,16 @@ class _AdvancerequestState extends State<Advancerequest> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
                             icon: const Icon(Icons.more_horiz_outlined,
                                 color: Colors.black),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      DetailRequest(requests: row)));
+                            },
                           ),
                         ],
                       ),
@@ -648,9 +795,154 @@ class _AdvancerequestState extends State<Advancerequest> {
                 }).toList(),
               ),
             ),
-          ))
+          )),
+          _buildPaginationControls(),
         ],
       ),
     );
   }
 }
+
+class DetailRequest extends StatelessWidget {
+  final AdvanceRequest requests;
+  const DetailRequest({Key? key, required this.requests}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Advance Request Details",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color.fromRGBO(100, 207, 198, 0.855),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Center(
+              child: Text(
+                "Advance Request Detail",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 30),
+            _buildRow("Request No", requests.requestNo, "Request Date",
+                DateFormat('yyyy-MM-dd').format(requests.date)),
+            const SizedBox(height: 20),
+            _buildRow("Request Code", requests.requestCode, "Request Type",
+                requests.requestType),
+            const SizedBox(height: 20),
+            _buildRow(
+                "Request Amount",
+                '${requests.requestAmount} ${requests.currency}',
+                "Approve Amount",
+                requests.approveAmount.toString()),
+            const SizedBox(height: 20),
+            _buildRow("Department", requests.requester, "Requester",
+                requests.requester),
+            const SizedBox(height: 20),
+            _buildRow("Purpose", requests.purpose, "Status", requests.status),
+            const SizedBox(height: 40),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.5,
+              // child: _buildBudgetTable(requests.budgetDetails),
+            ),
+            const SizedBox(height: 40),
+            Center(
+                child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                textStyle: const TextStyle(
+                  fontSize: 15,
+                ),
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.black,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text("Back"),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRow(
+      String label1, String value1, String label2, String? value2) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildInlineText(label1, value1),
+          if (label2.isNotEmpty) _buildInlineText(label2, value2 ?? "N/A"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBudgetTable(List<Budget> budgetDetails) {
+    return Container(
+      child: Table(
+        border: TableBorder.all(),
+        children: [
+          const TableRow(
+            decoration: BoxDecoration(color: Colors.lightBlueAccent),
+            children: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Budget Code",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("Description",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          ...budgetDetails.map((budget) => TableRow(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(budget.BudgetCode),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(budget.Description),
+                  ),
+                ],
+              )),
+        ],
+      ),
+    );
+  }
+}
+
+Widget _buildInlineText(String label, String value) {
+  return Expanded(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(fontSize: 16, color: Colors.black),
+          children: [
+            TextSpan(
+                text: "$label: ",
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            TextSpan(text: value),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+

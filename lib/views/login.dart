@@ -1,5 +1,14 @@
+import 'dart:convert';
+import 'package:advance_budget_request_system/views/data.dart';
+import 'package:advance_budget_request_system/views/api_service.dart';
+import 'package:advance_budget_request_system/views/permission.dart';
+import 'package:http/http.dart' as http;
+import 'package:advance_budget_request_system/views/dashoard.dart';
 import 'package:advance_budget_request_system/views/register.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,13 +18,22 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final List<String> departments = ["Admin", "HR", "Marketing"];
+  final List<Department> departments = [];
   String? _selectedDepartment;
+  String? _selectedDepartmentId;
 
   final _formkey = GlobalKey<FormState>();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   bool _isObscured = true;
+  bool _isLoading = false;
 
+@override
+void initState() {
+  super.initState();
+  fetchDepartments(); 
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,12 +44,13 @@ class _LoginState extends State<Login> {
         child: Row(
           children: [
             Container(
-              color: const Color.fromARGB(255, 83, 107, 62),
+              // color: const Color.fromARGB(255, 83, 107, 62),
+              color:  Colors.grey.shade50,
               width: MediaQuery.of(context).size.width / 7 * 2,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image(
-                  image: const AssetImage("images/frame_2.png"),
+                  image: const AssetImage("images/login.png"),
                   width: MediaQuery.of(context).size.width / 7 * 2,
                   height: MediaQuery.of(context).size.height / 7 * 7,
                 ),
@@ -69,6 +88,7 @@ class _LoginState extends State<Login> {
                                     size: 40,
                                   ),
                                   title: TextFormField(
+                                    controller: _emailController,
                                     decoration: const InputDecoration(
                                       labelText: "Enter Your Email",
                                       labelStyle:
@@ -82,6 +102,8 @@ class _LoginState extends State<Login> {
                                             color: Colors.white, width: 2.0),
                                       ),
                                     ),
+                                    keyboardType: TextInputType.emailAddress,
+                                    autofillHints: [AutofillHints.username],
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return "Enter Your Email";
@@ -97,6 +119,7 @@ class _LoginState extends State<Login> {
                                       size: 40,
                                     ),
                                     title: DropdownButtonFormField(
+                                      value: _selectedDepartment,
                                       decoration: const InputDecoration(
                                           labelText: "Choose Your Department",
                                           labelStyle:
@@ -109,14 +132,25 @@ class _LoginState extends State<Login> {
                                               borderSide: BorderSide(
                                                   color: Colors.white))),
                                       dropdownColor: Colors.white,
-                                      items: departments.map((department) {
+                                      items: departments.map((dept) {
                                         return DropdownMenuItem(
-                                            value: department,
-                                            child: Text(department));
+                                           value: dept.departmentCode,
+                                          child:
+                                              Text(dept.departmentName),
+                                          onTap: () {
+                                            _selectedDepartmentId = dept
+                                                .id
+                                                .toString(); 
+                                          },
+                                        );
                                       }).toList(),
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedDepartment = value;
+                                          final dep = departments.firstWhere(
+                                              (d) => d.departmentCode == value);
+                                          _selectedDepartmentId =
+                                              dep.id.toString();
                                         });
                                       },
                                       icon: const Icon(
@@ -141,6 +175,7 @@ class _LoginState extends State<Login> {
                                     size: 40,
                                   ),
                                   title: TextFormField(
+                                      controller: _passwordController,
                                       decoration: InputDecoration(
                                         labelText: "Enter Your Password",
                                         labelStyle: const TextStyle(
@@ -163,12 +198,13 @@ class _LoginState extends State<Login> {
                                             },
                                             icon: Icon(
                                               _isObscured
-                                                  ? Icons.visibility_off
-                                                  : Icons.visibility,
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off,
                                               color: Colors.white,
                                             )),
                                       ),
                                       obscureText: _isObscured,
+                                      
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return "Please Enter your Password!!";
@@ -196,28 +232,7 @@ class _LoginState extends State<Login> {
                                   height: 20,
                                 ),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    if (_formkey.currentState?.validate() ??
-                                        false) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                              content: Text(
-                                                  "Login Successfully!!")));
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const Login()));
-                                    }
-                                    // else {
-                                    //   ScaffoldMessenger.of(context).showSnackBar(
-                                    //     const SnackBar(
-                                    //       content:
-                                    //           Text("Please fix the errors above"),
-                                    //       backgroundColor: Colors.red,
-                                    //     ),
-                                    //   );
-                                    // }
-                                  },
+                                  onPressed: _loginUser,
                                   style: ButtonStyle(
                                       shape: WidgetStateProperty.all(
                                         RoundedRectangleBorder(
@@ -248,4 +263,75 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+  Future<void> fetchDepartments() async {
+    try {
+      final apiService = ApiService();
+      final response = await apiService.fetchDepartment();
+      if (response != null) {
+        setState(() {
+          departments.clear(); 
+          departments.addAll(response);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to load departments")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+ Future<void> _loginUser() async {
+  final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+  if (_formkey.currentState?.validate() ?? false) {
+    if(_selectedDepartmentId == null){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please select a department")),
+      );
+      return;
+    }
+     setState(() {
+      _isLoading = true;
+    });
+    try {
+      final apiService = ApiService();
+      final userData = await apiService.loginUser(email, password, _selectedDepartmentId!); 
+       
+      if (userData != null) {
+        final hasFullAccess = userData['Role'] == 'Admin'; 
+        final department =  userData['Department_Name'];
+        Provider.of<UserProvider>(context, listen: false).setDepartment(department);
+         
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                hasFullAccess ? Dashboard(userData: userData,)
+                               : LimitedDashboard(userData: userData,),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login Successfully!!")));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Login failed: Invalid credentials")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+      
+    }finally{
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 }
+
+}
+

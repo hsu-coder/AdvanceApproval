@@ -1,8 +1,11 @@
+import 'dart:convert';
+import 'dart:math';
 import 'package:advance_budget_request_system/views/advanceRequest.dart';
 import 'package:advance_budget_request_system/views/api_service.dart';
 import 'package:advance_budget_request_system/views/data.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class AdvanceRequestEntry extends StatefulWidget {
   final Function(AdvanceRequest) onRequestAdded;
@@ -15,11 +18,10 @@ class AdvanceRequestEntry extends StatefulWidget {
 
 class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
   final _formkey = GlobalKey<FormState>();
-  bool project_bcodeTable = false;
-  bool trip_bcodeTable = false;
+
   bool multiselect = false;
 
-  late final TextEditingController _reqNoController;
+  late final TextEditingController _reqNoController=TextEditingController();
   final TextEditingController _requester = TextEditingController(text: "May");
   final TextEditingController _dateController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
@@ -33,22 +35,37 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
   String? selectedType;
   int _nextId = 1;
   int operationCounter = 1;
+  String _selectedDepartmentName='';
 
   List<Budget> selectedBudgetCodes = [];
   List<Budget> selectedProjectBudgets = [];
   List<Budget> selectedTripBudgets = [];
 
   List<AdvanceRequest> advanceRequest = [];
-  List<ProjectInfo> project = [];
-  List<TripInfo> trip = [];
+  List<Projects> project = [];
+  List<Trip> trip = [];
   List<Budget> budget = [];
 
   @override
   void initState() {
     super.initState();
-    _reqNoController = TextEditingController(
-        text: 'Req-2425-${_nextId.toString().padLeft(3, '0')}');
     _fetchData();
+    _initializeTripCode();
+    _initializeOperationCode();
+  }
+  final ApiService apiService = ApiService();
+
+  Future<int> generateBudgetCodeID() async {  
+    List<AdvanceRequest> existingAvance = await apiService.fetchAdvanceRequestData();
+
+    if (existingAvance.isEmpty) {
+      return 1; // Start from 1 if no budget exists
+    }
+
+    // Find the highest existing ID
+    int maxId =
+        existingAvance.map((b) => b.id).reduce((a, b) => a > b ? a : b);
+    return maxId + 1;
   }
 
   //fetch Data
@@ -56,8 +73,8 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
     try {
       List<AdvanceRequest> advanceRequests =
           await ApiService().fetchAdvanceRequestData();
-      List<ProjectInfo> projects = await ApiService().fetchProjectInfoData();
-      List<TripInfo> trips = await ApiService().fetchTripinfoData();
+      List<Projects> projects = await ApiService().fetchProjectInfoData();
+      List<Trip> trips = await ApiService().fetchTripinfoData();
       List<Budget> budgets = await ApiService().fetchBudgetCodeData();
       setState(() {
         advanceRequest = advanceRequests;
@@ -66,16 +83,7 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
         budget = budgets;
         print("Projects: $project");
         print("Trips: $trips");
-        //AutoID
-        _reqNoController.text =
-            'Req-2425-${_nextId.toString().padLeft(3, '0')}';
-
-        if (advanceRequests.isNotEmpty) {
-          int maxId = advanceRequests
-              .map((r) => int.tryParse(r.requestNo.split('-')[2]) ?? 0)
-              .reduce((a, b) => a > b ? a : b);
-          _nextId = maxId + 1;
-        }
+       
       });
     } catch (e) {
       print("Fail to load $e");
@@ -201,68 +209,172 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
 
   //clear text
   void _clearText() {
-    selectedType = null;
-    _reqCodeController.text = '';
-    _reqDescriptionController.text = '';
-    _totalAmtController.text = '';
-    _selectedCurrency = 'MMK';
-    _reqPurposeController.text = '';
-    selectedBudgetCodes = [];
+    setState(() {
+      selectedType = null;
+      _reqCodeController.text = '';
+      _reqDescriptionController.text = '';
+      _totalAmtController.text = '';
+      _selectedCurrency = 'MMK';
+      _reqPurposeController.text = '';
+      selectedBudgetCodes = [];
+    });
+  }
+
+
+  void _initializeTripCode() async {
+    try {
+      String nextCode = await apiService.fetchNextAdvanceCode();
+      setState(() {
+        _reqNoController.text = nextCode;
+      });
+    } catch (error) {
+      // Handle error appropriately.
+      print('Error fetching advance code: $error');
+    }
+  }
+
+  void _initializeOperationCode() async {
+    try {
+      String nextCode = await apiService.fetchNextOperationCode();
+      setState(() {
+        _reqCodeController.text = nextCode;
+      });
+    } catch (error) {
+      // Handle error appropriately.
+      print('Error fetching operation code: $error');
+    }
   }
 
   //submit button
 
-bool _isSubmitting = false;
-void _submitForm() async {
-  if (_formkey.currentState!.validate() && !_isSubmitting) {
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    AdvanceRequest newAdvance = AdvanceRequest(
-      date: DateFormat('yyyy-MM-dd').parse(_dateController.text),
-      requestNo: 'Req-2425-${_nextId.toString().padLeft(3, '0')}', // Use _nextId
-      requestCode: _reqCodeController.text,
-      requestType: selectedType!,
-      requestAmount: double.tryParse(_totalAmtController.text) ?? 0.0,
-      currency: _selectedCurrency,
-      requester: _requester.text,
-      department: 'Admin',
-      approveAmount: 0.0,
-      purpose: _reqPurposeController.text,
-      status: 'Pending',
-    );
-
-    try {
-      await ApiService().postAdvanceRequest(newAdvance);
+  bool _isSubmitting = false;
+  void _submitForm() async {
+    if (_formkey.currentState!.validate() && !_isSubmitting) {
       setState(() {
-         _reqNoController.text = 'Req-2425-${_nextId.toString().padLeft(3, '0')}';
-        _nextId++; // Increment _nextId
-        // Update the request no
-        _isSubmitting = false;
-        widget.onRequestAdded(newAdvance);
+        _isSubmitting = true;
       });
-      _clearText();
+      List<Budget> budgetDetails = [];
+      int? relatedId; 
       
-      Navigator.of(context).push( 
-        MaterialPageRoute(builder: (context) => Advancerequest()),
-      );
-      _fetchData();
-    } catch (e) {
-      setState(() {
-        _isSubmitting = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to add request: $e'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-      print('Failed to add request: $e');
+      int tripId = 0;
+      int projectId = 0;
+      int operationId=0;
+      String requestCode = ''; 
+      String departmentName='';
+       int newId = await generateBudgetCodeID();
+      if (selectedType == "Project") {
+        Projects selectedProject = project.firstWhere(
+          (project) => project.Project_Code == _reqCodeController.text,
+        );
+        departmentName = selectedProject.departmentName;
+        projectId = selectedProject.id;
+        relatedId = selectedProject.id;
+        requestCode = selectedProject.Project_Code;
+        budgetDetails = selectedProject.budgetDetails;
+      } else if (selectedType == "Trip") {
+        Trip selectedTrip = trip.firstWhere(
+          (trip) => trip.Trip_Code == _reqCodeController.text,
+        );
+        departmentName = selectedTrip.departmentName;
+        relatedId = selectedTrip.id;
+        tripId = selectedTrip.id;
+        requestCode = selectedTrip.Trip_Code;
+        budgetDetails = selectedTrip.budgetDetails;
+      } else if (selectedType == "Operation") {
+        budgetDetails = selectedBudgetCodes;
+        departmentName = _selectedDepartmentName;
+        operationId=0;
+        relatedId = 0;
+        // String operationCode= await apiService.fetchNextOperationCode();
+        // requestCode = operationCode;
+        //   setState(() {
+        //     _reqCodeController.text = operationCode;
+        //   });
+      }
+      
+      AdvanceRequest newAdvance = AdvanceRequest(
+          id: newId,
+          date: DateTime.now(),
+          requestNo: _reqNoController.text,
+          requestCode: requestCode, 
+          requestType: selectedType!, 
+          requestAmount: double.tryParse(_totalAmtController.text) ?? 0.0,
+          currency: _selectedCurrency,
+          requester: _requester.text,
+          approveAmount: 0.0, 
+          purpose: _reqPurposeController.text,
+          status: 'Pending',
+          //setupId: 1,
+          tripId: selectedType == "Trip" ? int.parse(tripId.toString()) : null,
+          projectId: selectedType == "Project" ? int.parse(projectId.toString()) : null,
+          operationId: selectedType == "Operation" ? 0 : null,
+          budgetDetails: budgetDetails
+    
+     );
+
+      try { 
+        await ApiService().postAdvanceRequest(newAdvance);
+        await _callLogicAppsForAdvanceRequest(newAdvance,departmentName);
+        _fetchData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Request added successfully'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        _clearText();
+
+        Navigator.pop(context, true);
+       
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add request: $e'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        print('Failed to add request: $e');
+      }
     }
   }
-}
 
+  Future<void> _callLogicAppsForAdvanceRequest(AdvanceRequest request, String departmentName) async {
+  final logicAppsUrl = 'https://prod-92.southeastasia.logic.azure.com:443/workflows/c530932405df40cb905679f249e1997b/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=HhJbVzWb-eGOf3Cd_YfhhZ777zlksk0Th94wIcoX25o'; // Replace with your actual Logic Apps URL
+
+  final Map<String, dynamic> logicAppsData = {
+    "Date": DateFormat('yyyy-MM-dd').format(request.date),
+    "Request_No": request.requestNo,
+    "Request_Code": request.requestCode,
+    "Request_Type": request.requestType,
+    "Amount": request.requestAmount,
+    "Currency": request.currency,
+    "Requester": request.requester,
+    "Purpose": request.purpose,
+    "Department": departmentName,
+    "BudgetDetails": request.budgetDetails.map((budget) => {
+      "Budget Code": budget.BudgetCode,
+      "Description": budget.Description,
+    }).toList(),
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse('https://prod-92.southeastasia.logic.azure.com:443/workflows/c530932405df40cb905679f249e1997b/triggers/When_a_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_a_HTTP_request_is_received%2Frun&sv=1.0&sig=HhJbVzWb-eGOf3Cd_YfhhZ777zlksk0Th94wIcoX25o'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(logicAppsData),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 202) {
+      print('Logic Apps request successful');
+    } else {
+      throw Exception('Failed to send data to Logic Apps. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error sending Logic Apps request: $e');
+  }
+}
 
 
   @override
@@ -273,7 +385,9 @@ void _submitForm() async {
       ),
       body: Center(
         child: Container(
-          color: const Color.fromARGB(255, 103, 207, 177),
+          decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 103, 207, 177),
+              borderRadius: BorderRadius.circular(15)),
           width: MediaQuery.of(context).size.width * 0.5,
           child: Padding(
             padding: const EdgeInsets.all(7.0),
@@ -287,9 +401,9 @@ void _submitForm() async {
                       child: Column(
                         children: [
                           const Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0),
                             child: Text(
-                              'Add Advnace Request',
+                              'Add Advance Request',
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
@@ -311,7 +425,7 @@ void _submitForm() async {
                                   ListTile(
                                       title: DropdownButtonFormField(
                                     value: selectedType,
-                                    items: ['project', 'trip', 'operation']
+                                    items: ['Project', 'Trip', 'Operation']
                                         .map((selectedType) => DropdownMenuItem(
                                               value: selectedType,
                                               child: Text(selectedType),
@@ -320,30 +434,19 @@ void _submitForm() async {
                                     onChanged: (value) {
                                       setState(() {
                                         selectedType = value!;
-                                        if (selectedType == "project") {
+                                        if (selectedType == "Project") {
                                           showProjectDialog();
-                                          multiselect = false;
-                                          trip_bcodeTable = false;
                                           selectedBudgetCodes = [];
-                                        } else if (selectedType == "trip") {
+                                        } else if (selectedType == "Trip") {
                                           showTripDialog();
-                                          multiselect = false;
-                                          project_bcodeTable = false;
                                           selectedBudgetCodes = [];
                                         } else if (selectedType ==
-                                            "operation") {
-                                          multiselect == true;
-                                          project_bcodeTable = false;
-                                          trip_bcodeTable = false;
-                                          _reqCodeController.text =
-                                              'OPT-2425-${operationCounter.toString().padLeft(4, '0')}';
-                                          operationCounter++;
+                                            "Operation") {
+                                          selectedBudgetCodes = [];
+                                        //  _initializeOperationCode();
+                                        
                                           _reqDescriptionController.text =
                                               'No need to Filled';
-                                        } else {
-                                          multiselect = false;
-                                          project_bcodeTable = false;
-                                          trip_bcodeTable = false;
                                         }
                                       });
                                     },
@@ -389,7 +492,7 @@ void _submitForm() async {
                                       controller: _reqCodeController,
                                       decoration: const InputDecoration(
                                           labelText: "Request Code"),
-                                      readOnly: true,
+                                      // readOnly: true,
                                     ),
                                   ),
                                   ListTile(
@@ -456,7 +559,7 @@ void _submitForm() async {
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               children: [
-                                if (selectedType == "operation")
+                                if (selectedType == "Operation")
                                   ElevatedButton(
                                     onPressed: _showBudgetCodeDialog,
                                     style: ElevatedButton.styleFrom(
@@ -484,7 +587,7 @@ void _submitForm() async {
                                               label: Text("Budget Code")),
                                           const DataColumn(
                                               label: Text("Description")),
-                                          if (selectedType == "operation")
+                                          if (selectedType == "Operation")
                                             const DataColumn(
                                                 label: Text("Action"))
                                         ],
@@ -497,7 +600,7 @@ void _submitForm() async {
                                                 Text(budgetCode.BudgetCode)),
                                             DataCell(
                                                 Text(budgetCode.Description)),
-                                            if (selectedType == "operation")
+                                            if (selectedType == "Operation")
                                               DataCell(
                                                 IconButton(
                                                   onPressed: () {
@@ -515,7 +618,8 @@ void _submitForm() async {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     ElevatedButton(
-                                      onPressed:_isSubmitting ? null : _submitForm,
+                                      onPressed:
+                                          _isSubmitting ? null : _submitForm,
                                       style: ElevatedButton.styleFrom(
                                         textStyle: const TextStyle(
                                           fontSize: 15,
@@ -589,9 +693,10 @@ void _submitForm() async {
                         _reqCodeController.text = selectedProjectCode;
                         _reqDescriptionController.text = selectedDes;
 
-                        // ProjectInfo selectedProject = project.firstWhere(
-                        //     (project) =>
-                        //         project.projectID == selectedProjectCode);
+                        Projects selectedProject = project.firstWhere(
+                            (project) =>
+                                project.Project_Code == selectedProjectCode);
+                        selectedBudgetCodes = selectedProject.budgetDetails;
                       });
                     }),
               ),
@@ -623,8 +728,9 @@ void _submitForm() async {
                         _reqCodeController.text = selectedTripCode;
                         _reqDescriptionController.text = selectedDes;
 
-                        // TripInfo selectedTrip = trip.firstWhere(
-                        //     (trip) => trip.tripID == selectedTripCode);
+                        Trip selectedTrip = trip.firstWhere(
+                            (trip) => trip.Trip_Code == selectedTripCode);
+                        selectedBudgetCodes = selectedTrip.budgetDetails;
                       });
                     }),
               ),
@@ -642,7 +748,7 @@ void _submitForm() async {
 
 //Project Table
 class ProjectTable extends StatelessWidget {
-  final List<ProjectInfo> projects;
+  final List<Projects> projects;
   final void Function(String, String) onRowSelected;
   const ProjectTable(
       {required this.projects, required this.onRowSelected, Key? key})
@@ -695,15 +801,15 @@ class ProjectTable extends StatelessWidget {
           rows: filteredProjects.map((project) {
             return DataRow(
                 cells: [
-                  DataCell(Text(project.projectID)),
+                  DataCell(Text(project.Project_Code)),
                   DataCell(Text(project.description)),
-                  DataCell(Text(project.totalAmount)),
+                  DataCell(Text(project.totalAmount.toString())),
                   DataCell(Text(project.currency)),
                   DataCell(Text(project.requestable)),
                 ],
                 onSelectChanged: (bool? selected) {
                   if (selected ?? false) {
-                    onRowSelected(project.projectID, project.description);
+                    onRowSelected(project.Project_Code, project.description);
                     Future.delayed(const Duration(milliseconds: 100), () {
                       Navigator.of(context).pop();
                     });
@@ -716,7 +822,7 @@ class ProjectTable extends StatelessWidget {
 
 // //Trip Table
 class TripTable extends StatelessWidget {
-  final List<TripInfo> trips;
+  final List<Trip> trips;
   final void Function(String, String) onRowSelected;
   const TripTable({required this.trips, required this.onRowSelected, Key? key})
       : super(key: key);
@@ -753,14 +859,14 @@ class TripTable extends StatelessWidget {
         rows: trips.map((trip) {
           return DataRow(
               cells: [
-                DataCell(Text(trip.tripID)),
+                DataCell(Text(trip.Trip_Code)),
                 DataCell(Text(trip.description)),
-                DataCell(Text(trip.totalAmount)),
+                DataCell(Text(trip.totalAmount.toString())),
                 DataCell(Text(trip.currency)),
               ],
               onSelectChanged: (bool? selected) {
                 if (selected ?? false) {
-                  onRowSelected(trip.tripID, trip.description);
+                  onRowSelected(trip.Trip_Code, trip.description);
                   Future.delayed(const Duration(milliseconds: 100), () {
                     Navigator.of(context).pop();
                   });
