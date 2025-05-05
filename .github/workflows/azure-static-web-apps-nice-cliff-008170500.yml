@@ -32,8 +32,8 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}  # Needed for PRs
           action: "upload"
           skip_app_build: true
-          app_location: "/"
-          output_location: "build/web"
+          app_location: "build/web"  # Flutter's output directory
+          output_location: ""
           api_location: ""  # No backend API
 
 # No need for a separate cleanup job — Azure handles PR preview cleanup automatically on PR close
