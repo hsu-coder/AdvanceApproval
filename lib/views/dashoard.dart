@@ -37,7 +37,7 @@ class _DashboardState extends State<Dashboard>
     const Budgetamount(),
     ProjectInfo(),
     const TripInfo(),
-    const Advancerequest(),
+     Advancerequest(userData: widget.userData,),
     const Cashpayment(),
     // const Settlement(),
     ApprovalSetupStep(),
@@ -90,13 +90,13 @@ class _DashboardState extends State<Dashboard>
     if (department == 'HR' ||
         department == 'Marketing' ||
         department == 'Engineering') {
-      pages = [ProjectInfo(), const TripInfo(), const Advancerequest()];
+      pages = [ProjectInfo(), const TripInfo(),  Advancerequest(userData: widget.userData)];
     } else if (department == 'Finance') {
       pages = [
         ProjectInfo(),
         const TripInfo(),
-        const Advancerequest(),
-        Cashpayment(),
+         Advancerequest(userData: widget.userData,),
+        const Cashpayment(),
         // Settlement()
       ];
     } else if (department == 'Admin') {
@@ -106,7 +106,7 @@ class _DashboardState extends State<Dashboard>
         const Budgetamount(),
         ProjectInfo(),
         const TripInfo(),
-        const Advancerequest(),
+         Advancerequest(userData: widget.userData,),
         const Cashpayment(),
         // const Settlement(),
         ApprovalSetupStep(),
@@ -286,7 +286,7 @@ class _DashboardState extends State<Dashboard>
                   width: 200,
                   color: Colors.white,
                   child: SizedBox(
-                    child: CustomDrawer(onItemTapped: _onItemTapped),
+                    child: CustomDrawer(onItemTapped: _onItemTapped,userData: widget.userData,),
                   )),
             ),
             AnimatedPositioned(
@@ -314,8 +314,9 @@ class _DashboardState extends State<Dashboard>
 
 class CustomDrawer extends StatefulWidget {
   final ValueChanged<int> onItemTapped;
+  final Map<String, dynamic> userData;
 
-  const CustomDrawer({super.key, required this.onItemTapped});
+  const CustomDrawer({super.key, required this.onItemTapped, required this.userData});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -334,7 +335,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       const Budgetamount(),
       ProjectInfo(),
       const TripInfo(),
-      const Advancerequest(),
+       Advancerequest(userData: widget.userData,),
       const Cashpayment(),
       // const Settlement(),
       ApprovalSetupStep(),
@@ -512,19 +513,19 @@ class _DashboardViewState extends State<DashboardView> {
                     ),
                   ),
                   Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Department ',
+                        const Text(
+                          'Department: ',
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           widget.department,
-                          style: TextStyle(
-                            fontSize: 15,
+                          style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold
                           ),
                         ),
                       ],

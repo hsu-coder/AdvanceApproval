@@ -708,12 +708,12 @@ class _TripInfoState extends State<TripInfo> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: _buildHeaderCell(
-                              "Trip Description", "Trip_Description"),
+                              "Trip Description", "Description"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child:
-                              _buildHeaderCell("Total Amount", "Total_Budget_Amount"),
+                              _buildHeaderCell("Total Amount", "Total Amount"),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -721,7 +721,7 @@ class _TripInfoState extends State<TripInfo> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: _buildHeaderCell("Department", "Department_Name"),
+                          child: _buildHeaderCell("Department", "Department"),
                         ),
                         const Padding(
                           padding: EdgeInsets.all(8.0),
@@ -873,10 +873,8 @@ class _DetailTripState extends State<DetailTrip> {
             _buildRow(
                 "Date",
                 DateFormat('yyyy-MM-dd').format(widget.tripData.date),
-                "Name",
-                "May"),
-            const SizedBox(height: 20),
-            _buildRow("Department", widget.tripData.departmentName, " ", " "),
+                "Department", widget.tripData.departmentName),
+           
             const SizedBox(height: 10),
             const SizedBox(height: 20),
             const Text("Budget Details",
@@ -884,9 +882,11 @@ class _DetailTripState extends State<DetailTrip> {
             const SizedBox(
               height: 40,
             ),
-            Container(
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: _buildBudgetTable(widget.tripData.budgetDetails)),
+            Center(
+              child: Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  child: _buildBudgetTable(widget.tripData.budgetDetails)),
+            ),
             const SizedBox(height: 40),
             Center(
                 child: ElevatedButton(
