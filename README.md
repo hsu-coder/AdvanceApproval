@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # advance_budget_request_system
 
 A new Flutter project.
@@ -14,3 +15,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# Approval
+Advance Budget Request System
+>>>>>>> 8bb6336707cbcb78680b23e921d650b2d8994d63
