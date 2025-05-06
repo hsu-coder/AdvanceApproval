@@ -24,7 +24,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6' # Or your version
+          flutter-version: '3.29.3' # Or your version
 
       - name: Install Dependencies
         run: flutter pub get
@@ -43,6 +43,7 @@ jobs:
           app_location: "/" 
           api_location: "" 
           output_location: "build/web"
+          skip_app_build: true
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
