@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:advance_budget_request_system/views/data.dart';
 import 'package:http/http.dart' as http;
 
-class ApiService {
+
+  class ApiService {
   static String url = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/budget/";
 
   static String projectEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/project/";
@@ -32,6 +33,8 @@ class ApiService {
       "http://ievent.southeastasia.cloudapp.azure.com:8000/api/requestsetup/";
   static String approvalstepEndPoint =
       "http://ievent.southeastasia.cloudapp.azure.com:8000/api/approversetupstep/";
+
+
 
   Future<List<Budget>> fetchBudgetCodeData() async {
     final response = await http.get(Uri.parse(url));
@@ -485,7 +488,7 @@ class ApiService {
 
   Future<void> registerUser(Map<String, dynamic> userData) async {
     final response = await http.post(
-      Uri.parse('http://ievent.southeastasia.cloudapp.azure.com:8000/api/user/'),
+      Uri.parse('http://127.0.0.1:8000/api/user/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'UserName': userData['username'],
@@ -508,7 +511,7 @@ class ApiService {
   Future<Map<String, dynamic>?> loginUser(
       String email, String password, String departmentId) async {
     final response = await http.post(
-      Uri.parse('http://ievent.southeastasia.cloudapp.azure.com:8000/api/login/'),
+      Uri.parse('http://127.0.0.1:8000/api/login/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'User_Email': email,

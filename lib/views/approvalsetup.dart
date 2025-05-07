@@ -386,6 +386,7 @@ class _ApprovalSetupState extends State<ApprovalSetupStep> {
 
   void _fetchData() async {
     try {
+      
       List<ApprovalSetup> setup = await ApiService().fetchApprovalSetup();
       List<Department> department = await ApiService().fetchDepartment();
       setState(() {
@@ -584,12 +585,12 @@ class _ApprovalSetupState extends State<ApprovalSetupStep> {
                     columnWidths: const {
                       0: FlexColumnWidth(1.3),
                       1: FlexColumnWidth(0.9),
-                      2: FlexColumnWidth(0.9),
+                      2: FlexColumnWidth(0.8),
                       3: FlexColumnWidth(0.7),
-                      4: FlexColumnWidth(1.5),
-                      5: FlexColumnWidth(0.8),
-                      6: FlexColumnWidth(0.9),
-                      7: FlexColumnWidth(1.0),
+                      4: FlexColumnWidth(1.8),
+                      5: FlexColumnWidth(0.7),
+                      6: FlexColumnWidth(0.7),
+                      7: FlexColumnWidth(0.8),
                     },
                     children: [
                       TableRow(
@@ -667,12 +668,12 @@ class _ApprovalSetupState extends State<ApprovalSetupStep> {
                   columnWidths: const {
                     0: FlexColumnWidth(1.3),
                     1: FlexColumnWidth(0.9),
-                    2: FlexColumnWidth(0.9),
+                    2: FlexColumnWidth(0.8),
                     3: FlexColumnWidth(0.7),
-                    4: FlexColumnWidth(1.5),
-                    5: FlexColumnWidth(0.8),
-                    6: FlexColumnWidth(0.9),
-                    7: FlexColumnWidth(1.0),
+                    4: FlexColumnWidth(1.8),
+                    5: FlexColumnWidth(0.7),
+                    6: FlexColumnWidth(0.7),
+                    7: FlexColumnWidth(0.8),
                   },
                   children: paginatedData.map(
                     (row) {
@@ -1392,6 +1393,7 @@ class _ApprovalDetailState extends State<approvalDetailPage> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
+                    
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
@@ -1415,6 +1417,7 @@ class _ApprovalDetailState extends State<approvalDetailPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text((step.stepNo).toString()),
                       ),
+                      
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(step.maxAmount.toString()),

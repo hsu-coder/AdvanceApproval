@@ -9,8 +9,7 @@ import 'package:http/http.dart' as http;
 
 class AdvanceRequestEntry extends StatefulWidget {
   final Function(AdvanceRequest) onRequestAdded;
-  final String username;
-  const AdvanceRequestEntry({Key? key, required this.onRequestAdded, required this.username})
+  const AdvanceRequestEntry({Key? key, required this.onRequestAdded})
       : super(key: key);
 
   @override
@@ -23,7 +22,7 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
   bool multiselect = false;
 
   late final TextEditingController _reqNoController=TextEditingController();
-  final TextEditingController _requester = TextEditingController();
+  final TextEditingController _requester = TextEditingController(text: "May");
   final TextEditingController _dateController = TextEditingController(
       text: DateFormat('yyyy-MM-dd').format(DateTime.now()));
   final TextEditingController _totalAmtController = TextEditingController();
@@ -53,7 +52,6 @@ class _AdvanceRequestEntryState extends State<AdvanceRequestEntry> {
     _fetchData();
     _initializeTripCode();
     _initializeOperationCode();
-    _requester.text=widget.username;
   }
   final ApiService apiService = ApiService();
 

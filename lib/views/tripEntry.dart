@@ -6,6 +6,7 @@ import 'package:advance_budget_request_system/views/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 class AddTrip extends StatefulWidget {
   final Function(Trip) onTripAdded;
@@ -562,15 +563,9 @@ class _EditTripState extends State<EditTrip> {
         BudgetDetail = BudgetDetails;
         trip = trips;
         departments = department;
-
-      //   if (!departments
-      //       .any((dept) => dept.id.toString() == _selectedDepartmentId)) {
-      //     _selectedDepartmentId = widget.tripData.departmentId.toString();
-      //     _selectedDepartmentName = widget.tripData.departmentName;
-      //   }
-      // });
-       if (_selectedDepartmentId == null || 
-            !departments.any((dept) => dept.id.toString() == _selectedDepartmentId)) {
+        if (_selectedDepartmentId == null ||
+            !departments
+                .any((dept) => dept.id.toString() == _selectedDepartmentId)) {
           _selectedDepartmentId = widget.tripData.departmentId.toString();
           _selectedDepartmentName = widget.tripData.departmentName;
         }
@@ -873,74 +868,45 @@ class _EditTripState extends State<EditTrip> {
                                       return DropdownMenuItem<String>(
                                         value: dept.departmentName,
                                         child: Text(dept.departmentName),
-                                        // onTap: () {
-                                        //   setState(() {
-                                        //     _selectedDepartmentId =
-                                        //         dept.id.toString();
-                                        //     _selectedDepartmentName =
-                                        //         dept.departmentName;
-                                        //   });
-                                        // },
                                       );
                                     }).toList(),
-                                    // onChanged: (value) {
-                                    //   setState(() {
-                                    //     _selectedDepartmentName = value;
-                                    //     // Update the ID when name changes
-                                    //     _selectedDepartmentId = departments
-                                    //         .firstWhere((dept) =>
-                                    //             dept.departmentName == value)
-                                    //         .id
-                                    //         .toString();
-                                    //   });
-                                    // },
-          //                           onChanged: (value) {
-          //                             setState(() {
-          //                               _selectedDepartmentName = value;
-          //                               final selectedDept =
-          //                                   departments.firstWhere(
-          //                                 (dept) =>
-          //                                     dept.departmentName == value,
-          //                                 orElse: () =>  Department(
-          //   id: 0,
-          //   departmentName: 'Unknown',
-          //   departmentCode: '',
-          // ),
-          //                               );
-          //                               _selectedDepartmentId =
-          //                                   selectedDept.id.toString();
-          //                             });
-          //                           },
-          //                           validator: (value) => value == null
-          //                               ? "Select department"
-          //                               : null,
-          //                         ),
-          //                       ),
-         onChanged: (value) {
-  if (value != null) {
-    final selectedDept = departments.firstWhere(
-      (dept) => dept.departmentName == value,
-      orElse: () => Department(
-        id: 0,
-        departmentName: 'Unknown',
-        departmentCode: '',
-      ),
-    );
-    
-    setState(() {
-      _selectedDepartmentName = value;
-      _selectedDepartmentId = selectedDept.id.toString();
-    });
-  }
-},
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return "Please select a department";
-      }
-      return null;
-    },
-  ),
-),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        final matched = departments.firstWhere(
+                                          (dept) =>
+                                              dept.departmentName == value,
+                                          orElse: () => Department(
+                                              id: -1,
+                                              departmentName: '',
+                                              departmentCode: ''),
+                                        );
+
+                                        if (matched.id != -1) {
+                                          setState(() {
+                                            _selectedDepartmentName =
+                                                matched.departmentName;
+                                            _selectedDepartmentId =
+                                                matched.id.toString();
+                                          });
+                                        } else {
+                                          // Optional: Show error if no valid match (should never happen if dropdown values are valid)
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    "Invalid department selected.")),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please select a department";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
                                 ListTile(
                                   title: DropdownButtonFormField(
                                     decoration: const InputDecoration(),

@@ -1,16 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
-import 'dart:html' as html;
+
 import 'package:advance_budget_request_system/views/api_service.dart';
 import 'package:advance_budget_request_system/views/data.dart';
 import 'package:advance_budget_request_system/views/projectEntry.dart';
-import 'package:csv/csv.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ProjectInfo extends StatefulWidget {
   @override
@@ -536,68 +532,6 @@ class _ProjectInfoState extends State<ProjectInfo> {
     }
   }
 
-  Future<void> exportToCSV() async {
-    try {
-      // Convert the projectData list to a list of lists (CSV rows)
-      List<List<dynamic>> csvData = [];
-
-      //Add the header row
-      csvData.add([
-        "Request Date",
-        "Project Code",
-        "Description",
-        "Total Amount",
-        "Currency",
-        "Department",
-        "ApprovedAmount",
-        "Request Status",
-        "Budget Details"
-      ]);
-
-      //Add the data rows
-      for (var project in projectData) {
-        csvData.add([
-          DateFormat('yyyy-MM-dd').format(project.date),
-          project.Project_Code,
-          project.description,
-          project.totalAmount,
-          project.currency,
-          project.departmentName,
-          project.approveAmount,
-          project.requestable,
-          serializeBudgetDetails(project.budgetDetails)
-        ]);
-      }
-
-      String csv = const ListToCsvConverter().convert(csvData);
-      if (kIsWeb) {
-        final bytes = utf8.encode(csv);
-        final blob = html.Blob([bytes]);
-        final url = html.Url.createObjectUrlFromBlob(blob);
-        final anchor = html.AnchorElement(href: url)
-          ..setAttribute("download", "project.csv")
-          ..click();
-
-        html.Url.revokeObjectUrl(url);
-        print("CSV file downloaded in browser");
-      } else {
-        final directory = await getApplicationDocumentsDirectory();
-        final path = "${directory.path}/project.csv";
-        final file = File(path);
-        await file.writeAsString(csv);
-      }
-    } catch (e) {
-      print("Error exporting to CSV: $e");
-    }
-  }
-
-  //Budget Details in CSV
-  String serializeBudgetDetails(List<Budget> budgetDetails) {
-    return budgetDetails.map((budget) {
-      return '${budget.BudgetCode}: ${budget.Description}';
-    }).join('; ');
-  }
-
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -762,12 +696,14 @@ class _ProjectInfoState extends State<ProjectInfo> {
                         icon: const Icon(Icons.refresh, color: Colors.black),
                         onPressed: () {
                           _refreshData();
-                         
+                          setState(() {});
                         },
                       ),
                       IconButton(
                         icon: const Icon(Icons.download, color: Colors.black),
-                        onPressed: exportToCSV,
+                        onPressed: () {
+                          setState(() {});
+                        },
                       ),
                     ],
                   ),
@@ -786,14 +722,14 @@ class _ProjectInfoState extends State<ProjectInfo> {
                       outside: BorderSide(color: Colors.grey, width: 1),
                     ),
                     columnWidths: const {
-                      0: FlexColumnWidth(0.8),
-                      1: FlexColumnWidth(0.8),
-                      2: FlexColumnWidth(1.5),
-                      3: FlexColumnWidth(1.2),
+                      0: FlexColumnWidth(0.7),
+                      1: FlexColumnWidth(0.7),
+                      2: FlexColumnWidth(1.9),
+                      3: FlexColumnWidth(1.0),
                       4: FlexColumnWidth(0.6),
                       5: FlexColumnWidth(0.7),
-                      6: FlexColumnWidth(0.8),
-                      7: FlexColumnWidth(0.9),
+                      6: FlexColumnWidth(0.7),
+                      7: FlexColumnWidth(0.8),
                       // 8: FlexColumnWidth(0.8),
                     },
                     children: [
@@ -870,14 +806,14 @@ class _ProjectInfoState extends State<ProjectInfo> {
                     outside: BorderSide(color: Colors.black, width: 1),
                   ),
                   columnWidths: const {
-                    0: FlexColumnWidth(0.8),
-                      1: FlexColumnWidth(0.8),
-                      2: FlexColumnWidth(1.5),
-                      3: FlexColumnWidth(1.2),
-                      4: FlexColumnWidth(0.6),
-                      5: FlexColumnWidth(0.7),
-                      6: FlexColumnWidth(0.8),
-                      7: FlexColumnWidth(0.9),
+                    0: FlexColumnWidth(0.7),
+                    1: FlexColumnWidth(0.7),
+                    2: FlexColumnWidth(1.9),
+                    3: FlexColumnWidth(1.0),
+                    4: FlexColumnWidth(0.6),
+                    5: FlexColumnWidth(0.7),
+                    6: FlexColumnWidth(0.7),
+                    7: FlexColumnWidth(0.8),
                     // 8: FlexColumnWidth(0.8),
                   },
                   children: paginatedData.map(
@@ -1068,9 +1004,9 @@ class _EditProjectState extends State<EditProject> {
       );
       try {
         await ApiService().updateProjectInfo(updatedProject);
-        // for (var budget in chooseBudgetCodes) {
-        //   await ApiService().updateProjectBudget(updatedProject, budget.id);
-        // }
+        for (var budget in chooseBudgetCodes) {
+          await ApiService().updateProjectBudget(updatedProject, budget.id);
+        }
         widget.onProjectUpdated();
 
         Navigator.pop(context); // Close the edit form
@@ -1628,7 +1564,8 @@ class _ProjectDetailState extends State<ProjectDetailPage> {
             _buildRow(
                 "Date",
                 DateFormat('yyyy-MM-dd').format(widget.projectData.date),
-                '',''),
+                "Name",
+                'May'),
             const SizedBox(height: 10),
             _buildRow("Department", widget.projectData.departmentName,
                 "Requestable", widget.projectData.requestable),
@@ -1639,11 +1576,9 @@ class _ProjectDetailState extends State<ProjectDetailPage> {
             const SizedBox(
               height: 40,
             ),
-            Center(
-              child: Container(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  child: _buildBudgetTable(widget.projectData.budgetDetails)),
-            ),
+            Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                child: _buildBudgetTable(widget.projectData.budgetDetails)),
             const SizedBox(height: 40),
             Center(
                 child: ElevatedButton(

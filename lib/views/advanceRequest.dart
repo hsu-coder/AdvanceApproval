@@ -11,8 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Advancerequest extends StatefulWidget {
-  final Map<String, dynamic> userData;
-  const Advancerequest({super.key, required this.userData});
+  const Advancerequest({super.key});
 
   @override
   State<Advancerequest> createState() => _AdvancerequestState();
@@ -454,10 +453,11 @@ class _AdvancerequestState extends State<Advancerequest> {
         "Request Amount",
         "Currency",
         "Requester",
+        "Department",
         "ApprovedAmount",
         "Purpose",
         "Status",
-        // "Budget Details"
+        "Budget Details"
       ]);
 
       //Add the data rows
@@ -613,12 +613,9 @@ class _AdvancerequestState extends State<Advancerequest> {
                                           advanceRequest.add(newRequest);
                                           filteredData =
                                               List.from(advanceRequest);
-                                        },
-                                        
-                                        );
+                                        });
                                         _updatePagination();
                                       },
-                                      username: widget.userData['UserName']
                                     )));
                         if (result == true) {
                           _fetchRequest();
@@ -842,11 +839,11 @@ class DetailRequest extends StatelessWidget {
                 "Request Amount",
                 '${requests.requestAmount} ${requests.currency}',
                 "Approve Amount",
-                '${requests.approveAmount} ${requests.currency}' ),
+                requests.approveAmount.toString()),
             const SizedBox(height: 20),
-            // _buildRow("Department", requests.requester, "Requester",
-            //     requests.requester),
-            // const SizedBox(height: 20),
+            _buildRow("Department", requests.requester, "Requester",
+                requests.requester),
+            const SizedBox(height: 20),
             _buildRow("Purpose", requests.purpose, "Status", requests.status),
             const SizedBox(height: 40),
             Container(
