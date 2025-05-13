@@ -4,36 +4,38 @@ import 'package:http/http.dart' as http;
 
 
   class ApiService {
-    static String baseurl = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/";
-  static String budget = " $baseurl + budget/";
+    //static String baseurl = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/";
+   static String baseUrl = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/";
 
-  static String projectEndPoint = "$baseurl + project/";
-  final String projectBudgetEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/projectbudget/";
-  final String tripEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/trip/";
-  final String tripBudgetEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/tripbudget/";
-  final String TripCodeAutoIncrementEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/trips/next-code/";
-  final String operationEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/operation/";
+  static String budget = " $baseUrl + budget/";
+
+  static String projectEndPoint = "$baseUrl + project/";
+  final String projectBudgetEndPoint =" $baseUrl + projectbudget/";
+     
+  final String tripEndPoint = "$baseUrl + trip/";
+  final String tripBudgetEndPoint = "$baseUrl + tripbudget/";
+  final String TripCodeAutoIncrementEndPoint = "$baseUrl + trips/next-code/";
+     
+  final String operationEndPoint = "$baseUrl + operation/";
   final String operationBudgetEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/operationbudget/";
+      "$baseUrl + operationbudget/";
   final String operationCodeAutoIncrementEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/operations/next-code/";
+      "$baseUrl + operations/next-code/";
   final String advanceRequestEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/advancerequest/";
+      "$baseUrl + advancerequest/";
   final String advanceCodeAutoIncrementEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/requests/next-code/";
-  final String cashPaymentEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/cashpayment/";
-  final String cashPaymentAutoIncrementEndPoint= "https://ievent.southeastasia.cloudapp.azure.com:8000/api/requests/next-code/";
-  final String settlementEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/settlement/";
+      "$baseUrl + requests/next-code/";
+  final String cashPaymentEndPoint = "$baseUrl + cashpayment/";
+  final String cashPaymentAutoIncrementEndPoint= "$baseUrl + requests/next-code/";
+  final String settlementEndPoint = "$baseUrl + settlement/";
   final String settlementDetailEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/settlementdetail/";
-  final String userLoginEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/user/";
-  final String departmentEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/department/";
+      "$baseUrl + settlementdetail/";
+  final String userLoginEndPoint = "$baseUrl + user/";
+  final String departmentEndPoint = "$baseUrl + department/";
   static String approvalsetupEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/requestsetup/";
+      "$baseUrl + requestsetup/";
   static String approvalstepEndPoint =
-      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/approversetupstep/";
+      "$baseUrl + approversetupstep/";
 
 
 
