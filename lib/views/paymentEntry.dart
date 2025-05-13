@@ -221,7 +221,7 @@ final ApiService apiService = ApiService();
                                       controller: _paymentNoController,
                                       decoration: const InputDecoration(
                                           labelText: "Payment No"),
-                                      // readOnly: true,
+                                      readOnly: true,
                                     ),
                                   ),
                                   ListTile(

@@ -11,7 +11,7 @@ class ApiService {
   final String tripEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/trip/";
   final String tripBudgetEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/tripbudget/";
   final String TripCodeAutoIncrementEndPoint =
-      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/next-code/";
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/trips/next-code/";
   final String operationEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api//";
   final String operationBudgetEndPoint =
       "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/operationbudget/";
@@ -22,7 +22,7 @@ class ApiService {
   final String advanceCodeAutoIncrementEndPoint =
       "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/requests/next-code/";
   final String cashPaymentEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/cashpayment/";
-  final String cashPaymentAutoIncrementEndPoint= "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/requests/next-code/";
+  final String cashPaymentAutoIncrementEndPoint= "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/payments/next-code/";
   final String settlementEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/settlement/";
   final String settlementDetailEndPoint =
       "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/settlementdetail/";
