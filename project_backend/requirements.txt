@@ -6,8 +6,10 @@ django-cors-headers==4.7.0
 django-extensions==4.1
 django-filter==25.1
 djangorestframework==3.16.0
+gunicorn==23.0.0
 MarkupSafe==3.0.2
 mysqlclient==2.2.7
+packaging==25.0
 pycparser==2.22
 pyOpenSSL==25.0.0
 sqlparse==0.5.3

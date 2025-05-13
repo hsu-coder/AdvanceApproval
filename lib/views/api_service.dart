@@ -4,40 +4,41 @@ import 'package:http/http.dart' as http;
 
 
   class ApiService {
-  static String url = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/budget/";
+    static String baseurl = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/";
+  static String budget = " $baseurl + budget/";
 
-  static String projectEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/project/";
+  static String projectEndPoint = "$baseurl + project/";
   final String projectBudgetEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/projectbudget/";
-  final String tripEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/trip/";
-  final String tripBudgetEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/tripbudget/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/projectbudget/";
+  final String tripEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/trip/";
+  final String tripBudgetEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/tripbudget/";
   final String TripCodeAutoIncrementEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/trips/next-code/";
-  final String operationEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/operation/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/trips/next-code/";
+  final String operationEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/operation/";
   final String operationBudgetEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/operationbudget/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/operationbudget/";
   final String operationCodeAutoIncrementEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/operations/next-code/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/operations/next-code/";
   final String advanceRequestEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/advancerequest/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/advancerequest/";
   final String advanceCodeAutoIncrementEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/requests/next-code/";
-  final String cashPaymentEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/cashpayment/";
-  final String cashPaymentAutoIncrementEndPoint= "http://ievent.southeastasia.cloudapp.azure.com:8000/api/requests/next-code/";
-  final String settlementEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/settlement/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/requests/next-code/";
+  final String cashPaymentEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/cashpayment/";
+  final String cashPaymentAutoIncrementEndPoint= "https://ievent.southeastasia.cloudapp.azure.com:8000/api/requests/next-code/";
+  final String settlementEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/settlement/";
   final String settlementDetailEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/settlementdetail/";
-  final String userLoginEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/user/";
-  final String departmentEndPoint = "http://ievent.southeastasia.cloudapp.azure.com:8000/api/department/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/settlementdetail/";
+  final String userLoginEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/user/";
+  final String departmentEndPoint = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/department/";
   static String approvalsetupEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/requestsetup/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/requestsetup/";
   static String approvalstepEndPoint =
-      "http://ievent.southeastasia.cloudapp.azure.com:8000/api/approversetupstep/";
+      "https://ievent.southeastasia.cloudapp.azure.com:8000/api/approversetupstep/";
 
 
 
   Future<List<Budget>> fetchBudgetCodeData() async {
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(budget));
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
@@ -49,7 +50,7 @@ import 'package:http/http.dart' as http;
 
   Future<bool> postBudgetCode(Budget newbudgetCode) async {
     //  print("API Call: ${jsonEncode(newbudgetCode .toJson())}");
-    final response = await http.post(Uri.parse(url),
+    final response = await http.post(Uri.parse(budget),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -65,7 +66,7 @@ import 'package:http/http.dart' as http;
 
   Future<bool> updateBudget(Budget budget) async {
     final response = await http.put(
-      Uri.parse('$url${budget.id}/'),
+      Uri.parse('$budget${budget.id}/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -84,7 +85,7 @@ import 'package:http/http.dart' as http;
   }
 
   Future<void> deleteBudget(int id) async {
-    final response = await http.delete(Uri.parse('$url$id'));
+    final response = await http.delete(Uri.parse('$budget$id'));
     if (response.statusCode != 204) {
       throw Exception('Failed to delete BudgetCode');
     }
