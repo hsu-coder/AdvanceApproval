@@ -485,7 +485,7 @@ class ApiService {
 
   Future<void> registerUser(Map<String, dynamic> userData) async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/api/user/'),
+      Uri.parse('https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/user/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'UserName': userData['username'],
@@ -508,7 +508,7 @@ class ApiService {
   Future<Map<String, dynamic>?> loginUser(
       String email, String password, String departmentId) async {
     final response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/api/login/'),
+      Uri.parse('https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/login/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'User_Email': email,
