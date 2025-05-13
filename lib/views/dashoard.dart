@@ -1,6 +1,6 @@
 import 'package:advance_budget_request_system/views/advanceRequest.dart';
 import 'package:advance_budget_request_system/views/approvalsetup.dart';
-import 'package:advance_budget_request_system/views/budgetAmount.dart';
+import 'package:advance_budget_request_system/views/budgetamount.dart';
 import 'package:advance_budget_request_system/views/budgetcodeview.dart';
 import 'package:advance_budget_request_system/views/cashPayment.dart';
 import 'package:advance_budget_request_system/views/data.dart';

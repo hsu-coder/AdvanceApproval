@@ -417,8 +417,10 @@ class AdvanceRequestTable extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: Center(
+        child: Container(
+          height: 500,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
                 "Choose Advance Request",
@@ -429,7 +431,7 @@ class AdvanceRequestTable extends StatelessWidget {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.4,
+                   // height: MediaQuery.of(context).size.height * 0.4,
                     child: DataTable(
                       showCheckboxColumn: false,
                       border: TableBorder.all(),
