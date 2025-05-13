@@ -2,45 +2,39 @@ import 'dart:convert';
 import 'package:advance_budget_request_system/views/data.dart';
 import 'package:http/http.dart' as http;
 
+class ApiService {
+  static String url = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/budget/";
 
-  class ApiService {
-    //static String baseurl = "https://ievent.southeastasia.cloudapp.azure.com:8000/api/";
-   static String baseUrl = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/";
-
-  static String budget = " $baseUrl + budget/";
-
-  static String projectEndPoint = "$baseUrl + project/";
-  final String projectBudgetEndPoint =" $baseUrl + projectbudget/";
-     
-  final String tripEndPoint = "$baseUrl + trip/";
-  final String tripBudgetEndPoint = "$baseUrl + tripbudget/";
-  final String TripCodeAutoIncrementEndPoint = "$baseUrl + trips/next-code/";
-     
-  final String operationEndPoint = "$baseUrl + operation/";
+  static String projectEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/project/";
+  final String projectBudgetEndPoint =
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/projectbudget/";
+  final String tripEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/trip/";
+  final String tripBudgetEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/tripbudget/";
+  final String TripCodeAutoIncrementEndPoint =
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/next-code/";
+  final String operationEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api//";
   final String operationBudgetEndPoint =
-      "$baseUrl + operationbudget/";
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/operationbudget/";
   final String operationCodeAutoIncrementEndPoint =
-      "$baseUrl + operations/next-code/";
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/next-code/";
   final String advanceRequestEndPoint =
-      "$baseUrl + advancerequest/";
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/advancerequest/";
   final String advanceCodeAutoIncrementEndPoint =
-      "$baseUrl + requests/next-code/";
-  final String cashPaymentEndPoint = "$baseUrl + cashpayment/";
-  final String cashPaymentAutoIncrementEndPoint= "$baseUrl + requests/next-code/";
-  final String settlementEndPoint = "$baseUrl + settlement/";
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/requests/next-code/";
+  final String cashPaymentEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/cashpayment/";
+  final String cashPaymentAutoIncrementEndPoint= "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/requests/next-code/";
+  final String settlementEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/settlement/";
   final String settlementDetailEndPoint =
-      "$baseUrl + settlementdetail/";
-  final String userLoginEndPoint = "$baseUrl + user/";
-  final String departmentEndPoint = "$baseUrl + department/";
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/settlementdetail/";
+  final String userLoginEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/user/";
+  final String departmentEndPoint = "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/department/";
   static String approvalsetupEndPoint =
-      "$baseUrl + requestsetup/";
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/requestsetup/";
   static String approvalstepEndPoint =
-      "$baseUrl + approversetupstep/";
-
-
+      "https://approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net/api/approversetupstep/";
 
   Future<List<Budget>> fetchBudgetCodeData() async {
-    final response = await http.get(Uri.parse(budget));
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       List<dynamic> body = jsonDecode(response.body);
@@ -52,7 +46,7 @@ import 'package:http/http.dart' as http;
 
   Future<bool> postBudgetCode(Budget newbudgetCode) async {
     //  print("API Call: ${jsonEncode(newbudgetCode .toJson())}");
-    final response = await http.post(Uri.parse(budget),
+    final response = await http.post(Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -68,7 +62,7 @@ import 'package:http/http.dart' as http;
 
   Future<bool> updateBudget(Budget budget) async {
     final response = await http.put(
-      Uri.parse('$budget${budget.id}/'),
+      Uri.parse('$url${budget.id}/'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -87,7 +81,7 @@ import 'package:http/http.dart' as http;
   }
 
   Future<void> deleteBudget(int id) async {
-    final response = await http.delete(Uri.parse('$budget$id'));
+    final response = await http.delete(Uri.parse('$url$id'));
     if (response.statusCode != 204) {
       throw Exception('Failed to delete BudgetCode');
     }
@@ -604,37 +598,6 @@ import 'package:http/http.dart' as http;
     }
   }
 
-//   static Future<ApprovalSetup> postApprovalSetup(ApprovalSetup newSetup) async {
-//   // First create the RequestSetUp without steps
-//   final setupBody = {
-//     'Flow_Name': newSetup.FlowName,
-//     'Department_ID': newSetup.departmentId,
-//     'Flow_Type': newSetup.RequestType,
-//     'Currency': newSetup.Currency,
-//     'Description': newSetup.Description,
-//     'No_Of_Steps': newSetup.No_of_Steps,
-//     'Management_Approver': newSetup.Management,
-//   };
-
-//   final response = await http.post(
-//     Uri.parse(approvalsetupEndPoint),
-//     headers: {'Content-Type': 'application/json'},
-//     body: json.encode(newSetup.toJson()),
-//   );
-
-//   if (response.statusCode == 201) {
-//     final createdSetup = ApprovalSetup.fromJson(json.decode(response.body));
-
-//     // Then create the ApprovalSteps
-//     for (final step in newSetup.ApprovalSteps) {
-//       await postApprovalStep(step.copyWith(setupid: createdSetup.id));
-//     }
-
-//     return createdSetup.copyWith(ApprovalSteps: newSetup.ApprovalSteps);
-//   } else {
-//     throw Exception('Failed to create setup: ${response.body}');
-//   }
-// }
 
   static Future<ApprovalSetup> postApprovalSetup(ApprovalSetup newSetup) async {
     final response = await http.post(
