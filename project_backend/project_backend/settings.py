@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-u44bl5r2n&*0@#ns1i2i+%m274-m)m0p@-#o4y6+536%z1854$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['approvalbackend-e4d9gwawejg9d3bg.eastasia-01.azurewebsites.net']
 
 
 # Application definition
@@ -58,7 +58,7 @@ MIDDLEWARE = [
 ]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [  
-    "https://kind-river-026473500.6.azurestaticapps.net",
+    "https://mango-hill-0dd3a9b00.6.azurestaticapps.net",
 ]
 ROOT_URLCONF = 'project_backend.urls'
 
