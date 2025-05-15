@@ -24,6 +24,7 @@ class _CashpaymentState extends State<Cashpayment> {
   List<CashPayment> postedData = [];
   List<CashPayment> filteredData = [];
   final TextEditingController _searchController = TextEditingController();
+  final NumberFormat thousandSeparator = NumberFormat("#,##0", "en_US");
 
   String? selectedDate;
   DateTimeRange? CustomDateRange;
@@ -575,12 +576,6 @@ class _CashpaymentState extends State<Cashpayment> {
     }
   }
 
-  // //Budget Details in CSV
-  // String serializeBudgetDetails(List<Budget> budgetDetails) {
-  //   return budgetDetails.map((budget) {
-  //     return '${budget.BudgetCode}: ${budget.Description}';
-  //   }).join('; ');
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -863,7 +858,9 @@ class _CashpaymentState extends State<Cashpayment> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Align(child: Text(row.paymentAmount.toString())),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(thousandSeparator.format(row.paymentAmount))),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),

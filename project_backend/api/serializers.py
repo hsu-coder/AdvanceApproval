@@ -95,9 +95,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         budgets_data = validated_data.pop('budgets', [])
        
-        # for budget_id in budgets_data:
-        #     ProjectBudget.objects.create(Project_ID=project, Budget_ID_id=budget_id)
-        # return project
         invalid_budgets = []
         for budget_id in budgets_data:
             if not Budget.objects.filter(id=budget_id).exists():
@@ -347,7 +344,7 @@ class RelatedObjectField(serializers.Field):
 
 
 class AdvanceRequestSerializer(serializers.ModelSerializer):
-    related_object = serializers.SerializerMethodField()  # This will call get_related_object()
+    related_object = serializers.SerializerMethodField() 
     ID = serializers.IntegerField()
     Request_Code=serializers.SerializerMethodField()
     Budget_Details = serializers.SerializerMethodField()

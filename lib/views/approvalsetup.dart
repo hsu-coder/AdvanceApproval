@@ -299,8 +299,8 @@ class _ApprovalSetupState extends State<ApprovalSetupStep> {
             setup.FlowName!
                 .toLowerCase()
                 .contains(flownameController.text.toLowerCase());
-        bool matchesManagement = !managementApprover ||
-            setup.ApprovalSteps.any((step) => step.approver == 'Management');
+        bool matchesManagement =
+            !managementApprover || (setup.Management?.toLowerCase() == 'yes');
 
         return matchesDepartment &&
             matchesType &&
@@ -386,7 +386,6 @@ class _ApprovalSetupState extends State<ApprovalSetupStep> {
 
   void _fetchData() async {
     try {
-      
       List<ApprovalSetup> setup = await ApiService().fetchApprovalSetup();
       List<Department> department = await ApiService().fetchDepartment();
       setState(() {
@@ -1393,7 +1392,6 @@ class _ApprovalDetailState extends State<approvalDetailPage> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    
                     Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text(
@@ -1417,7 +1415,6 @@ class _ApprovalDetailState extends State<approvalDetailPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text((step.stepNo).toString()),
                       ),
-                      
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(step.maxAmount.toString()),

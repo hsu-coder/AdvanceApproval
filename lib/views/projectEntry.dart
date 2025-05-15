@@ -304,22 +304,21 @@ class _EntryFormState extends State<EntryForm> {
       for (var budget in chooseBudgetCodes) {
         await ApiService().postProjectBudget(newProject.id, budget.id);
         _fetchData();
-      }
-       Navigator.pop(context, true);
-
-      // Call Logic Apps
-      await _callLogicApps(newProject);
-
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text( "Project created successfully!"
-              ),
+          content: Text( "Project created successfully!"),
+           duration: Duration(seconds: 3),   
         ),
 
       );
+      }
+       Navigator.pop(context, true);
 
-      // Clear form and generate new project code
+    
+      await _callLogicApps(newProject);
+       
+      
+
       _clearText();
       
     } catch (e) {

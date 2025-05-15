@@ -24,7 +24,7 @@ class _ProjectInfoState extends State<ProjectInfo> {
   DateTimeRange? selectedDateRange;
   DateTimeRange? CustomDateRange;
   TextEditingController _searchController = TextEditingController();
-  final numberFormat = NumberFormat("#,##0");
+  final NumberFormat thousandSeparator = NumberFormat("#,##0", "en_US");
 
   String? sortColumn;
   bool sortAscending = true;
@@ -838,7 +838,9 @@ class _ProjectInfoState extends State<ProjectInfo> {
                             child: Align(
                               alignment: Alignment
                                   .centerRight, // Aligns the text to the right
-                              child: Text(row.totalAmount.toString()),
+                              child: Text(thousandSeparator.format(
+                                row.totalAmount,
+                              )),
                             ),
                           ),
                           Padding(
@@ -1514,9 +1516,7 @@ class _AdvancedSearchDialogState extends State<AdvancedSearchDialog> {
 
 class ProjectDetailPage extends StatefulWidget {
   final Projects projectData;
-  // final List<Map<String, dynamic>> selectedBudgetCodes;
-  //final String selectedBudgetCode;
-
+  
   const ProjectDetailPage({
     super.key,
     required this.projectData,
@@ -1534,16 +1534,8 @@ class _ProjectDetailState extends State<ProjectDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // // ignore: unused_local_variable
-    // List<Budget> BudgetDetails = [];
-    // if (widget.projectData["budgetDetails"] != null) {
-    //   if (widget.projectData["BudgetDetails"] is String) {
-    //     budgetDetails = _parseBudgetDetails(widget.projectData["BudgetDetails"]);
-    //   } else if (widget.projectData["BudgetDetails"] is List) {
-    //     budgetDetails =
-    //         List<Map<String, String>>.from(widget.projectData["BudgetDetails"]);
-    //   }
-    // }
+    
+    
 
     return Scaffold(
       appBar: AppBar(
@@ -1564,8 +1556,8 @@ class _ProjectDetailState extends State<ProjectDetailPage> {
             _buildRow(
                 "Date",
                 DateFormat('yyyy-MM-dd').format(widget.projectData.date),
-                "Name",
-                'May'),
+                "",
+                ''),
             const SizedBox(height: 10),
             _buildRow("Department", widget.projectData.departmentName,
                 "Requestable", widget.projectData.requestable),

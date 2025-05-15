@@ -26,6 +26,7 @@ class _TripInfoState extends State<TripInfo> {
   List<Budget> BudgetDetail = [];
 
   final TextEditingController _searchController = TextEditingController();
+  final NumberFormat thousandSeparator = NumberFormat("#,##0", "en_US");
 
   String? selectedDate;
   DateTimeRange? CustomDateRange;
@@ -479,7 +480,7 @@ class _TripInfoState extends State<TripInfo> {
   //Download button CSV
   Future<void> exportToCSV() async {
     try {
-      // Convert the projectData list to a list of lists (CSV rows)
+  
       List<List<dynamic>> csvData = [];
 
       //Add the header row
@@ -773,7 +774,8 @@ class _TripInfoState extends State<TripInfo> {
                       child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            row.totalAmount.toString(),
+                            thousandSeparator.format(row.totalAmount),
+                            
                           )),
                     ),
                     Padding(
