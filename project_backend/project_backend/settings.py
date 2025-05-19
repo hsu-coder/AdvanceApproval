@@ -64,8 +64,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [  
-    "https://mango-hill-0dd3a9b00.6.azurestaticapps.net",
+   "https://delightful-grass-0f7e73b00.6.azurestaticapps.net",
 ]
 ROOT_URLCONF = 'project_backend.urls'
 
